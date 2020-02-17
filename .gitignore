@@ -1,0 +1,8 @@
+
+mvdXMLChecker_2.2/.settings/*
+mvdXMLChecker_2.2/example/Demo.mvdxml
+mvdXMLChecker_2.2/example/Duplex_A_20110505_1.ifc
+mvdXMLChecker_2.2/example/Duplex_A_20110505_modified.ifc
+mvdXMLChecker_2.2/IFC2X3TC1.exp
+mvdXMLOnlineChecker/target/*
+mvdXMLChecker_2.2/target/*
