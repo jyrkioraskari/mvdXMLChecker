@@ -4,3 +4,5 @@ mvdXMLChecker_2.2/example/*
 mvdXMLChecker_2.2/IFC2X3TC1.exp
 mvdXMLOnlineChecker/target/*
 mvdXMLChecker_2.2/target/*
+mvdXMLCheckerOpenAPI/.settings/*
+mvdXMLCheckerOpenAPI/target/*
