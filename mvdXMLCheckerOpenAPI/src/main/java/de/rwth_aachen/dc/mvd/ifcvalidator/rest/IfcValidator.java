@@ -10,7 +10,7 @@ public class IfcValidator {
     @Path("/hello")
     public String hello()
     {
-         return "Hello World !! - Jersey 2";
+         return "Hello from IfcValidator! It works. ";
     }
 
 }
