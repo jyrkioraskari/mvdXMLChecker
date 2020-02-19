@@ -8,7 +8,6 @@ mvdXMLChecker_2020/IFC2X3TC1.exp
 
 mvdXMLOnlineChecker/target/*
 mvdXMLChecker_2.2/target/*
-mvdXMLChecker_2020/target/*
 
 mvdXMLCheckerOpenAPI/.settings/*
 mvdXMLCheckerOpenAPI/target/*
