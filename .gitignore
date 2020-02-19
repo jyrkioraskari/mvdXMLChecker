@@ -2,6 +2,9 @@
 mvdXMLChecker_2.2/.settings/*
 mvdXMLChecker_2.2/example/*
 mvdXMLChecker_2.2/IFC2X3TC1.exp
+mvdXMLChecker_2020/.settings/*
+mvdXMLChecker_2020/example/*
+mvdXMLChecker_2020/IFC2X3TC1.exp
 mvdXMLOnlineChecker/target/*
 mvdXMLChecker_2.2/target/*
 mvdXMLCheckerOpenAPI/.settings/*
