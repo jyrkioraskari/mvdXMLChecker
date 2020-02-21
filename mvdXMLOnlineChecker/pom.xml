@@ -4,11 +4,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.rwth_aachen.dc</groupId>
-	<artifactId>mvdXMLOnlineChecker</artifactId>
+	<groupId>de.rwth-aachen.dc.mvd</groupId>
+	<artifactId>mvdXMLCheckerUserInterface</artifactId>
 	<packaging>war</packaging>
 	<version>1.0</version>
-	<name>mvdXMLOnlineChecker</name>
+	<name>mvdXMLChecker User Interface</name>
 
 	<developers>
 		<developer>
@@ -77,8 +77,8 @@
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
-			<artifactId>mvdXMLChecker_2</artifactId>
-			<version>2.01</version>
+			<artifactId>mvdXMLCheckerCore</artifactId>
+			<version>1.0</version>
 		</dependency>
 
 	</dependencies>

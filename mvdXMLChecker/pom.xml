@@ -1,0 +1,14 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.rwth-aachen.dc.mvd</groupId>
+  <artifactId>mvdXMLChecker</artifactId>
+  <version>1.0</version>
+  <name>mvdXMLChecker main module</name>
+  <description>This is used to build the software</description>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>../mvdXMLCheckerCore</module>
+  	<module>../mvdXMLCheckerOpenAPI</module>
+  	<module>../mvdXMLOnlineChecker</module>
+  </modules>
+</project>
