@@ -1,19 +1,23 @@
 package de.rwth_aachen.dc.mvdXMLOnlineChecker.events;
 
+import org.bimserver.emf.IfcModelInterface;
+
 public class New_ifcSTEPFile {
-    private final String absolute_filename;    
+    private final IfcModelInterface ifcModel;    
     private final String filename;
     
 
-    public New_ifcSTEPFile(String absolute_filename,String filename) {
+    public New_ifcSTEPFile(IfcModelInterface ifcModel,String filename) {
 	super();
-	this.absolute_filename=absolute_filename;
+	this.ifcModel=ifcModel;
 	this.filename = filename;
     }
     
-    public String getAbsolute_filename() {
-        return absolute_filename;
+
+    public IfcModelInterface getIfcModel() {
+        return ifcModel;
     }
+
 
     public String getFilename() {
         return filename;
