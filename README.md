@@ -8,4 +8,4 @@ https://github.com/BenzclyZhang/mvdXMLChecker
 
 
 The test Open API interface can be found here:
-https://lbd.arch.rwth-aachen.de:8443/mvdXMLChecker/
+http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/
