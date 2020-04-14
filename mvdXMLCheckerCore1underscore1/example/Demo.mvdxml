@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<mvdXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" uuid="00000000-0000-0000-0000-000000000000" name="" xmlns="http://buildingsmart-tech.org/mvdXML/mvdXML1-1">
+  <Templates>
+    <ConceptTemplate uuid="7aaad17c-20a0-4117-8abc-050d0c67e6ec" name="SingleValueProperty" applicableSchema="IFC4" applicableEntity="IfcObject">
+      <Rules>
+        <AttributeRule AttributeName="IsDefinedBy" Cardinality="_asSchema">
+          <EntityRules>
+            <EntityRule EntityName="IfcRelDefinesByProperties" Cardinality="_asSchema">
+              <AttributeRules>
+                <AttributeRule AttributeName="RelatingPropertyDefinition" Cardinality="_asSchema">
+                  <EntityRules>
+                    <EntityRule EntityName="IfcPropertySet" Cardinality="_asSchema">
+                      <AttributeRules>
+                        <AttributeRule AttributeName="HasProperties" Cardinality="_asSchema">
+                          <EntityRules>
+                            <EntityRule EntityName="IfcPropertySingleValue" Cardinality="_asSchema">
+                              <AttributeRules>
+                                <AttributeRule RuleID="PropertyName" AttributeName="Name" Cardinality="_asSchema" />
+                                <AttributeRule RuleID="NominalValue" AttributeName="NominalValue" Cardinality="_asSchema" />
+                                <AttributeRule RuleID="Unit" AttributeName="Unit" Cardinality="_asSchema" />
+                              </AttributeRules>
+                            </EntityRule>
+                          </EntityRules>
+                        </AttributeRule>
+                        <AttributeRule RuleID="PropertySetName" AttributeName="Name" Cardinality="_asSchema" />
+                      </AttributeRules>
+                    </EntityRule>
+                  </EntityRules>
+                </AttributeRule>
+              </AttributeRules>
+            </EntityRule>
+          </EntityRules>
+        </AttributeRule>
+      </Rules>
+    </ConceptTemplate>
+  </Templates>
+  <Views>
+    <ModelView uuid="a3713e64-6251-4569-b8c6-934fa6acfb25" name="DEMO" applicableSchema="IFC4">
+      <ExchangeRequirements>
+        <ExchangeRequirement uuid="139cd9af-7874-4c62-aab8-9ca39dc25dd2" name="Example" applicability="both" />
+      </ExchangeRequirements>
+      <Roots>
+        <ConceptRoot uuid="f4170e8d-5041-40fb-82d2-7f12f8c7329b" name="" applicableRootEntity="IfcDoor">
+          <Concepts>
+            <Concept uuid="f19755da-4ca0-4d90-9b9f-627b8a3c6e9c" name="SingleValueProperty" override="false">
+              <Definitions>
+                <Definition>
+                  <Body><![CDATA[The property of fire rating should be provided.]]></Body>
+                </Definition>
+              </Definitions>
+              <Template ref="7aaad17c-20a0-4117-8abc-050d0c67e6ec" />
+              <Requirements>
+                <Requirement applicability="import" requirement="mandatory" exchangeRequirement="139cd9af-7874-4c62-aab8-9ca39dc25dd2" />
+                <Requirement applicability="export" requirement="mandatory" exchangeRequirement="139cd9af-7874-4c62-aab8-9ca39dc25dd2" />
+              </Requirements>
+              <Rules>
+                <TemplateRule Parameters="PropertyName[Value]='FireRating'" />
+              </Rules>
+            </Concept>
+          </Concepts>
+        </ConceptRoot>
+        <ConceptRoot uuid="8101d3e8-afe0-448c-b803-f80874ab63a5" name="" applicableRootEntity="IfcWindow">
+          <Concepts>
+            <Concept uuid="6ca5d3a3-ae77-49a3-9012-96180d68810b" name="SingleValueProperty" override="false">
+              <Definitions>
+                <Definition>
+                  <Body><![CDATA[The property of fire rating should be provided.]]></Body>
+                </Definition>
+              </Definitions>
+              <Template ref="7aaad17c-20a0-4117-8abc-050d0c67e6ec" />
+              <Requirements>
+                <Requirement applicability="import" requirement="mandatory" exchangeRequirement="139cd9af-7874-4c62-aab8-9ca39dc25dd2" />
+                <Requirement applicability="export" requirement="mandatory" exchangeRequirement="139cd9af-7874-4c62-aab8-9ca39dc25dd2" />
+              </Requirements>
+              <Rules>
+                <TemplateRule Parameters="PropertyName='FireRating'" />
+              </Rules>
+            </Concept>
+          </Concepts>
+        </ConceptRoot>
+      </Roots>
+    </ModelView>
+  </Views>
+</mvdXML>
