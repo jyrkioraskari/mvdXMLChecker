@@ -1,8 +1,10 @@
 
 mvdXMLCheckerCore/example/*
 mvdXMLCheckerCore/IFC2X3TC1.exp
-mvdXMLCheckerCore/example/*
-mvdXMLCheckerCore/target/*
-
 mvdXMLCheckerOpenAPI/target/*
 mvdXMLOnlineChecker/target/*
+mvdXMLCheckerCore1underscore1/target/*
+mvdXMLCheckerCore1dot1/example/*
+mvdXMLCheckerCore1underscore1/example/*
+mvdXMLCheckerCore1dot1/target/*
+*.class

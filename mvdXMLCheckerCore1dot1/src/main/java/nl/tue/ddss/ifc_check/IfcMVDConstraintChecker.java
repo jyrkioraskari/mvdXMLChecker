@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -31,6 +32,7 @@ import org.bimserver.plugins.serializers.SerializerException;
 import org.xml.sax.SAXException;
 
 import de.rwth_aachen.dc.mvd.AbstractRule;
+import de.rwth_aachen.dc.mvd.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.report.IssueReport;
 import de.rwth_aachen.dc.mvdxml.checker.MVDConstraint;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
@@ -44,9 +46,12 @@ import nl.tue.ddss.rule_parse.MvdXMLv1_1Parser;
 
 public class IfcMVDConstraintChecker {
     private List<MVDConstraint> constraints;
+    
+    IfcVersion ifcversion;
 
-    public IfcMVDConstraintChecker(List<MVDConstraint> constraints) throws DeserializeException, IOException, URISyntaxException {
+    public IfcMVDConstraintChecker(List<MVDConstraint> constraints, IfcVersion ifcversion) throws DeserializeException, IOException, URISyntaxException {
 	this.constraints = constraints;
+	this.ifcversion=ifcversion;
     }
 
     public IssueReport checkModel(IfcModelInterface ifcModel)
@@ -57,7 +62,16 @@ public class IfcMVDConstraintChecker {
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
 	    System.out.println("class: "+constraint.getConceptRoot().getApplicableRootEntity());
 	    try {
-		Class cls = Class.forName("org.bimserver.models.ifc2x3tc1." + constraint.getConceptRoot().getApplicableRootEntity());
+		Class cls=null;
+		switch(this.ifcversion)
+		{
+		case IFC2x3: cls = Class.forName("org.bimserver.models.ifc2x3tc1." + constraint.getConceptRoot().getApplicableRootEntity());
+		break;
+		case IFC4: cls = Class.forName("org.bimserver.models.ifc4." + constraint.getConceptRoot().getApplicableRootEntity());
+		break;
+		default: throw new RuntimeException("Unsupported IFC type");
+		}
+
 		List<Object> allRoots = ifcModel.getAllWithSubTypes(cls);
 		for (Object ifcObject : allRoots) {
 		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules);
