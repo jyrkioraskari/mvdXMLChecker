@@ -117,5 +117,10 @@
 			<version>${tomcat.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>de.rwth-aachen.dc.mvd</groupId>
+			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>
