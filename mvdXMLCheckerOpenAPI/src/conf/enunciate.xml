@@ -8,5 +8,7 @@
 		<swagger  basePath="/mvdXMLChecker/api/">	   
 		</swagger>
 	</modules>
-
+	<api-classes>
+	   <include pattern="de.rwth_aachen.dc.mvd.ifcvalidator.rest.*"/>
+	</api-classes>
 </enunciate>
