@@ -1,10 +1,9 @@
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\rule_parse\XorOperator.java
-C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\mvdparser\MVDConstraint.java
-C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\de\rwth_aachen\dc\mvd\IfcModelHelper.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\buildingsmart_tech\mvd_xml_1dot1\ModelView.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\rule_parse\OrOperator.java
-C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\mvdparser\MvdXMLParser.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\rule_parse\GreaterOperator.java
+C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\de\rwth_aachen\dc\mvd\IfcModelInstance.java
+C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\de\rwth_aachen\dc\mvdxml\checker\MVDConstraint.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\ifc_check\IfcMVDConstraintChecker.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\rule_parse\LessEqualOperator.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\buildingsmart_tech\mvd_xml_1dot1\ObjectFactory.java
@@ -25,6 +24,7 @@ C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\b
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\ifc_check\IfcHashMapBuilder.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\buildingsmart_tech\mvd_xml_1dot1\Concept.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\nl\tue\ddss\rule_parse\AndOperator.java
+C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\de\rwth_aachen\dc\mvdxml\checker\MvdXMLValidationRules.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\buildingsmart_tech\mvd_xml_1dot1\GenericReference.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\buildingsmart_tech\mvd_xml_1dot1\Applicability.java
 C:\Workspaces\mvdXMLChecker-2.0\mvdXMLCheckerCore1dot1\src\main\java\generated\buildingsmart_tech\mvd_xml_1dot1\AttributeRule.java

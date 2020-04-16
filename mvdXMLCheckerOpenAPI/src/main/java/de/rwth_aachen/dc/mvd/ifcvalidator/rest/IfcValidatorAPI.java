@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,15 +18,23 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBException;
 
+import org.bimserver.emf.IfcModelInterface;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.rwth_aachen.dc.mvd.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.ifcvalidator.db.MvdXMLFileHandle;
+import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.IssueReportBean;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MVDCheck_BOTServiceDescriotor;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MvdXMLFileHandleList;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.ResponseBean;
+import de.rwth_aachen.dc.mvd.report.IssueReport;
+import de.rwth_aachen.dc.mvdxml.checker.MVDConstraint;
+import de.rwth_aachen.dc.mvdxml.checker.MvdXMLValidationRules;
 import net.javaguides.hibernate.util.HibernateUtil;
+import nl.tue.ddss.ifc_check.IfcMVDConstraintChecker;
 
 @Path("/")
 public class IfcValidatorAPI {
@@ -103,12 +112,12 @@ public class IfcValidatorAPI {
 	    outStream.writeUTF(mvdxmlContent);
 	    outStream.close();
 
-	    MvdXMLFileHandle mvdXMLFile  = new MvdXMLFileHandle(tempFile.getAbsolutePath());
+	    MvdXMLFileHandle mvdXMLFile = new MvdXMLFileHandle(tempFile.getAbsolutePath());
 	    Transaction transaction = null;
 	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 		transaction = session.beginTransaction();
-		Serializable id=session.save(mvdXMLFile);
-		responseBean.setMessage("ID was:"+id.toString());
+		Serializable id = session.save(mvdXMLFile);
+		responseBean.setMessage("ID was:" + id.toString());
 		responseBean.setResult(id.toString());
 		transaction.commit();
 	    } catch (Exception e) {
@@ -117,7 +126,7 @@ public class IfcValidatorAPI {
 		}
 		e.printStackTrace();
 		responseBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		responseBean.setMessage("Error: "+e.getMessage());
+		responseBean.setMessage("Error: " + e.getMessage());
 		responseBean.setResult("-1");
 	    }
 	} catch (IOException e) {
@@ -136,15 +145,16 @@ public class IfcValidatorAPI {
     @Path("/mvdxml")
     @Produces(MediaType.APPLICATION_JSON)
     public MvdXMLFileHandleList list_mvdxml_json() {
-	final MvdXMLFileHandleList list = new MvdXMLFileHandleList();
+	final MvdXMLFileHandleList mvdlist = new MvdXMLFileHandleList();
 	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 	    List<MvdXMLFileHandle> mvdXMLFiles = session.createQuery("from MvdXMLFileHandle", MvdXMLFileHandle.class).list();
-	    mvdXMLFiles.forEach(f -> list.append(f));
+	    mvdXMLFiles.forEach(f -> mvdlist.append(f));
 	} catch (Exception e) {
-
 	    e.printStackTrace();
+	    mvdlist.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	    mvdlist.setMessage("Error: " + e.getMessage());
 	}
-	return list;
+	return mvdlist;
     }
 
     /**
@@ -182,20 +192,52 @@ public class IfcValidatorAPI {
     @Path("/check/{mvdxmlid}")
     @Consumes("application/ifc")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResponseBean check_withsSecifiedMvcxml(@PathParam("mvdxmlid") String mvdxmlid, String ifcStepContent) {
+    public IssueReportBean check_withsSecifiedMvcxml(@PathParam("mvdxmlid") String mvdxmlid, String ifcStepContent) {
+	IssueReportBean issueReportBean = new IssueReportBean();
 	System.out.println("ifc content: \n" + ifcStepContent);
 	try {
-	    File tempFile = File.createTempFile("ifcChecker-", ".ifc");
-	    FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());
+	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
+	    FileOutputStream fos = new FileOutputStream(tempIfcFile.getAbsolutePath());
 	    DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 	    outStream.writeUTF(ifcStepContent);
 	    outStream.close();
 
+	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+		Integer id = Integer.parseInt(mvdxmlid);
+		MvdXMLFileHandle mvdXMLFiles = session.get(MvdXMLFileHandle.class, id);
+
+		MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFiles.getFile_path());
+		try {
+		    java.nio.file.Path ifcFile = Paths.get(tempIfcFile.getAbsolutePath());
+		    IfcModelInstance model = new IfcModelInstance();
+		    IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+		    List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
+		    System.out.println(constraints.size());
+
+		    if (model.getIfcversion().isPresent()) {
+			IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+			IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel);
+			issueReportBean.getIssues().addAll(issuereport.getIssues());
+		    }
+
+		} catch (JAXBException e) {
+		    e.printStackTrace();
+		    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    issueReportBean.setMessage("Error: " + e.getMessage());
+		}
+
+	    } catch (Exception e) {
+		e.printStackTrace();
+		issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		issueReportBean.setMessage("Error: " + e.getMessage());
+	    }
 	} catch (IOException e) {
 	    e.printStackTrace();
+	    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	    issueReportBean.setMessage("Error: " + e.getMessage());
 	}
-	ResponseBean responseBean = new ResponseBean();
-	return responseBean;
+
+	return issueReportBean;
     }
 
 }

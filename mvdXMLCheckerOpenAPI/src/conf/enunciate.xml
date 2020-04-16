@@ -9,6 +9,6 @@
 		</swagger>
 	</modules>
 	<api-classes>
-	   <include pattern="de.rwth_aachen.dc.mvd.ifcvalidator.rest.*"/>
+	   <include pattern="de.rwth_aachen.dc.mvd.ifcvalidator.*"/>
 	</api-classes>
 </enunciate>

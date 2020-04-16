@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.rwth_aachen.dc.mvd.ifcvalidator.db.MvdXMLFileHandle;
 
-public class MvdXMLFileHandleList {
+public class MvdXMLFileHandleList extends ResponseBean{
     List<MvdXMLFileHandle> files = new ArrayList<>();
 
     public MvdXMLFileHandleList () {
