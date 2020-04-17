@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.rwth_aachen.dc.mvd.AbstractRule;
+import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
 
 //Modified by Jyrki Oraskari 14/04/2020
 

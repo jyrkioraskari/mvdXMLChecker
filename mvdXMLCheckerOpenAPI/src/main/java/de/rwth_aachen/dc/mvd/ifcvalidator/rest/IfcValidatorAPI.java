@@ -3,12 +3,14 @@ package de.rwth_aachen.dc.mvd.ifcvalidator.rest;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -18,23 +20,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBException;
 
-import org.bimserver.emf.IfcModelInterface;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.rwth_aachen.dc.mvd.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.ifcvalidator.db.MvdXMLFileHandle;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.IssueReportBean;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MVDCheck_BOTServiceDescriotor;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MvdXMLFileHandleList;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.ResponseBean;
-import de.rwth_aachen.dc.mvd.report.IssueReport;
-import de.rwth_aachen.dc.mvdxml.checker.MVDConstraint;
-import de.rwth_aachen.dc.mvdxml.checker.MvdXMLValidationRules;
+import de.rwth_aachen.dc.mvd.ifcvalidator.rest.checkers.MvdXMLv1dot1Check;
 import net.javaguides.hibernate.util.HibernateUtil;
-import nl.tue.ddss.ifc_check.IfcMVDConstraintChecker;
 
 @Path("/")
 public class IfcValidatorAPI {
@@ -204,26 +200,24 @@ public class IfcValidatorAPI {
 
 	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 		Integer id = Integer.parseInt(mvdxmlid);
-		MvdXMLFileHandle mvdXMLFiles = session.get(MvdXMLFileHandle.class, id);
+		MvdXMLFileHandle mvdXMLFileHandle = session.get(MvdXMLFileHandle.class, id);
 
-		MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFiles.getFile_path());
-		try {
-		    java.nio.file.Path ifcFile = Paths.get(tempIfcFile.getAbsolutePath());
-		    IfcModelInstance model = new IfcModelInstance();
-		    IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-		    List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
-		    System.out.println(constraints.size());
+		java.nio.file.Path ifcFile = Paths.get(tempIfcFile.getAbsolutePath());
 
-		    if (model.getIfcversion().isPresent()) {
-			IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-			IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel);
-			issueReportBean.getIssues().addAll(issuereport.getIssues());
+		if (checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1"))  {
+		    issueReportBean.setMessage("a valid mvdXML 1.1 file");
+		    MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path(), issueReportBean);
+		   
+		} else {
+		    // mvdXML 1_1
+		    if (checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+			issueReportBean.setMessage("a mvdXML 1_1 file");
+			try {
+
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
 		    }
-
-		} catch (JAXBException e) {
-		    e.printStackTrace();
-		    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		    issueReportBean.setMessage("Error: " + e.getMessage());
 		}
 
 	    } catch (Exception e) {
@@ -238,6 +232,32 @@ public class IfcValidatorAPI {
 	}
 
 	return issueReportBean;
+    }
+
+    private boolean checkMvdXMLSchemaVersion(String filename, String schemaName) {
+	try {
+	    File myObj = new File(filename);
+	    Scanner myReader = new Scanner(myObj);
+	    for (int i = 0; i < 5; i++)
+		if (myReader.hasNextLine())
+		    if (checSchemaLine(myReader.nextLine(), schemaName))
+			return true;
+
+	    myReader.close();
+	} catch (FileNotFoundException e) {
+	    System.out.println("An error occurred.");
+	    e.printStackTrace();
+	}
+	return false;
+    }
+
+    private boolean checSchemaLine(String line, String schemaName) {
+	String[] tokens = line.split("[ =>]");
+	for (String t : tokens) {
+	    if (t.equals("\"" + schemaName + "\""))
+		return true;
+	}
+	return false;
     }
 
 }

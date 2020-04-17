@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,16 +36,14 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.rwth_aachen.dc.mvd.IfcModelHelper;
-import de.rwth_aachen.dc.mvd.report.Issue;
-import de.rwth_aachen.dc.mvd.report.IssueReport;
+import de.rwth_aachen.dc.mvd.IssueReport;
+import de.rwth_aachen.dc.mvd.beans.Issue;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_ifcSTEPFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_mvdXMLFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.upload.WebFileHandler;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import nl.tue.ddss.ifc_check.IfcMVDConstraintChecker;
 import nl.tue.ddss.mvdparser.MVDConstraint;
-import nl.tue.ddss.mvdparser.MvdXMLParser;
 
 @Theme("rwth")
 public class mvdXMLOnlineCheckerUI extends UI {

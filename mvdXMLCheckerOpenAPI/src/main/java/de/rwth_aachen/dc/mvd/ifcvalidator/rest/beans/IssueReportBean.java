@@ -3,9 +3,7 @@ package de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
-import de.rwth_aachen.dc.mvd.report.Issue;
+import de.rwth_aachen.dc.mvd.beans.Issue;
 
 public class IssueReportBean extends ResponseBean{
     private List<Issue> issues = new ArrayList<>();

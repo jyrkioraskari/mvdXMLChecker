@@ -1,5 +1,7 @@
+de\rwth_aachen\dc\mvd\IssueReport.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\AbstractRule.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\Applicability.class
+de\rwth_aachen\dc\mvd\beans\Issue.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\Rules.class
 nl\tue\ddss\mvdparser\MvdXMLException.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\GenericReference.class
@@ -7,7 +9,6 @@ org\buildingsmart_tech\mvdxml\mvdxml1_1\ModelView$ExchangeRequirements.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\ModelView$Roots.class
 nl\tue\ddss\ifc_check\IfcMVDConstraintChecker.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\AttributeRule$EntityRules.class
-de\rwth_aachen\dc\mvd\report\IssueReport.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\Concept$SubConcepts.class
 nl\tue\ddss\mvdparser\MvdXMLParser.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\Concept.class
@@ -43,7 +44,6 @@ org\buildingsmart_tech\mvdxml\mvdxml1_1\EntityRule$Constraints.class
 nl\tue\ddss\rule_parse\GreaterEqualOperator.class
 nl\tue\ddss\rule_parse\LessOperator.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\AttributeRule.class
-de\rwth_aachen\dc\mvd\report\Issue.class
 nl\tue\ddss\rule_parse\MvdXMLv1_1Lexer$DFA17.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\Requirements$Requirement.class
 org\buildingsmart_tech\mvdxml\mvdxml1_1\MvdXML$Views.class

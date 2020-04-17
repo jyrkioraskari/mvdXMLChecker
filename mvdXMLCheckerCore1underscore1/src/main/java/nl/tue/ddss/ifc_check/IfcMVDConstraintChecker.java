@@ -1,6 +1,5 @@
 package nl.tue.ddss.ifc_check;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ import org.buildingsmart_tech.mvdxml.mvdxml1_1.EntityRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.TemplateRule;
 import org.xml.sax.SAXException;
 
-import de.rwth_aachen.dc.mvd.report.IssueReport;
+import de.rwth_aachen.dc.mvd.IssueReport;
 import nl.tue.ddss.ifc_check.IfcHashMapBuilder.ObjectToValue;
 import nl.tue.ddss.mvdparser.MVDConstraint;
 import nl.tue.ddss.rule_parse.MvdXMLv1_1Lexer;
