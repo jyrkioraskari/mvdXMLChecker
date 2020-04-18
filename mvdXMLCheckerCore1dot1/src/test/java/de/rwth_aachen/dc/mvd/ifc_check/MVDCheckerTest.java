@@ -30,7 +30,7 @@ public class MVDCheckerTest {
 		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints,model.getIfcversion().get());
 		IssueReport issuereport=ifcChecker.checkModel(bimserver_ifcModel);
 		for(Issue i: issuereport.getIssues())
-		    System.out.println(i.getComment());
+		    System.out.println("Issue: "+i.getComment());
 	    }
 
 	} catch (JAXBException e) {
@@ -43,7 +43,7 @@ public class MVDCheckerTest {
 	
 	// Error case 1  IFC4<>IFC2x3
 	//new MVDCheckerTest("c:\\ifc\\20160125Autodesk_Hospital_Parking Garage_2015 - IFC4.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
-	new MVDCheckerTest("c:\\ifc\\Duplex_MEP_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
+	new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Vorlage.mvdxml");
 	
     }
 }

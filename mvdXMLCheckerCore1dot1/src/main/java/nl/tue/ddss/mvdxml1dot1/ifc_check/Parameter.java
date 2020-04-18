@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.sound.midi.Soundbank;
+
 import org.bimserver.emf.IdEObject;
 import org.eclipse.emf.common.util.Enumerator;
 
@@ -18,6 +20,7 @@ public class Parameter {
     public Parameter(String name, HashMap<AbstractRule, ObjectToValue> hashMap) {
 	this.name = name;
 	this.hashMap = hashMap;
+	System.out.println("Param name: "+name);
     }
 
     public Object getResult() {

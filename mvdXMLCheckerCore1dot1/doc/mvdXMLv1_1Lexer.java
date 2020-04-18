@@ -1,4 +1,4 @@
-// $ANTLR 3.5.2 mvdXMLv1_1.g 2020-04-17 13:04:17
+// $ANTLR 3.5.2 mvdXMLv1_1.g 2020-04-18 21:37:21
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -8,10 +8,6 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class mvdXMLv1_1Lexer extends Lexer {
 	public static final int EOF=-1;
-	public static final int T__28=28;
-	public static final int T__29=29;
-	public static final int T__30=30;
-	public static final int T__31=31;
 	public static final int T__32=32;
 	public static final int T__33=33;
 	public static final int T__34=34;
@@ -36,11 +32,15 @@ public class mvdXMLv1_1Lexer extends Lexer {
 	public static final int RPAREN=20;
 	public static final int SIMPLEID=21;
 	public static final int STRING=22;
-	public static final int TRUE=23;
-	public static final int UNICODE_ESC=24;
-	public static final int UNKNOWN=25;
-	public static final int WS=26;
-	public static final int XOR=27;
+	public static final int Size=23;
+	public static final int TRUE=24;
+	public static final int Type=25;
+	public static final int UNICODE_ESC=26;
+	public static final int UNKNOWN=27;
+	public static final int Unique=28;
+	public static final int Value=29;
+	public static final int WS=30;
+	public static final int XOR=31;
 
 	// delegates
 	// delegators
@@ -57,97 +57,15 @@ public class mvdXMLv1_1Lexer extends Lexer {
 	}
 	@Override public String getGrammarFileName() { return "mvdXMLv1_1.g"; }
 
-	// $ANTLR start "T__28"
-	public final void mT__28() throws RecognitionException {
-		try {
-			int _type = T__28;
-			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:2:7: ( '+' )
-			// mvdXMLv1_1.g:2:9: '+'
-			{
-			match('+'); 
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally {
-			// do for sure before leaving
-		}
-	}
-	// $ANTLR end "T__28"
-
-	// $ANTLR start "T__29"
-	public final void mT__29() throws RecognitionException {
-		try {
-			int _type = T__29;
-			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:3:7: ( '-' )
-			// mvdXMLv1_1.g:3:9: '-'
-			{
-			match('-'); 
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally {
-			// do for sure before leaving
-		}
-	}
-	// $ANTLR end "T__29"
-
-	// $ANTLR start "T__30"
-	public final void mT__30() throws RecognitionException {
-		try {
-			int _type = T__30;
-			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:4:7: ( '.' )
-			// mvdXMLv1_1.g:4:9: '.'
-			{
-			match('.'); 
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally {
-			// do for sure before leaving
-		}
-	}
-	// $ANTLR end "T__30"
-
-	// $ANTLR start "T__31"
-	public final void mT__31() throws RecognitionException {
-		try {
-			int _type = T__31;
-			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:5:7: ( '[Size]' )
-			// mvdXMLv1_1.g:5:9: '[Size]'
-			{
-			match("[Size]"); 
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally {
-			// do for sure before leaving
-		}
-	}
-	// $ANTLR end "T__31"
-
 	// $ANTLR start "T__32"
 	public final void mT__32() throws RecognitionException {
 		try {
 			int _type = T__32;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:6:7: ( '[Type]' )
-			// mvdXMLv1_1.g:6:9: '[Type]'
+			// mvdXMLv1_1.g:2:7: ( '+' )
+			// mvdXMLv1_1.g:2:9: '+'
 			{
-			match("[Type]"); 
-
+			match('+'); 
 			}
 
 			state.type = _type;
@@ -164,11 +82,10 @@ public class mvdXMLv1_1Lexer extends Lexer {
 		try {
 			int _type = T__33;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:7:7: ( '[Unique]' )
-			// mvdXMLv1_1.g:7:9: '[Unique]'
+			// mvdXMLv1_1.g:3:7: ( '-' )
+			// mvdXMLv1_1.g:3:9: '-'
 			{
-			match("[Unique]"); 
-
+			match('-'); 
 			}
 
 			state.type = _type;
@@ -185,11 +102,10 @@ public class mvdXMLv1_1Lexer extends Lexer {
 		try {
 			int _type = T__34;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:8:7: ( '[Value]' )
-			// mvdXMLv1_1.g:8:9: '[Value]'
+			// mvdXMLv1_1.g:4:7: ( '.' )
+			// mvdXMLv1_1.g:4:9: '.'
 			{
-			match("[Value]"); 
-
+			match('.'); 
 			}
 
 			state.type = _type;
@@ -206,8 +122,8 @@ public class mvdXMLv1_1Lexer extends Lexer {
 		try {
 			int _type = T__35;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:9:7: ( 'e' )
-			// mvdXMLv1_1.g:9:9: 'e'
+			// mvdXMLv1_1.g:5:7: ( 'e' )
+			// mvdXMLv1_1.g:5:9: 'e'
 			{
 			match('e'); 
 			}
@@ -226,8 +142,8 @@ public class mvdXMLv1_1Lexer extends Lexer {
 		try {
 			int _type = T__36;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// mvdXMLv1_1.g:10:7: ( 'reg' )
-			// mvdXMLv1_1.g:10:9: 'reg'
+			// mvdXMLv1_1.g:6:7: ( 'reg' )
+			// mvdXMLv1_1.g:6:9: 'reg'
 			{
 			match("reg"); 
 
@@ -1288,236 +1204,208 @@ public class mvdXMLv1_1Lexer extends Lexer {
 
 	@Override
 	public void mTokens() throws RecognitionException {
-		// mvdXMLv1_1.g:1:8: ( T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | AND | OR | XOR | EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | FALSE | TRUE | UNKNOWN | DIGIT | INT | HEX_DIGIT | LETTER | SIMPLEID | LPAREN | RPAREN | OCTAL_ESC | UNICODE_ESC | ESC_SEQ | STRING | WS )
-		int alt13=33;
+		// mvdXMLv1_1.g:1:8: ( T__32 | T__33 | T__34 | T__35 | T__36 | AND | OR | XOR | EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | FALSE | TRUE | UNKNOWN | DIGIT | INT | HEX_DIGIT | LETTER | SIMPLEID | LPAREN | RPAREN | OCTAL_ESC | UNICODE_ESC | ESC_SEQ | STRING | WS )
+		int alt13=29;
 		alt13 = dfa13.predict(input);
 		switch (alt13) {
 			case 1 :
-				// mvdXMLv1_1.g:1:10: T__28
-				{
-				mT__28(); 
-
-				}
-				break;
-			case 2 :
-				// mvdXMLv1_1.g:1:16: T__29
-				{
-				mT__29(); 
-
-				}
-				break;
-			case 3 :
-				// mvdXMLv1_1.g:1:22: T__30
-				{
-				mT__30(); 
-
-				}
-				break;
-			case 4 :
-				// mvdXMLv1_1.g:1:28: T__31
-				{
-				mT__31(); 
-
-				}
-				break;
-			case 5 :
-				// mvdXMLv1_1.g:1:34: T__32
+				// mvdXMLv1_1.g:1:10: T__32
 				{
 				mT__32(); 
 
 				}
 				break;
-			case 6 :
-				// mvdXMLv1_1.g:1:40: T__33
+			case 2 :
+				// mvdXMLv1_1.g:1:16: T__33
 				{
 				mT__33(); 
 
 				}
 				break;
-			case 7 :
-				// mvdXMLv1_1.g:1:46: T__34
+			case 3 :
+				// mvdXMLv1_1.g:1:22: T__34
 				{
 				mT__34(); 
 
 				}
 				break;
-			case 8 :
-				// mvdXMLv1_1.g:1:52: T__35
+			case 4 :
+				// mvdXMLv1_1.g:1:28: T__35
 				{
 				mT__35(); 
 
 				}
 				break;
-			case 9 :
-				// mvdXMLv1_1.g:1:58: T__36
+			case 5 :
+				// mvdXMLv1_1.g:1:34: T__36
 				{
 				mT__36(); 
 
 				}
 				break;
-			case 10 :
-				// mvdXMLv1_1.g:1:64: AND
+			case 6 :
+				// mvdXMLv1_1.g:1:40: AND
 				{
 				mAND(); 
 
 				}
 				break;
-			case 11 :
-				// mvdXMLv1_1.g:1:68: OR
+			case 7 :
+				// mvdXMLv1_1.g:1:44: OR
 				{
 				mOR(); 
 
 				}
 				break;
-			case 12 :
-				// mvdXMLv1_1.g:1:71: XOR
+			case 8 :
+				// mvdXMLv1_1.g:1:47: XOR
 				{
 				mXOR(); 
 
 				}
 				break;
-			case 13 :
-				// mvdXMLv1_1.g:1:75: EQUAL
+			case 9 :
+				// mvdXMLv1_1.g:1:51: EQUAL
 				{
 				mEQUAL(); 
 
 				}
 				break;
-			case 14 :
-				// mvdXMLv1_1.g:1:81: NOT_EQUAL
+			case 10 :
+				// mvdXMLv1_1.g:1:57: NOT_EQUAL
 				{
 				mNOT_EQUAL(); 
 
 				}
 				break;
-			case 15 :
-				// mvdXMLv1_1.g:1:91: GREATER_THAN
+			case 11 :
+				// mvdXMLv1_1.g:1:67: GREATER_THAN
 				{
 				mGREATER_THAN(); 
 
 				}
 				break;
-			case 16 :
-				// mvdXMLv1_1.g:1:104: GREATER_THAN_OR_EQUAL
+			case 12 :
+				// mvdXMLv1_1.g:1:80: GREATER_THAN_OR_EQUAL
 				{
 				mGREATER_THAN_OR_EQUAL(); 
 
 				}
 				break;
-			case 17 :
-				// mvdXMLv1_1.g:1:126: LESS_THAN
+			case 13 :
+				// mvdXMLv1_1.g:1:102: LESS_THAN
 				{
 				mLESS_THAN(); 
 
 				}
 				break;
-			case 18 :
-				// mvdXMLv1_1.g:1:136: LESS_THAN_OR_EQUAL
+			case 14 :
+				// mvdXMLv1_1.g:1:112: LESS_THAN_OR_EQUAL
 				{
 				mLESS_THAN_OR_EQUAL(); 
 
 				}
 				break;
-			case 19 :
-				// mvdXMLv1_1.g:1:155: FALSE
+			case 15 :
+				// mvdXMLv1_1.g:1:131: FALSE
 				{
 				mFALSE(); 
 
 				}
 				break;
-			case 20 :
-				// mvdXMLv1_1.g:1:161: TRUE
+			case 16 :
+				// mvdXMLv1_1.g:1:137: TRUE
 				{
 				mTRUE(); 
 
 				}
 				break;
-			case 21 :
-				// mvdXMLv1_1.g:1:166: UNKNOWN
+			case 17 :
+				// mvdXMLv1_1.g:1:142: UNKNOWN
 				{
 				mUNKNOWN(); 
 
 				}
 				break;
-			case 22 :
-				// mvdXMLv1_1.g:1:174: DIGIT
+			case 18 :
+				// mvdXMLv1_1.g:1:150: DIGIT
 				{
 				mDIGIT(); 
 
 				}
 				break;
-			case 23 :
-				// mvdXMLv1_1.g:1:180: INT
+			case 19 :
+				// mvdXMLv1_1.g:1:156: INT
 				{
 				mINT(); 
 
 				}
 				break;
-			case 24 :
-				// mvdXMLv1_1.g:1:184: HEX_DIGIT
+			case 20 :
+				// mvdXMLv1_1.g:1:160: HEX_DIGIT
 				{
 				mHEX_DIGIT(); 
 
 				}
 				break;
-			case 25 :
-				// mvdXMLv1_1.g:1:194: LETTER
+			case 21 :
+				// mvdXMLv1_1.g:1:170: LETTER
 				{
 				mLETTER(); 
 
 				}
 				break;
-			case 26 :
-				// mvdXMLv1_1.g:1:201: SIMPLEID
+			case 22 :
+				// mvdXMLv1_1.g:1:177: SIMPLEID
 				{
 				mSIMPLEID(); 
 
 				}
 				break;
-			case 27 :
-				// mvdXMLv1_1.g:1:210: LPAREN
+			case 23 :
+				// mvdXMLv1_1.g:1:186: LPAREN
 				{
 				mLPAREN(); 
 
 				}
 				break;
-			case 28 :
-				// mvdXMLv1_1.g:1:217: RPAREN
+			case 24 :
+				// mvdXMLv1_1.g:1:193: RPAREN
 				{
 				mRPAREN(); 
 
 				}
 				break;
-			case 29 :
-				// mvdXMLv1_1.g:1:224: OCTAL_ESC
+			case 25 :
+				// mvdXMLv1_1.g:1:200: OCTAL_ESC
 				{
 				mOCTAL_ESC(); 
 
 				}
 				break;
-			case 30 :
-				// mvdXMLv1_1.g:1:234: UNICODE_ESC
+			case 26 :
+				// mvdXMLv1_1.g:1:210: UNICODE_ESC
 				{
 				mUNICODE_ESC(); 
 
 				}
 				break;
-			case 31 :
-				// mvdXMLv1_1.g:1:246: ESC_SEQ
+			case 27 :
+				// mvdXMLv1_1.g:1:222: ESC_SEQ
 				{
 				mESC_SEQ(); 
 
 				}
 				break;
-			case 32 :
-				// mvdXMLv1_1.g:1:254: STRING
+			case 28 :
+				// mvdXMLv1_1.g:1:230: STRING
 				{
 				mSTRING(); 
 
 				}
 				break;
-			case 33 :
-				// mvdXMLv1_1.g:1:261: WS
+			case 29 :
+				// mvdXMLv1_1.g:1:237: WS
 				{
 				mWS(); 
 
@@ -1530,142 +1418,137 @@ public class mvdXMLv1_1Lexer extends Lexer {
 
 	protected DFA13 dfa13 = new DFA13(this);
 	static final String DFA13_eotS =
-		"\5\uffff\1\45\1\50\2\52\1\uffff\2\50\1\uffff\2\50\2\uffff\1\61\1\63\2"+
-		"\52\4\50\1\72\1\52\1\50\13\uffff\1\46\1\uffff\1\46\1\uffff\1\46\2\14\2"+
-		"\46\4\uffff\6\46\2\uffff\2\114\2\uffff\1\117\2\11\2\120\6\46\1\114\5\uffff"+
-		"\2\46\2\133\2\46\2\uffff\2\137\1\uffff\2\46\2\uffff\2\46\1\uffff\2\146"+
+		"\4\uffff\1\40\1\43\2\45\1\uffff\2\43\1\uffff\2\43\2\uffff\1\54\1\56\2"+
+		"\45\4\43\1\65\1\45\1\43\7\uffff\1\41\1\uffff\1\41\1\uffff\1\41\2\13\2"+
+		"\41\4\uffff\6\41\2\uffff\2\107\2\uffff\1\112\2\10\2\113\6\41\1\107\5\uffff"+
+		"\2\41\2\126\2\41\2\uffff\2\132\1\uffff\2\41\2\uffff\2\41\1\uffff\2\141"+
 		"\2\uffff";
 	static final String DFA13_eofS =
-		"\147\uffff";
+		"\142\uffff";
 	static final String DFA13_minS =
-		"\1\11\3\uffff\1\123\4\60\1\uffff\2\60\1\uffff\2\60\2\uffff\2\75\11\60"+
-		"\2\uffff\1\42\10\uffff\1\147\1\uffff\1\104\1\uffff\1\144\2\60\1\122\1"+
-		"\162\4\uffff\1\114\1\154\1\125\1\165\1\113\1\153\2\uffff\3\60\1\uffff"+
-		"\5\60\1\123\1\163\1\105\1\145\1\116\1\156\1\60\2\uffff\1\60\2\uffff\1"+
-		"\105\1\145\2\60\1\117\1\157\1\uffff\3\60\1\uffff\1\127\1\167\1\60\1\uffff"+
-		"\1\116\1\156\1\uffff\2\60\2\uffff";
+		"\1\11\3\uffff\4\60\1\uffff\2\60\1\uffff\2\60\2\uffff\2\75\11\60\2\uffff"+
+		"\1\42\4\uffff\1\147\1\uffff\1\104\1\uffff\1\144\2\60\1\122\1\162\4\uffff"+
+		"\1\114\1\154\1\125\1\165\1\113\1\153\2\uffff\3\60\1\uffff\5\60\1\123\1"+
+		"\163\1\105\1\145\1\116\1\156\1\60\2\uffff\1\60\2\uffff\1\105\1\145\2\60"+
+		"\1\117\1\157\1\uffff\3\60\1\uffff\1\127\1\167\1\60\1\uffff\1\116\1\156"+
+		"\1\uffff\2\60\2\uffff";
 	static final String DFA13_maxS =
-		"\1\174\3\uffff\1\126\4\172\1\uffff\2\172\1\uffff\2\172\2\uffff\2\75\6"+
-		"\172\1\71\2\172\2\uffff\1\165\10\uffff\1\147\1\uffff\1\104\1\uffff\1\144"+
-		"\2\172\1\122\1\162\4\uffff\1\114\1\154\1\125\1\165\1\113\1\153\2\uffff"+
-		"\2\67\1\146\1\uffff\5\172\1\123\1\163\1\105\1\145\1\116\1\156\1\67\2\uffff"+
+		"\1\174\3\uffff\4\172\1\uffff\2\172\1\uffff\2\172\2\uffff\2\75\6\172\1"+
+		"\71\2\172\2\uffff\1\165\4\uffff\1\147\1\uffff\1\104\1\uffff\1\144\2\172"+
+		"\1\122\1\162\4\uffff\1\114\1\154\1\125\1\165\1\113\1\153\2\uffff\2\67"+
+		"\1\146\1\uffff\5\172\1\123\1\163\1\105\1\145\1\116\1\156\1\67\2\uffff"+
 		"\1\146\2\uffff\1\105\1\145\2\172\1\117\1\157\1\uffff\1\146\2\172\1\uffff"+
 		"\1\127\1\167\1\146\1\uffff\1\116\1\156\1\uffff\2\172\2\uffff";
 	static final String DFA13_acceptS =
-		"\1\uffff\1\1\1\2\1\3\5\uffff\1\12\2\uffff\1\13\2\uffff\1\15\1\16\13\uffff"+
-		"\1\33\1\34\1\uffff\1\40\1\41\1\4\1\5\1\6\1\7\1\10\1\32\1\uffff\1\31\1"+
-		"\uffff\1\30\5\uffff\1\20\1\17\1\22\1\21\6\uffff\1\26\1\27\3\uffff\1\37"+
-		"\14\uffff\2\35\1\uffff\1\11\1\14\6\uffff\1\35\3\uffff\1\24\3\uffff\1\23"+
-		"\2\uffff\1\36\2\uffff\1\36\1\25";
+		"\1\uffff\1\1\1\2\1\3\4\uffff\1\6\2\uffff\1\7\2\uffff\1\11\1\12\13\uffff"+
+		"\1\27\1\30\1\uffff\1\34\1\35\1\4\1\26\1\uffff\1\25\1\uffff\1\24\5\uffff"+
+		"\1\14\1\13\1\16\1\15\6\uffff\1\22\1\23\3\uffff\1\33\14\uffff\2\31\1\uffff"+
+		"\1\5\1\10\6\uffff\1\31\3\uffff\1\20\3\uffff\1\17\2\uffff\1\32\2\uffff"+
+		"\1\32\1\21";
 	static final String DFA13_specialS =
-		"\147\uffff}>";
+		"\142\uffff}>";
 	static final String[] DFA13_transitionS = {
-			"\2\40\2\uffff\1\40\22\uffff\1\40\1\20\4\uffff\1\11\1\37\1\34\1\35\1\uffff"+
-			"\1\1\1\uffff\1\2\1\3\1\uffff\12\31\1\uffff\1\11\1\22\1\17\1\21\2\uffff"+
-			"\1\7\4\32\1\23\10\33\1\12\4\33\1\25\1\27\2\33\1\15\2\33\1\4\1\36\4\uffff"+
-			"\1\10\3\32\1\5\1\24\10\33\1\13\2\33\1\6\1\33\1\26\1\30\2\33\1\16\2\33"+
-			"\1\uffff\1\14",
+			"\2\37\2\uffff\1\37\22\uffff\1\37\1\17\4\uffff\1\10\1\36\1\33\1\34\1\uffff"+
+			"\1\1\1\uffff\1\2\1\3\1\uffff\12\30\1\uffff\1\10\1\21\1\16\1\20\2\uffff"+
+			"\1\6\4\31\1\22\10\32\1\11\4\32\1\24\1\26\2\32\1\14\2\32\1\uffff\1\35"+
+			"\4\uffff\1\7\3\31\1\4\1\23\10\32\1\12\2\32\1\5\1\32\1\25\1\27\2\32\1"+
+			"\15\2\32\1\uffff\1\13",
 			"",
 			"",
 			"",
-			"\1\41\1\42\1\43\1\44",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\4\46\1\47\25\46",
-			"\12\46\7\uffff\15\46\1\51\14\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\15\46\1\53\14\46",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\4\41\1\42\25\41",
+			"\12\41\7\uffff\15\41\1\44\14\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\15\41\1\46\14\41",
 			"",
-			"\12\46\7\uffff\21\46\1\54\10\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\21\46\1\55\10\46",
+			"\12\41\7\uffff\21\41\1\47\10\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\21\41\1\50\10\41",
 			"",
-			"\12\46\7\uffff\16\46\1\56\13\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\16\46\1\57\13\46",
-			"",
-			"",
-			"\1\60",
-			"\1\62",
-			"\12\46\7\uffff\1\64\31\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\1\65\31\46",
-			"\12\46\7\uffff\21\46\1\66\10\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\21\46\1\67\10\46",
-			"\12\46\7\uffff\15\46\1\70\14\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\15\46\1\71\14\46",
-			"\12\73",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+			"\12\41\7\uffff\16\41\1\51\13\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\16\41\1\52\13\41",
 			"",
 			"",
-			"\1\77\4\uffff\1\77\10\uffff\4\74\4\75\44\uffff\1\77\5\uffff\1\77\3\uffff"+
-			"\1\77\7\uffff\1\77\3\uffff\1\77\1\uffff\1\77\1\76",
+			"\1\53",
+			"\1\55",
+			"\12\41\7\uffff\1\57\31\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\1\60\31\41",
+			"\12\41\7\uffff\21\41\1\61\10\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\21\41\1\62\10\41",
+			"\12\41\7\uffff\15\41\1\63\14\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\15\41\1\64\14\41",
+			"\12\66",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
 			"",
+			"",
+			"\1\72\4\uffff\1\72\10\uffff\4\67\4\70\44\uffff\1\72\5\uffff\1\72\3\uffff"+
+			"\1\72\7\uffff\1\72\3\uffff\1\72\1\uffff\1\72\1\71",
 			"",
 			"",
 			"",
+			"",
+			"\1\73",
+			"",
+			"\1\74",
+			"",
+			"\1\75",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\1\76",
+			"\1\77",
 			"",
 			"",
 			"",
 			"",
 			"\1\100",
-			"",
 			"\1\101",
-			"",
 			"\1\102",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
 			"\1\103",
 			"\1\104",
-			"",
-			"",
-			"",
-			"",
 			"\1\105",
-			"\1\106",
-			"\1\107",
-			"\1\110",
-			"\1\111",
-			"\1\112",
 			"",
 			"",
-			"\10\113",
-			"\10\115",
-			"\12\116\7\uffff\6\116\32\uffff\6\116",
+			"\10\106",
+			"\10\110",
+			"\12\111\7\uffff\6\111\32\uffff\6\111",
 			"",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\1\114",
+			"\1\115",
+			"\1\116",
+			"\1\117",
+			"\1\120",
 			"\1\121",
-			"\1\122",
-			"\1\123",
+			"\10\122",
+			"",
+			"",
+			"\12\123\7\uffff\6\123\32\uffff\6\123",
+			"",
+			"",
 			"\1\124",
 			"\1\125",
-			"\1\126",
-			"\10\127",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\1\127",
+			"\1\130",
 			"",
+			"\12\131\7\uffff\6\131\32\uffff\6\131",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
 			"",
-			"\12\130\7\uffff\6\130\32\uffff\6\130",
-			"",
-			"",
-			"\1\131",
-			"\1\132",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+			"\1\133",
 			"\1\134",
-			"\1\135",
+			"\12\135\7\uffff\6\135\32\uffff\6\135",
 			"",
-			"\12\136\7\uffff\6\136\32\uffff\6\136",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+			"\1\136",
+			"\1\137",
 			"",
-			"\1\140",
-			"\1\141",
-			"\12\142\7\uffff\6\142\32\uffff\6\142",
-			"",
-			"\1\143",
-			"\1\144",
-			"",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-			"\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+			"\12\41\7\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
 			"",
 			""
 	};
@@ -1701,7 +1584,7 @@ public class mvdXMLv1_1Lexer extends Lexer {
 		}
 		@Override
 		public String getDescription() {
-			return "1:1: Tokens : ( T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | AND | OR | XOR | EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | FALSE | TRUE | UNKNOWN | DIGIT | INT | HEX_DIGIT | LETTER | SIMPLEID | LPAREN | RPAREN | OCTAL_ESC | UNICODE_ESC | ESC_SEQ | STRING | WS );";
+			return "1:1: Tokens : ( T__32 | T__33 | T__34 | T__35 | T__36 | AND | OR | XOR | EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | FALSE | TRUE | UNKNOWN | DIGIT | INT | HEX_DIGIT | LETTER | SIMPLEID | LPAREN | RPAREN | OCTAL_ESC | UNICODE_ESC | ESC_SEQ | STRING | WS );";
 		}
 	}
 

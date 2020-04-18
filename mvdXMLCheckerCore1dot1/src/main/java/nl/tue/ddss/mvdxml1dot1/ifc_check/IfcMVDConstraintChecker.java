@@ -32,10 +32,7 @@ import org.xml.sax.SAXException;
 
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance.IfcVersion;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.mvdXMLv1_1Lexer;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.mvdXMLv1_1Parser;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConstraint;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Definitions;
@@ -43,6 +40,8 @@ import generated.buildingsmart_tech.mvd_xml_1dot1.Definitions.Definition;
 import generated.buildingsmart_tech.mvd_xml_1dot1.EntityRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.TemplateRules.TemplateRule;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.MvdXMLv1_1Lexer;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.MvdXMLv1_1Parser;
 
 public class IfcMVDConstraintChecker {
     private List<MVDConstraint> constraints;
@@ -58,6 +57,8 @@ public class IfcMVDConstraintChecker {
 	IssueReport reportWriter = new IssueReport(ifcModel);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
+	    System.out.println("attrrules: " + attributeRules.size());
+	    System.out.println("attrrule: " + attributeRules.get(0).getAttributeName());
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
 	    System.out.println("class: " + constraint.getConceptRoot().getApplicableRootEntity());
 	    try {
@@ -72,28 +73,32 @@ public class IfcMVDConstraintChecker {
 		default:
 		    throw new RuntimeException("Unsupported IFC type");
 		}
-		
+		System.out.println("Root: " + cls.getCanonicalName());
+		System.out.println("ifcModel size:" + ifcModel.size());
 
-		System.out.println("approotentity: "+constraint.getConceptRoot().getApplicableRootEntity());
 		List<Object> allRoots = ifcModel.getAllWithSubTypes(cls);
-		System.out.println("Allroots count: "+allRoots.size());
+		System.out.println("Allroots count: " + allRoots.size());
+
+		if (allRoots.size() == 0)
+		    reportWriter.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
+
 		for (Object ifcObject : allRoots) {
-		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules,this.ifcversion);
+		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules, this.ifcversion);
 		    List<HashMap<AbstractRule, ObjectToValue>> hashMaps = ifcHashMapBuilder.getHashMaps();
+		    System.out.println("hashmaps: " + hashMaps.size());
+
 		    String comment = new String();
 		    for (HashMap<AbstractRule, ObjectToValue> hashMap : hashMaps)
 			comment = templateLevelRuleCheck(hashMap);
 
-		    if (templateRules.size() > 0) {
-			for (TemplateRule templateRule : templateRules) {
-			    for (int i = 0; i < hashMaps.size(); i++) {
-				Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
-				System.out.println("template rule:"+templateRule.hashCode()+" result:"+result.booleanValue());
-				if (result != null && result == true)
-				    break;
-				if (result == false && i == hashMaps.size() - 1)
-				    comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
-			    }
+		    for (TemplateRule templateRule : templateRules) {
+			for (int i = 0; i < hashMaps.size(); i++) {
+			    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
+			    System.out.println("template rule:" + templateRule.hashCode() + " result:" + result.booleanValue());
+			    if (result != null && result == true)
+				break;
+			    if (result == false && i == hashMaps.size() - 1)
+				comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
 			}
 		    }
 		    if (comment.length() > 0) {
@@ -150,12 +155,12 @@ public class IfcMVDConstraintChecker {
     @SuppressWarnings("rawtypes")
     private String templateLevelRuleCheck(HashMap<AbstractRule, ObjectToValue> hashMap) {
 	String report = new String();
+	// No effect, since the cardinality check is not valid anymore in the 1.1
+	// version of the specification
 	Set<AbstractRule> rules = hashMap.keySet();
 	for (AbstractRule rule : rules) {
-	    System.out.println("Template level rule check: "+rule.getRuleID());
 	    ObjectToValue objectToValue = hashMap.get(rule);
 	    Object ifcObject = objectToValue.getIfcObject();
-	    System.out.println("ifcObject: "+ifcObject);
 	    Object value = objectToValue.getValue();
 	    List<Object> valueList = new ArrayList<Object>();
 	    if (value == null) {
@@ -167,49 +172,23 @@ public class IfcMVDConstraintChecker {
 	    } else {
 		valueList.add(value);
 	    }
+
 	}
 	return report;
     }
 
     private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, ObjectToValue> hashMap) {
-	System.out.println("Rule: "+rule);
+	System.out.println("Rule: " + rule);
 	Boolean result = false;
 	CharStream charStream = new ANTLRStringStream(rule);
-	mvdXMLv1_1Lexer lexer = new mvdXMLv1_1Lexer(charStream);
+	MvdXMLv1_1Lexer lexer = new MvdXMLv1_1Lexer(charStream);
 	TokenStream tokenStream = new CommonTokenStream(lexer);
-	mvdXMLv1_1Parser parser = new mvdXMLv1_1Parser(tokenStream);
+	System.out.println("Tokenstream: " + tokenStream.LA(1));
+	MvdXMLv1_1Parser parser = new MvdXMLv1_1Parser(tokenStream,hashMap);
 	try {
-	    parser.expression();
-	    result=true;
-	    //result = parser.expression();
+	    result = parser.expression();
 	} catch (RecognitionException e) {
 	    e.printStackTrace();
-	}
-	return result;
-    }
-
-    private Boolean cardinalityCheck(String cardinality, List<Object> valueList) {
-	Boolean result = true;
-	if (cardinality != null) {
-	    if (cardinality.equals("Zero")) {
-		if (valueList.size() > 0)
-		    result = false;
-	    } else if (cardinality.equals("ZeroToOne")) {
-		if (valueList.size() > 1)
-		    result = false;
-	    } else if (cardinality.equals("One")) {
-		if (valueList == null || valueList.size() != 1)
-		    result = false;
-	    } else if (cardinality.equals("OneToMany")) {
-		if (valueList == null || valueList.size() == 0)
-		    result = false;
-	    } else if (cardinality.equals("_asSchema")) {
-		// FIXME
-	    } else if (cardinality.matches(".+:.+")) {
-
-	    } else {
-		System.out.println("Cardinality Syntax error of mvdXML");
-	    }
 	}
 	return result;
     }

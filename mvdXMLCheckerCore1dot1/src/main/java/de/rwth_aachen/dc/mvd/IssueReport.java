@@ -77,6 +77,13 @@ public class IssueReport {
 	// System.out.println();
     }
 
+    public void addIssue(String elementClass, String comment) {
+	issues.add(new Issue(null, elementClass, "", "", comment));
+	// System.out.println("addIssue:");
+	// System.out.println("ifcRoot: " + ifcRoot.getGlobalId() + ", Comment: " +
+	// comment );
+	// System.out.println();
+    }
     public static String cleanString(String txt) {
 	StringBuilder sb = new StringBuilder();
 	char ch = '\\';

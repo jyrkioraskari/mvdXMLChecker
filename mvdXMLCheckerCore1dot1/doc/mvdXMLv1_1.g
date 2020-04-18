@@ -12,7 +12,7 @@ boolean_term
 parameter 
 	:	SIMPLEID ;
 metric 	
-	:	'[Value]' | '[Size]' | '[Type]' | '[Unique]';
+	:	Value | Size | Type | Unique;
 logical_interconnection 
 	:	AND | OR | XOR ;
 operator 
