@@ -41,11 +41,13 @@ generated\buildingsmart_tech\mvd_xml_1dot1\ObjectFactory.class
 nl\tue\ddss\mvdxml1dot1\rule_parse\AndOperator.class
 generated\buildingsmart_tech\mvd_xml_1dot1\EntityRule.class
 nl\tue\ddss\mvdxml1dot1\rule_parse\LessOperator.class
+nl\tue\ddss\mvdxml1dot1\ifc_check\IfcHashMapBuilder$1.class
 generated\buildingsmart_tech\mvd_xml_1dot1\Concept.class
 generated\buildingsmart_tech\mvd_xml_1dot1\MvdXML$Views.class
 generated\buildingsmart_tech\mvd_xml_1dot1\ConceptRoot$Applicability.class
 de\rwth_aachen\dc\mvd\mvdxml1dot1\IfcModelInstance$IfcVersion.class
 nl\tue\ddss\mvdxml1dot1\mvdparser\MvdXMLException.class
+nl\tue\ddss\rule_parse\MvdXMLv1_1Parser$real_literal_return.class
 generated\buildingsmart_tech\mvd_xml_1dot1\EntityRule$Constraints.class
 generated\buildingsmart_tech\mvd_xml_1dot1\Definitions.class
 generated\buildingsmart_tech\mvd_xml_1dot1\MvdXML$Templates.class
@@ -60,4 +62,5 @@ nl\tue\ddss\mvdxml1dot1\rule_parse\LessEqualOperator.class
 generated\buildingsmart_tech\mvd_xml_1dot1\Requirements.class
 generated\buildingsmart_tech\mvd_xml_1dot1\MvdXML.class
 nl\tue\ddss\mvdxml1dot1\rule_parse\EqualOperator.class
+nl\tue\ddss\rule_parse\MvdXMLv1_1Parser.class
 generated\buildingsmart_tech\mvd_xml_1dot1\Applicability.class

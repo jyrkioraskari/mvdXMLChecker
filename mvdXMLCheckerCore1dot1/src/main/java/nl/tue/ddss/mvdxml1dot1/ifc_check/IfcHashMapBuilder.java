@@ -235,7 +235,7 @@ public class IfcHashMapBuilder {
 	return attributeRules;
     }
 
-    class ObjectToValue {
+    public class ObjectToValue {
 	Object ifcObject;
 	Object value;
 
