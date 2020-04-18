@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
+import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance.IfcVersion;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.EntityRule;
 
@@ -17,18 +18,21 @@ public class IfcHashMapBuilder {
     private Object ifcObject;
     private List<AttributeRule> attributeRules;
     private List<HashMap<AbstractRule, ObjectToValue>> hashMaps;
+    private final String ifc_class_base;
 
-    public Object getIfcObject() {
-	return ifcObject;
-    }
-
-    public List<AttributeRule> getAttributeRules() {
-	return attributeRules;
-    }
-
-    public IfcHashMapBuilder(Object ifcObject, List<AttributeRule> attributeRules) {
+    public IfcHashMapBuilder(Object ifcObject, List<AttributeRule> attributeRules, IfcVersion ifcversion) {
 	this.ifcObject = ifcObject;
 	this.attributeRules = attributeRules;
+	switch (ifcversion) {
+	default:
+	case IFC2x3:
+	    ifc_class_base = "org.bimserver.models.ifc2x3tc1.";
+	    break;
+	case IFC4:
+	    ifc_class_base = "org.bimserver.models.ifc4.";
+	    break;
+	}
+
     }
 
     public List<HashMap<AbstractRule, ObjectToValue>> getHashMaps() throws ClassNotFoundException {
@@ -45,8 +49,8 @@ public class IfcHashMapBuilder {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<HashMap<AttributeRule, ObjectToValue>> buildHashMaps(Object ifcObject, List<AttributeRule> attributeRules, List<HashMap<AttributeRule, ObjectToValue>> hashMaps) throws ClassNotFoundException {
-	for (AttributeRule attributeRule : attributeRules) {	   
+    private List<HashMap<AttributeRule, ObjectToValue>> buildHashMaps(Object ifcObject, List<AttributeRule> attributeRules, List<HashMap<AttributeRule, ObjectToValue>> hashMaps) throws ClassNotFoundException {
+	for (AttributeRule attributeRule : attributeRules) {
 	    String attributeName = attributeRule.getAttributeName();
 	    Object value = new Object();
 	    try {
@@ -96,7 +100,7 @@ public class IfcHashMapBuilder {
 			List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
 			for (EntityRule entityRule : entityRules) {
 
-			    if (Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName()).isInstance(valueList.get(0))) {
+			    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(0))) {
 				if (entityRule.getAttributeRules() != null) {
 				    if (entityRule.getAttributeRules().getAttributeRule().size() >= 1) {
 					hashMaps = buildHashMaps(valueList.get(0), entityRule.getAttributeRules().getAttributeRule(), hashMaps);
@@ -112,7 +116,7 @@ public class IfcHashMapBuilder {
 			    if (attributeRule.getEntityRules() != null) {
 				List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
 				for (EntityRule entityRule : entityRules) {
-				    if (Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName()).isInstance(valueList.get(i))) {
+				    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(i))) {
 					if (entityRule.getAttributeRules() != null) {
 					    hashMaps = buildHashMaps((valueList).get(i), entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 					}
@@ -125,7 +129,7 @@ public class IfcHashMapBuilder {
 			    if (attributeRule.getEntityRules() != null) {
 				List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
 				for (EntityRule entityRule : entityRules) {
-				    if (Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName()).isInstance(valueList.get(i))) {
+				    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(i))) {
 					if (entityRule.getAttributeRules() != null) {
 
 					    List<AttributeRule> attRuleList = entityRule.getAttributeRules().getAttributeRule();
@@ -145,7 +149,7 @@ public class IfcHashMapBuilder {
 		if (attributeRule.getEntityRules() != null) {
 		    List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
 		    for (EntityRule entityRule : entityRules) {
-			if (Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName()).isInstance(value)) {
+			if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(value)) {
 			    if (entityRule.getAttributeRules() != null) {
 				hashMaps = buildHashMaps(value, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 			    }
@@ -158,7 +162,7 @@ public class IfcHashMapBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    public HashMap<AbstractRule, ObjectToValue> enrichHashMap(HashMap<AttributeRule, ObjectToValue> hM) {
+    private HashMap<AbstractRule, ObjectToValue> enrichHashMap(HashMap<AttributeRule, ObjectToValue> hM) {
 	Set<AttributeRule> attributeRules = hM.keySet();
 	HashMap<AbstractRule, ObjectToValue> enrichedHashMap = new HashMap<AbstractRule, ObjectToValue>();
 	for (AttributeRule attributeRule : attributeRules) {
@@ -181,7 +185,7 @@ public class IfcHashMapBuilder {
 				    try {
 					if (object instanceof String) {
 					} else if (object instanceof Double) {
-					} else if (Class.forName("org.bimserver.models.ifc2x3tc1." + entityName).isInstance(object)) {
+					} else if (Class.forName(this.ifc_class_base + entityName).isInstance(object)) {
 					    derivedValue = new ArrayList<Object>();
 					    ((ArrayList<Object>) derivedValue).add(object);
 					}
@@ -193,7 +197,7 @@ public class IfcHashMapBuilder {
 			    } else {
 				derivedValue = null;
 				try {
-				    if (Class.forName("org.bimserver.models.ifc2x3tc1." + entityName).isInstance(value)) {
+				    if (Class.forName(this.ifc_class_base + entityName).isInstance(value)) {
 					derivedValue = value;
 				    }
 				} catch (ClassNotFoundException e) {
@@ -210,7 +214,7 @@ public class IfcHashMapBuilder {
 	return enrichedHashMap;
     }
 
-    public List<HashMap<AttributeRule, ObjectToValue>> copyHashMaps(List<HashMap<AttributeRule, ObjectToValue>> hashMaps) {
+    private List<HashMap<AttributeRule, ObjectToValue>> copyHashMaps(List<HashMap<AttributeRule, ObjectToValue>> hashMaps) {
 	List<HashMap<AttributeRule, ObjectToValue>> hashMapList = new ArrayList<HashMap<AttributeRule, ObjectToValue>>();
 	for (HashMap<AttributeRule, ObjectToValue> hashMap : hashMaps) {
 	    HashMap<AttributeRule, ObjectToValue> hm = new HashMap<AttributeRule, ObjectToValue>();
@@ -223,7 +227,15 @@ public class IfcHashMapBuilder {
 	return hashMapList;
     }
 
-    public class ObjectToValue {
+    public Object getIfcObject() {
+	return ifcObject;
+    }
+
+    public List<AttributeRule> getAttributeRules() {
+	return attributeRules;
+    }
+
+    class ObjectToValue {
 	Object ifcObject;
 	Object value;
 

@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
+import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.mvdXMLv1_1Lexer;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.mvdXMLv1_1Parser;
@@ -46,7 +47,7 @@ import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
 public class IfcMVDConstraintChecker {
     private List<MVDConstraint> constraints;
 
-    IfcVersion ifcversion;
+    private IfcVersion ifcversion;
 
     public IfcMVDConstraintChecker(List<MVDConstraint> constraints, IfcVersion ifcversion) throws DeserializeException, IOException, URISyntaxException {
 	this.constraints = constraints;
@@ -71,12 +72,13 @@ public class IfcMVDConstraintChecker {
 		default:
 		    throw new RuntimeException("Unsupported IFC type");
 		}
+		
 
 		System.out.println("approotentity: "+constraint.getConceptRoot().getApplicableRootEntity());
 		List<Object> allRoots = ifcModel.getAllWithSubTypes(cls);
 		System.out.println("Allroots count: "+allRoots.size());
 		for (Object ifcObject : allRoots) {
-		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules);
+		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules,this.ifcversion);
 		    List<HashMap<AbstractRule, ObjectToValue>> hashMaps = ifcHashMapBuilder.getHashMaps();
 		    String comment = new String();
 		    for (HashMap<AbstractRule, ObjectToValue> hashMap : hashMaps)
@@ -150,8 +152,10 @@ public class IfcMVDConstraintChecker {
 	String report = new String();
 	Set<AbstractRule> rules = hashMap.keySet();
 	for (AbstractRule rule : rules) {
+	    System.out.println("Template level rule check: "+rule.getRuleID());
 	    ObjectToValue objectToValue = hashMap.get(rule);
 	    Object ifcObject = objectToValue.getIfcObject();
+	    System.out.println("ifcObject: "+ifcObject);
 	    Object value = objectToValue.getValue();
 	    List<Object> valueList = new ArrayList<Object>();
 	    if (value == null) {
@@ -163,32 +167,6 @@ public class IfcMVDConstraintChecker {
 	    } else {
 		valueList.add(value);
 	    }
-
-	    /*
-	     * DEPRECATED - are handled in template rules //FIXME if (rule instanceof
-	     * AttributeRule) { String cardinality = ((AttributeRule)
-	     * rule).getCardinality(); boolean carCheck = cardinalityCheck(cardinality,
-	     * valueList);
-	     * 
-	     * if (carCheck == false) { if (ifcObject == null) { report = report + "\n" +
-	     * ((AttributeRule) rule).getAttributeName() + " should have " + cardinality; }
-	     * else if (ifcObject instanceof IfcRoot) { report = report + "\n" + ((IfcRoot)
-	     * ifcObject).getGlobalId() + " " + ((AttributeRule) rule).getAttributeName() +
-	     * " should have " + cardinality; } else if (ifcObject instanceof IdEObject) {
-	     * report = report + "\n" + ((IdEObject) ifcObject).getExpressId() + " " +
-	     * ((AttributeRule) rule).getAttributeName() + " should have " + cardinality; }
-	     * } } else { String cardinality = ((EntityRule) rule).getCardinality(); boolean
-	     * carCheck = cardinalityCheck(cardinality, valueList); if (carCheck == false) {
-	     * if (ifcObject == null) { report = report + "\n" + ((EntityRule)
-	     * rule).getEntityName() + " should have " + cardinality; } else if (ifcObject
-	     * instanceof IfcRoot) { report = report + "\n" + ((IfcRoot)
-	     * ifcObject).getGlobalId() + " " + ((AttributeRule) rule).getAttributeName() +
-	     * " should have " + cardinality + " " + ((EntityRule) rule).getEntityName(); }
-	     * else if (ifcObject instanceof IdEObject) { report = report + "\n" +
-	     * ((IdEObject) ifcObject).getExpressId() + " " + ((AttributeRule)
-	     * rule).getAttributeName() + " should have " + cardinality + " " +
-	     * ((EntityRule) rule).getEntityName(); } } }
-	     */
 	}
 	return report;
     }
@@ -242,8 +220,17 @@ public class IfcMVDConstraintChecker {
 	List<Class> entityTypes = new ArrayList<Class>();
 	for (EntityRule entityRule : entityRules) {
 	    try {
-		// FIXME only 2x3
-		Class cls = Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName());
+		Class cls = null;
+		switch (this.ifcversion) {
+		case IFC2x3:
+		    cls = Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName());
+		    break;
+		case IFC4:
+		    cls = Class.forName("org.bimserver.models.ifc4." + entityRule.getEntityName());
+		    break;
+		default:
+		    throw new RuntimeException("Unsupported IFC type");
+		}
 		entityTypes.add(cls);
 	    } catch (ClassNotFoundException e) {
 		e.printStackTrace();

@@ -1,7 +1,5 @@
 package de.rwth_aachen.dc.mvd.beans;
 
-import org.bimserver.models.ifc2x3tc1.IfcRoot;
-
 public class Issue {
     private final String ifcSpatialStructureElement;
     private final String ifcClassName;
