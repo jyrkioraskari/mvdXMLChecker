@@ -43,6 +43,11 @@ import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.MvdXMLv1_1Lexer;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.MvdXMLv1_1Parser;
 
+
+/*
+ * Modified by J0 2020
+ */
+
 public class IfcMVDConstraintChecker {
     private List<MVDConstraint> constraints;
 
@@ -179,6 +184,7 @@ public class IfcMVDConstraintChecker {
 
     private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, ObjectToValue> hashMap) {
 	System.out.println("Rule: " + rule);
+	rule=filterCharacters(rule);
 	Boolean result = false;
 	CharStream charStream = new ANTLRStringStream(rule);
 	MvdXMLv1_1Lexer lexer = new MvdXMLv1_1Lexer(charStream);
@@ -191,6 +197,18 @@ public class IfcMVDConstraintChecker {
 	    e.printStackTrace();
 	}
 	return result;
+    }
+    
+    private String filterCharacters(String rule)
+    {
+	StringBuilder sb=new StringBuilder();
+	for(int i=0;i<rule.length();i++)
+	{
+	    char ch=rule.charAt(i);
+	    if(ch!=';')
+		sb.append(ch);
+	}
+	return sb.toString().trim();
     }
 
     @SuppressWarnings({ "rawtypes", "unused" })
