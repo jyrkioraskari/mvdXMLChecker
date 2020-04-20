@@ -25,6 +25,8 @@ public class MvdXMLv1dot1Check {
 
     public static List<Issue> check(Path ifcFile , String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException, ParserConfigurationException, SAXException, SerializerException {
 	List<Issue> issues=new ArrayList<>();
+	        System.out.println("Check IFC: "+ifcFile);
+	        System.out.println("Check mvdXML: "+mvdXMLFile);
 	        MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 	     
 		IfcModelInstance model = new IfcModelInstance();

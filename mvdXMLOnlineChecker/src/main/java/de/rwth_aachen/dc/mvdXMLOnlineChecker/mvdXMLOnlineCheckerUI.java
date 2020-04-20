@@ -43,9 +43,9 @@ public class mvdXMLOnlineCheckerUI extends UI {
     private EventBusCommunication communication = EventBusCommunication.getInstance();
 
     private Label mvdXMLFileLabel = new Label("mvdXML file");
-    private Label ifcXMLFileLabel = new Label("IFC STEP file");
+    private Label ifcFileLabel = new Label("IFC STEP file");
     private File mvdXMLFile = null;
-    private File ifcXMLFile = null;
+    private File ifcFile = null;
 
     private Grid<Issue> issues_grid = new Grid<>();
     private List<Issue> issues = new ArrayList<>();
@@ -60,7 +60,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	final Label instruction_label = new Label("Currently supported versions are: IFC2X3 for mvdXML1-1, and IFC2x3 and IFC4 for mvdXML 1.1.");
 	layout.addComponent(instruction_label);
 
-	layout.addComponents(mvdXMLFileLabel, ifcXMLFileLabel);
+	layout.addComponents(mvdXMLFileLabel, ifcFileLabel);
 
 	WebFileHandler file_receiver = null;
 	try {
@@ -124,7 +124,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     public void checkIFCFile() {
 	issues.clear();
-	if (this.ifcXMLFile == null) {
+	if (this.ifcFile == null) {
 	    Notification n = new Notification("Upload an IFC file.", Notification.Type.TRAY_NOTIFICATION);
 	    n.setDelayMsec(5000);
 	    n.show(Page.getCurrent());
@@ -138,22 +138,35 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
 	try {
 
-	    if (checkMvdXMLSchemaVersion(this.ifcXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
-		List<Issue> result = MvdXMLv1dot1Check.check(this.ifcXMLFile.toPath(), this.ifcXMLFile.getAbsolutePath());
+	    if (checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
+		 Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+		 n.setDelayMsec(5000);
+		 n.show(Page.getCurrent());
+		List<Issue> result = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 		issues.addAll(result);
 
 	    } else {
 		// mvdXML 1_1
-		if (checkMvdXMLSchemaVersion(this.ifcXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-		    List<Issue> result = MvdXMLv1undescore1Check.check(this.ifcXMLFile.toPath(), this.ifcXMLFile.getAbsolutePath());
+		if (checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+			 Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
+			 n.setDelayMsec(5000);
+			 n.show(Page.getCurrent());
+		    List<Issue> result = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 		    issues.addAll(result);
+		}
+		else
+		{
+			 Notification n = new Notification("Unknown mvdXML version.", Notification.Type.TRAY_NOTIFICATION);
+			 n.setDelayMsec(5000);
+			 n.show(Page.getCurrent());
+
 		}
 	    }
 
 	    // issues.addAll(report.getIssues());
 	    issues_grid.setItems(issues);
 	} catch (Exception e) {
-	    // TODO: handle exception
+	    e.printStackTrace();
 	}
     }
 
@@ -185,8 +198,8 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     @Subscribe
     public void onNew_ifcSTEPFile(New_ifcSTEPFile event) {
-	this.ifcXMLFileLabel.setValue("IFC: " + event.getFile().getName());
-	this.ifcXMLFile = event.getFile();
+	this.ifcFileLabel.setValue("IFC: " + event.getFile().getName());
+	this.ifcFile = event.getFile();
     }
 
     @Subscribe
