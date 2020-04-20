@@ -1,21 +1,15 @@
 package de.rwth_aachen.dc.mvdXMLOnlineChecker;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.servlet.annotation.WebServlet;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.bimserver.emf.IfcModelInterface;
-import org.bimserver.plugins.deserializers.DeserializeException;
-import org.bimserver.plugins.renderengine.RenderEngineException;
-import org.bimserver.plugins.serializers.SerializerException;
-import org.xml.sax.SAXException;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
@@ -36,23 +30,23 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.beans.Issue;
+import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
+import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_ifcSTEPFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_mvdXMLFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.upload.WebFileHandler;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
-import nl.tue.ddss.ifc_check.IfcMVDConstraintChecker;
-import nl.tue.ddss.mvdparser.MVDConstraint;
 
 @Theme("rwth")
 public class mvdXMLOnlineCheckerUI extends UI {
     private EventBusCommunication communication = EventBusCommunication.getInstance();
 
-    private List<MVDConstraint> constraints = null;
-    private IfcModelInterface ifcModel = null;
     private Label mvdXMLFileLabel = new Label("mvdXML file");
     private Label ifcXMLFileLabel = new Label("IFC STEP file");
+    private File mvdXMLFile = null;
+    private File ifcXMLFile = null;
+
     private Grid<Issue> issues_grid = new Grid<>();
     private List<Issue> issues = new ArrayList<>();
 
@@ -63,7 +57,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	labelH1.addStyleName(ValoTheme.LABEL_H1);
 	layout.addComponent(labelH1);
 
-	final Label instruction_label = new Label("Currently supported versions are: IFC2X3 and mvdXML1-1 (not yet 1.1).");
+	final Label instruction_label = new Label("Currently supported versions are: IFC2X3 for mvdXML1-1, and IFC2x3 and IFC4 for mvdXML 1.1.");
 	layout.addComponent(instruction_label);
 
 	layout.addComponents(mvdXMLFileLabel, ifcXMLFileLabel);
@@ -130,59 +124,75 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     public void checkIFCFile() {
 	issues.clear();
-	if (this.ifcModel == null) {
+	if (this.ifcXMLFile == null) {
 	    Notification n = new Notification("Upload an IFC file.", Notification.Type.TRAY_NOTIFICATION);
 	    n.setDelayMsec(5000);
 	    n.show(Page.getCurrent());
 	    return;
 	}
-	if (this.constraints == null) {
+	if (this.mvdXMLFile == null) {
 	    Notification n = new Notification("Upload an mvdXML file.", Notification.Type.TRAY_NOTIFICATION);
 	    n.setDelayMsec(5000);
 	    n.show(Page.getCurrent());
 	    return;
 	}
 	try {
-	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints);
-	    IssueReport report = ifcChecker.checkModel(ifcModel);
-	    if (report.getIssues().isEmpty()) {
-		Notification n = new Notification("No issues.", Notification.Type.TRAY_NOTIFICATION);
-		n.setDelayMsec(5000);
-		n.show(Page.getCurrent());
-		return;
+
+	    if (checkMvdXMLSchemaVersion(this.ifcXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
+		List<Issue> result = MvdXMLv1dot1Check.check(this.ifcXMLFile.toPath(), this.ifcXMLFile.getAbsolutePath());
+		issues.addAll(result);
+
+	    } else {
+		// mvdXML 1_1
+		if (checkMvdXMLSchemaVersion(this.ifcXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+		    List<Issue> result = MvdXMLv1undescore1Check.check(this.ifcXMLFile.toPath(), this.ifcXMLFile.getAbsolutePath());
+		    issues.addAll(result);
+		}
 	    }
-	    issues.addAll(report.getIssues());
+
+	    // issues.addAll(report.getIssues());
 	    issues_grid.setItems(issues);
-	} catch (JAXBException e) {
-	    e.printStackTrace();
-	} catch (DeserializeException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} catch (URISyntaxException e) {
-	    e.printStackTrace();
-	} catch (RenderEngineException e) {
-	    e.printStackTrace();
-	} catch (ParserConfigurationException e) {
-	    e.printStackTrace();
-	} catch (SAXException e) {
-	    e.printStackTrace();
-	} catch (SerializerException e) {
+	} catch (Exception e) {
+	    // TODO: handle exception
+	}
+    }
+
+    private boolean checkMvdXMLSchemaVersion(String filename, String schemaName) {
+	try {
+	    File myObj = new File(filename);
+	    Scanner myReader = new Scanner(myObj);
+	    for (int i = 0; i < 5; i++)
+		if (myReader.hasNextLine())
+		    if (checSchemaLine(myReader.nextLine(), schemaName))
+			return true;
+
+	    myReader.close();
+	} catch (FileNotFoundException e) {
+	    System.out.println("An error occurred.");
 	    e.printStackTrace();
 	}
+	return false;
+    }
 
+    private boolean checSchemaLine(String line, String schemaName) {
+	String[] tokens = line.split("[ =>]");
+	for (String t : tokens) {
+	    if (t.equals("\"" + schemaName + "\""))
+		return true;
+	}
+	return false;
     }
 
     @Subscribe
     public void onNew_ifcSTEPFile(New_ifcSTEPFile event) {
-	ifcXMLFileLabel.setValue("IFC: " + event.getFilename());
-	this.ifcModel = event.getIfcModel();
+	this.ifcXMLFileLabel.setValue("IFC: " + event.getFile().getName());
+	this.ifcXMLFile = event.getFile();
     }
 
     @Subscribe
     public void onNew_mvdXMLFile(New_mvdXMLFile event) {
-	mvdXMLFileLabel.setValue("mvdXML: " + event.getFilename());
-	this.constraints = event.getConstraints();
+	this.mvdXMLFileLabel.setValue("mvdXML: " + event.getFile().getName());
+	this.mvdXMLFile = event.getFile();
     }
 
     @WebServlet(urlPatterns = "/*", name = "mvdXMLOnlineCheckerUIServlet", asyncSupported = true)

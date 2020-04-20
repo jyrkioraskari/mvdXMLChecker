@@ -3,13 +3,6 @@ package de.rwth_aachen.dc.mvdXMLOnlineChecker.upload;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import javax.xml.bind.JAXBException;
-
-import org.bimserver.emf.IfcModelInterface;
 
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
@@ -19,18 +12,13 @@ import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 
-import de.rwth_aachen.dc.mvd.IfcModelHelper;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_ifcSTEPFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_mvdXMLFile;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
-import nl.tue.ddss.mvdparser.MVDConstraint;
-import nl.tue.ddss.mvdparser.MvdXMLParser;
 
 public class WebFileHandler implements Receiver, SucceededListener, FailedListener {
     private EventBusCommunication communication = EventBusCommunication.getInstance();
-
     private static final long serialVersionUID = -3353293504543369792L;
-    public File file;
     private String uploads;
 
     public WebFileHandler(String uploads) {
@@ -40,7 +28,6 @@ public class WebFileHandler implements Receiver, SucceededListener, FailedListen
     }
 
     public OutputStream receiveUpload(String filename, String mimeType) {
-	file = null;
 	if ((filename == null) || filename.length() == 0) {
 	    Notification n = new Notification("A file has to be selected", " ", Notification.Type.ERROR_MESSAGE);
 	    n.setDelayMsec(5000);
@@ -59,7 +46,7 @@ public class WebFileHandler implements Receiver, SucceededListener, FailedListen
 	FileOutputStream fos = null; // Stream to write to
 	try {
 	    // Open the file for writing.
-	    file = new File(uploads + filename);
+	    File file = new File(uploads + filename);
 	    fos = new FileOutputStream(file);
 	} catch (final java.io.FileNotFoundException e) {
 	    Notification n = new Notification("Could not open file ", e.getMessage(), Notification.Type.ERROR_MESSAGE);
@@ -71,47 +58,20 @@ public class WebFileHandler implements Receiver, SucceededListener, FailedListen
     }
 
     public void uploadSucceeded(SucceededEvent event) {
+	File file=new File(this.uploads+event.getFilename());
+	if(!file.exists())
+	{
+	    Notification n = new Notification("Upload not successed. The dile is not existing.", Notification.Type.TRAY_NOTIFICATION);
+		n.setDelayMsec(1000);
+		n.show(Page.getCurrent());
+	}
 
 	if (event.getFilename().toLowerCase().endsWith(".ifc")) {
 
-	    String ifcFileName = this.file.getAbsolutePath();;
-	    Path ifcFile = Paths.get(ifcFileName);
-	    IfcModelInterface ifcModel = IfcModelHelper.readModel(ifcFile, Paths.get("."));
-
-	    if (ifcModel == null) {
-		Notification in1 = new Notification("Unsupported IFC version. Use IFC2X3.", Notification.Type.ERROR_MESSAGE);
-		in1.setDelayMsec(5000);
-		in1.show(Page.getCurrent());
-		System.err.println("Unsupported IFC version. Use IFC2X3.");
-
-		return;
-	    }
-	    communication.post(new New_ifcSTEPFile(ifcModel, event.getFilename()));
-
+	    communication.post(new New_ifcSTEPFile(file));
 	}
 	if (event.getFilename().toLowerCase().endsWith(".mvdxml") || event.getFilename().toLowerCase().endsWith(".xml")) {
-	    String mvdXMLFile = this.file.getAbsolutePath();
-	    try {
-		MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
-		System.out.println("mvdXMLParser"+mvdXMLParser);
-		List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
-
-		communication.post(new New_mvdXMLFile(constraints, event.getFilename()));
-	    } catch (NullPointerException e) {
-		Notification mn1 = new Notification("Unsupported mvdXML version. Use mvdXML 1-1.", Notification.Type.ERROR_MESSAGE);
-		mn1.setDelayMsec(5000);
-		mn1.show(Page.getCurrent());
-		e.printStackTrace();
-		System.err.println("Unsupported mvdXML version. Use mvdXML 1-1.");
-		return;
-	    } catch (JAXBException e) {
-		Notification mn2 = new Notification("Unsupported mvdXML version. Use mvdXML 1-1.", Notification.Type.ERROR_MESSAGE);
-		mn2.setDelayMsec(5000);
-		mn2.show(Page.getCurrent());
-		e.printStackTrace();
-		System.err.println("Unsupported mvdXML version. Use mvdXML 1-1.");
-		return;
-	    }
+	    communication.post(new New_mvdXMLFile(file));
 	}
 	Notification n = new Notification("Uploading succeed.", Notification.Type.TRAY_NOTIFICATION);
 	n.setDelayMsec(1000);

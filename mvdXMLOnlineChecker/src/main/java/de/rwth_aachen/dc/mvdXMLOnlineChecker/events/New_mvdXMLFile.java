@@ -1,26 +1,16 @@
 package de.rwth_aachen.dc.mvdXMLOnlineChecker.events;
 
-import java.util.List;
-
-import nl.tue.ddss.mvdparser.MVDConstraint;
-import nl.tue.ddss.mvdparser.MvdXMLParser;
+import java.io.File;
 
 public class New_mvdXMLFile {
-    private final  List<MVDConstraint> constraints;    
-    private final String filename;
+    private final File file;
 
-    public New_mvdXMLFile(List<MVDConstraint> constraints, String filename) {
+    public New_mvdXMLFile(File file) {
 	super();
-	this.constraints=constraints;
-	this.filename = filename;
+	this.file = file;
     }
     
-    
-    public List<MVDConstraint> getConstraints() {
-        return constraints;
-    }
-
-    public String getFilename() {
-        return filename;
+    public File getFile() {
+        return this.file;
     }
 }
