@@ -10,7 +10,7 @@ The test Open API interface can be found here:
 http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/
 
 ## Docker
-Docker (https://www.docker.com/) installations are available for the interfaces. A client for your desktop can be installed from: https://www.docker.com/products/docker-desktop . 
+Docker (https://www.docker.com/) installations are available for the interfaces. A client for a desktop computer can be installed from: https://www.docker.com/products/docker-desktop . 
 
 ### Docker for the Open API interface
 
