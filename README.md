@@ -12,7 +12,7 @@ http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/
 ## Docker
 Docker installations are available for the intarfaces
 
-## Docker for the Open API interface
+### Docker for the Open API interface
 
 docker pull jyrkioraskari/api4mvdxmlchecker:latest
 
@@ -20,7 +20,7 @@ docker container run -it --publish 8081:8080 jyrkioraskari/api4mvdxmlchecker
 
 http://localhost:8081/
 
-# Docker for the Web interface
+### Docker for the Web interface
 
 docker pull jyrkioraskari/webui4mvdxmlchecker:latest
 
