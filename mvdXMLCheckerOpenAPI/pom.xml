@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
 	<artifactId>mvdXMLCheckerOpenAPI</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 	<packaging>war</packaging>
 	<name>mvdXMLChecker OpenAPI Interface</name>
 	<developers>
@@ -120,12 +120,12 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>1.4</version>
+			<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>1.4</version>
+			<version>1.5</version>
 		</dependency>
 		
 		 <dependency>

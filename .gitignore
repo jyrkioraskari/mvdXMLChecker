@@ -8,3 +8,5 @@ mvdXMLCheckerCore1dot1/example/*
 mvdXMLCheckerCore1underscore1/example/*
 mvdXMLCheckerCore1dot1/target/*
 *.class
+mvdXMLCheckerCommon/target/*
+*.bcfzip

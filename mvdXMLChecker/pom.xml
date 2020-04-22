@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.rwth-aachen.dc.mvd</groupId>
   <artifactId>mvdXMLChecker</artifactId>
-  <version>1.4</version>
+  <version>1.5</version>
   <name>mvdXMLChecker main module</name>
   <description>This is used to build the software</description>
   <packaging>pom</packaging>
@@ -11,5 +11,6 @@
   	<module>../mvdXMLCheckerCore1dot1</module>
   	<module>../mvdXMLCheckerOpenAPI</module>
   	<module>../mvdXMLOnlineChecker</module>
+  	<module>../mvdXMLCheckerCommon</module>
   </modules>
 </project>
