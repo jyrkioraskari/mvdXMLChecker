@@ -8,9 +8,9 @@ import javax.xml.bind.JAXBException;
 
 import org.bimserver.emf.IfcModelInterface;
 
+import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.beans.Issue;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConstraint;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLValidationRules;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcMVDConstraintChecker;
@@ -42,8 +42,9 @@ public class MVDCheckerTest {
     public static void main(String[] args) throws Exception {
 	
 	// Error case 1  IFC4<>IFC2x3
-	//new MVDCheckerTest("c:\\ifc\\20160125Autodesk_Hospital_Parking Garage_2015 - IFC4.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
-	new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
+	
+	new MVDCheckerTest("c:\\ifc\\20160125Autodesk_Hospital_Parking Garage_2015 - IFC4.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
+	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
 	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Vorlage.mvdxml");
 	
     }

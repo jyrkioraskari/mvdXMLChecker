@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance.IfcVersion;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.EntityRule;
 

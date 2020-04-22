@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import org.bimserver.ifc.IfcModel;
-import org.bimserver.models.ifc2x3tc1.IfcObject;
-import org.bimserver.models.ifc2x3tc1.IfcRoot;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.*;
 import nl.tue.ddss.ifc_check.IfcHashMapBuilder.ObjectToValue;
 import nl.tue.ddss.ifc_check.Parameter;

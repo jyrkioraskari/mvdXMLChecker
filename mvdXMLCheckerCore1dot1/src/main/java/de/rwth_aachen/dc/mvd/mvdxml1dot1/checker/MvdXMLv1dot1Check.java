@@ -16,9 +16,9 @@ import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.bimserver.plugins.serializers.SerializerException;
 import org.xml.sax.SAXException;
 
+import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.beans.Issue;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcMVDConstraintChecker;
 
 public class MvdXMLv1dot1Check {
@@ -32,7 +32,6 @@ public class MvdXMLv1dot1Check {
 		IfcModelInstance model = new IfcModelInstance();
 		IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
 		List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
-		System.out.println(constraints.size());
 
 		if (model.getIfcversion().isPresent()) {
 		    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());

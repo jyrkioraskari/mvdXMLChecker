@@ -18,21 +18,14 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.bimserver.emf.IfcModelInterface;
-import org.bimserver.models.ifc2x3tc1.IfcElement;
-import org.bimserver.models.ifc2x3tc1.IfcObjectDefinition;
-import org.bimserver.models.ifc2x3tc1.IfcProduct;
-import org.bimserver.models.ifc2x3tc1.IfcRelContainedInSpatialStructure;
-import org.bimserver.models.ifc2x3tc1.IfcRelDecomposes;
-import org.bimserver.models.ifc2x3tc1.IfcRoot;
-import org.bimserver.models.ifc2x3tc1.IfcSpatialStructureElement;
 import org.bimserver.plugins.deserializers.DeserializeException;
 import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.bimserver.plugins.serializers.SerializerException;
 import org.xml.sax.SAXException;
 
+import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConstraint;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Definitions;
@@ -59,7 +52,7 @@ public class IfcMVDConstraintChecker {
     }
 
     public IssueReport checkModel(IfcModelInterface ifcModel) throws JAXBException, DeserializeException, ParserConfigurationException, SAXException, SerializerException, IOException, RenderEngineException {
-	IssueReport reportWriter = new IssueReport(ifcModel);
+	IssueReport issueReport = new IssueReport(ifcModel);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
 	    System.out.println("attrrules: " + attributeRules.size());
@@ -78,14 +71,11 @@ public class IfcMVDConstraintChecker {
 		default:
 		    throw new RuntimeException("Unsupported IFC type");
 		}
-		System.out.println("Root: " + cls.getCanonicalName());
-		System.out.println("ifcModel size:" + ifcModel.size());
 
 		List<Object> allRoots = ifcModel.getAllWithSubTypes(cls);
-		System.out.println("Allroots count: " + allRoots.size());
 
 		if (allRoots.size() == 0)
-		    reportWriter.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
+		    issueReport.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
 
 		for (Object ifcObject : allRoots) {
 		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules, this.ifcversion);
@@ -115,47 +105,95 @@ public class IfcMVDConstraintChecker {
 			}
 			String type = ifcObject.getClass().getSimpleName();
 			type = type.substring(0, type.length() - 4);
-			if (ifcObject instanceof IfcProduct) {
-			    String spatialStructureElement = new String();
-			    if (ifcObject instanceof IfcElement)
-				spatialStructureElement = getIfcSpatialStructure((IfcElement) ifcObject);
-			    List<String> componantGuids = new LinkedList<String>();
-			    componantGuids = getComponantGuids(componantGuids, (IfcProduct) ifcObject);
-			    reportWriter.addIssue(spatialStructureElement, ((IfcProduct) ifcObject), ((IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
-			} else {
-			    reportWriter.addIssue(null, (IfcRoot) ifcObject, ((IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+			
+			
+			switch (this.ifcversion) {
+			case IFC2x3:
+				if (ifcObject instanceof  org.bimserver.models.ifc2x3tc1.IfcProduct) {
+				    String spatialStructureElement = new String();
+				    if (ifcObject instanceof  org.bimserver.models.ifc2x3tc1.IfcElement)
+					spatialStructureElement = getIfcSpatialStructure(( org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
+				    List<String> componantGuids = new LinkedList<String>();
+				    componantGuids = getComponantGuids(componantGuids, ( org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
+				    issueReport.addIssue(spatialStructureElement, (( org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject), (( org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+				} else {
+				    issueReport.addIssue(null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, (( org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+				}
+			    break;
+			case IFC4:
+				if (ifcObject instanceof  org.bimserver.models.ifc4.IfcProduct) {
+				    String spatialStructureElement = new String();
+				    if (ifcObject instanceof  org.bimserver.models.ifc4.IfcElement)
+					spatialStructureElement = getIfcSpatialStructure(( org.bimserver.models.ifc4.IfcElement) ifcObject);
+				    List<String> componantGuids = new LinkedList<String>();
+				    componantGuids = getComponantGuids(componantGuids, ( org.bimserver.models.ifc4.IfcProduct) ifcObject);
+				    issueReport.addIssue(spatialStructureElement, (( org.bimserver.models.ifc4.IfcProduct) ifcObject), (( org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+				} else {
+				    issueReport.addIssue(null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, (( org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+				}
+			    break;
+			default:
+			    throw new RuntimeException("Unsupported IFC type");
 			}
+			
+			
+			
+			
 		    }
 		}
 	    } catch (ClassNotFoundException e) {
 		e.printStackTrace();
 	    }
 	}
-	return reportWriter;
+	return issueReport;
     }
 
-    private String getIfcSpatialStructure(IfcElement ifcObject) {
+    private String getIfcSpatialStructure(org.bimserver.models.ifc2x3tc1.IfcElement ifcObject) {
 	String guid = new String();
-	List<IfcRelContainedInSpatialStructure> ircsisss = ifcObject.getContainedInStructure();
+	List<org.bimserver.models.ifc2x3tc1.IfcRelContainedInSpatialStructure> ircsisss = ifcObject.getContainedInStructure();
 	if (ircsisss != null && ircsisss.size() == 1) {
-	    IfcSpatialStructureElement isse = ircsisss.get(0).getRelatingStructure();
+	    org.bimserver.models.ifc2x3tc1.IfcSpatialStructureElement isse = ircsisss.get(0).getRelatingStructure();
 	    guid = isse.getGlobalId();
 	}
 	return guid;
     }
 
-    private List<String> getComponantGuids(List<String> guids, IfcObjectDefinition ifcObject) {
+    private String getIfcSpatialStructure(org.bimserver.models.ifc4.IfcElement ifcObject) {
+  	String guid = new String();
+  	List<org.bimserver.models.ifc4.IfcRelContainedInSpatialStructure> ircsisss = ifcObject.getContainedInStructure();
+  	if (ircsisss != null && ircsisss.size() == 1) {
+  	  org.bimserver.models.ifc4.IfcSpatialStructureElement isse = (org.bimserver.models.ifc4.IfcSpatialStructureElement) ircsisss.get(0).getRelatingStructure();
+  	    guid = isse.getGlobalId();
+  	}
+  	return guid;
+      }
+
+    
+    private List<String> getComponantGuids(List<String> guids, org.bimserver.models.ifc2x3tc1.IfcObjectDefinition ifcObject) {
 	if (ifcObject.getIsDecomposedBy().size() >= 1) {
-	    List<IfcRelDecomposes> irds = ifcObject.getIsDecomposedBy();
-	    for (IfcRelDecomposes ird : irds) {
-		List<IfcObjectDefinition> ifcObjects = ird.getRelatedObjects();
-		for (IfcObjectDefinition io : ifcObjects)
+	    List<org.bimserver.models.ifc2x3tc1.IfcRelDecomposes> irds = ifcObject.getIsDecomposedBy();
+	    for (org.bimserver.models.ifc2x3tc1.IfcRelDecomposes ird : irds) {
+		List<org.bimserver.models.ifc2x3tc1.IfcObjectDefinition> ifcObjects = ird.getRelatedObjects();
+		for (org.bimserver.models.ifc2x3tc1.IfcObjectDefinition io : ifcObjects)
 		    getComponantGuids(guids, io);
 	    }
 	} else
 	    guids.add(ifcObject.getGlobalId());
 	return guids;
     }
+    
+    private List<String> getComponantGuids(List<String> guids, org.bimserver.models.ifc4.IfcObjectDefinition ifcObject) {
+   	if (ifcObject.getIsDecomposedBy().size() >= 1) {
+   	    List<org.bimserver.models.ifc4.IfcRelAggregates> irds = ifcObject.getIsDecomposedBy();
+   	    for (org.bimserver.models.ifc4.IfcRelAggregates ird : irds) {
+   		List<org.bimserver.models.ifc4.IfcObjectDefinition> ifcObjects = ird.getRelatedObjects();
+   		for (org.bimserver.models.ifc4.IfcObjectDefinition io : ifcObjects)
+   		    getComponantGuids(guids, io);
+   	    }
+   	} else
+   	    guids.add(ifcObject.getGlobalId());
+   	return guids;
+       }
 
     @SuppressWarnings("rawtypes")
     private String templateLevelRuleCheck(HashMap<AbstractRule, ObjectToValue> hashMap) {

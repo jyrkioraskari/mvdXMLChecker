@@ -16,7 +16,7 @@ import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.bimserver.plugins.serializers.SerializerException;
 import org.xml.sax.SAXException;
 
-import de.rwth_aachen.dc.mvd.IfcModelHelper;
+import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.beans.Issue;
 import nl.tue.ddss.ifc_check.IfcMVDConstraintChecker;
@@ -29,13 +29,18 @@ public class MvdXMLv1undescore1Check {
 	List<Issue> issues = new ArrayList<>();
 	
 	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
-	IfcModelInterface ifcModel = IfcModelHelper.readModel(ifcFile, Paths.get("."));
+	
+	IfcModelInstance model = new IfcModelInstance();
+	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+	
 	List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
 
-	IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints);
-
-	IssueReport issuereport = ifcChecker.checkModel(ifcModel);
-	issues.addAll(issuereport.getIssues());
+	if (model.getIfcversion().isPresent()) {
+	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel);
+	    issues.addAll(issuereport.getIssues());
+	}
+	
 	return issues;
     }
 

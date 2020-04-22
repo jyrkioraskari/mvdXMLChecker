@@ -8,7 +8,9 @@ import javax.xml.bind.JAXBException;
 
 import org.bimserver.emf.IfcModelInterface;
 
-import de.rwth_aachen.dc.mvd.IfcModelHelper;
+import de.rwth_aachen.dc.ifc.IfcModelInstance;
+import de.rwth_aachen.dc.mvd.IssueReport;
+import de.rwth_aachen.dc.mvd.beans.Issue;
 import nl.tue.ddss.mvdparser.MVDConstraint;
 import nl.tue.ddss.mvdparser.MvdXMLParser;
 
@@ -18,11 +20,17 @@ public class MVDCheckerTest {
 	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
 	try {
 	    Path ifcFile = Paths.get(ifcFileName);
-	    IfcModelInterface ifcModel = IfcModelHelper.readModel(ifcFile,Paths.get("."));
+	    IfcModelInstance model = new IfcModelInstance();
+            IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+		
 	    List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
 
-	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints);
-	    ifcChecker.checkModel(ifcModel);
+	    if (model.getIfcversion().isPresent()) {
+		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints,model.getIfcversion().get());
+		IssueReport issuereport=ifcChecker.checkModel(bimserver_ifcModel);
+		for(Issue i: issuereport.getIssues())
+		    System.out.println("Issue: "+i.getComment());
+	    }
 
 	} catch (JAXBException e) {
 	    e.printStackTrace();
@@ -37,6 +45,6 @@ public class MVDCheckerTest {
 	 * files
 	 */
 	//new MVDCheckerTest("example/Duplex_A_20110505_modified.ifc", "example/Demo.mvdxml", "report/");
-	new MVDCheckerTest("example/Duplex_A_20110505_modified.ifc", "C:\\jo\\BIM4Ren\\mvd-ld\\DoorHasProperties.xml");
+	new MVDCheckerTest("example/Duplex_A_20110505_modified.ifc", "C:\\jo\\BIM4Ren\\technical\\mvd-ld\\DoorHasProperties.xml");
     }
 }
