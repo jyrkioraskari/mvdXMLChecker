@@ -1,4 +1,4 @@
-# mvdXMLChecker
+# mvdXML Checker
 Online mvdXMLChecker: Use mvdXML to validate IFC models
 
 
