@@ -1,6 +1,11 @@
 # mvdXML Checker
 Online mvdXMLChecker: Use mvdXML to validate IFC models
 
+Precompiled binaries that can be used at a web application server can be found here: 
+https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases/tag/1.4
+
+Tomcat 9 (https://tomcat.apache.org/download-90.cgi) was used as an application server for the tests.
+
 
 This code is based on the original work of Chi Zhang in: 	
 https://github.com/BenzclyZhang/mvdXMLChecker
@@ -10,11 +15,11 @@ The test Open API interface can be found here:
 http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/
 
 ## Docker
-Docker (https://www.docker.com/) installations are available for the interfaces. A client for a desktop computer can be installed from: https://www.docker.com/products/docker-desktop . 
+Docker (https://www.docker.com/) installations are available for the interfaces. A client for a desktop computer can be installed from https://www.docker.com/products/docker-desktop . 
 
 ### Docker for the Open API interface
 
-Command line commands needed to start the server at your computer;
+Command-line commands needed to start the server at your computer;
 ```
 docker pull jyrkioraskari/api4mvdxmlchecker:latest
 
@@ -26,7 +31,7 @@ http://localhost:8081/
 
 ### Docker for the Web interface
 
-Command line commands needed to start the server at your computer;
+Command-line commands needed to start the server at your computer;
 ```
 docker pull jyrkioraskari/webui4mvdxmlchecker:latest
 
