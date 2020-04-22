@@ -2,7 +2,7 @@
 Online mvdXMLChecker: Use mvdXML to validate IFC models
 
 
-This code is based on the original work ot Chi Zhang in: 	
+This code is based on the original work of Chi Zhang in: 	
 https://github.com/BenzclyZhang/mvdXMLChecker
 
 
