@@ -20,4 +20,11 @@ docker container run -it --publish 8081:8080 jyrkioraskari/api4mvdxmlchecker
 
 http://localhost:8081/
 
+# Docker for the Web interface
+
+docker pull jyrkioraskari/webui4mvdxmlchecker:latest
+
+docker container run -it --publish 8084:8080 jyrkioraskari/webui4mvdxmlchecker
+
+http://localhost:8084/
 
