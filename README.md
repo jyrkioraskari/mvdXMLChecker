@@ -14,18 +14,28 @@ Docker (https://www.docker.com/) installations are available for the interfaces.
 
 ### Docker for the Open API interface
 
+Command line commands needed to start the server at your computer;
+```
 docker pull jyrkioraskari/api4mvdxmlchecker:latest
 
 docker container run -it --publish 8081:8080 jyrkioraskari/api4mvdxmlchecker
 
+```
+Then the software can be accessed from the local web address:
 http://localhost:8081/
 
 ### Docker for the Web interface
 
+Command line commands needed to start the server at your computer;
+```
 docker pull jyrkioraskari/webui4mvdxmlchecker:latest
 
 docker container run -it --publish 8084:8080 jyrkioraskari/webui4mvdxmlchecker
 
+```
+
+
+Then the software can be accessed from the local web address:
 http://localhost:8084/
 
 
