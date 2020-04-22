@@ -28,3 +28,19 @@ docker container run -it --publish 8084:8080 jyrkioraskari/webui4mvdxmlchecker
 
 http://localhost:8084/
 
+
+## Cite this
+```
+@software{jyrki_oraskari_2020_3760756,
+  author       = {Jyrki Oraskari},
+  title        = {{jyrkioraskari/OnlineMvdXMLChecker: mvdXML Checker 
+                   for mvdXML 1.1}},
+  month        = apr,
+  year         = 2020,
+  publisher    = {Zenodo},
+  version      = {1.4},
+  doi          = {10.5281/zenodo.3760756},
+  url          = {https://doi.org/10.5281/zenodo.3760756}
+}
+```
+
