@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org

@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org
@@ -17,20 +17,8 @@ package org.openbimserver.plugins.renderengine;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-import java.io.IOException;
-
-public class RenderEngineException extends Exception {
-	private static final long serialVersionUID = 4485210826117178542L;
-
-	public RenderEngineException(String message) {
-		super(message);
-	}
-	
-	public RenderEngineException(Exception e) {
-		super(e);
-	}
-
-	public RenderEngineException(String message, IOException e) {
-		super(message, e);
-	}
+public interface RenderEngineInstance {
+	float[] getTransformationMatrix() throws RenderEngineException;
+	RenderEngineGeometry generateGeometry() throws RenderEngineException;
+	double getArea() throws RenderEngineException;
 }

@@ -7,7 +7,7 @@
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
 	<artifactId>mvdXMLCheckerUserInterface</artifactId>
 	<packaging>war</packaging>
-	<version>1.5</version>
+	<version>1.6</version>
 	<name>mvdXMLChecker User Interface</name>
 
 	<developers>
@@ -78,12 +78,12 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>1.5</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>1.5</version>
+			<version>1.6</version>
 		</dependency>
 
 	</dependencies>

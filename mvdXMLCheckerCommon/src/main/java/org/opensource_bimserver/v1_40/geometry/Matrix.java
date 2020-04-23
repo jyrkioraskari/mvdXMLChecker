@@ -1,4 +1,4 @@
-package org.openbimserver.geometry;
+package org.opensource_bimserver.v1_40.geometry;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org

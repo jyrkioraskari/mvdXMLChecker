@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org
@@ -17,38 +17,33 @@ package org.openbimserver.plugins.renderengine;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-public class RenderEngineInstanceVisualisationProperties {
-	private final float[] vertices;
-	private final int[] indices;
-	private final float[] normals;
-	private int[] materialIndices;
-	private float[] materials;
+public class RenderEngineSurfaceProperties {
 
-	public RenderEngineInstanceVisualisationProperties(int[] indices, float[] vertices, float[] normals, int[] materialIndices, float[] materials) {
-		this.indices = indices;
-		this.vertices = vertices;
-		this.normals = normals;
-		this.materialIndices = materialIndices;
-		this.materials = materials;
-	}
-	
-	public float[] getVertices() {
-		return vertices;
+	private final int modelId;
+	private final int verticesCount;
+	private final int indicesCount;
+	private final double scale;
+
+	public RenderEngineSurfaceProperties(int modelId, int verticesCount, int indicesCount, double scale) {
+		this.modelId = modelId;
+		this.verticesCount = verticesCount;
+		this.indicesCount = indicesCount;
+		this.scale = scale;
 	}
 
-	public int[] getIndices() {
-		return indices;
+	public int getModelId() {
+		return modelId;
 	}
 
-	public float[] getMaterials() {
-		return materials;
+	public int getVerticesCount() {
+		return verticesCount;
 	}
 
-	public int[] getMaterialIndices() {
-		return materialIndices;
+	public int getIndicesCount() {
+		return indicesCount;
 	}
 
-	public float[] getNormals() {
-		return normals;
+	public double getScale() {
+		return scale;
 	}
 }

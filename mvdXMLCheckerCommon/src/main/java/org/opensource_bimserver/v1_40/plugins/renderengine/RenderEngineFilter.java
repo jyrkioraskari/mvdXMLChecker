@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 public class RenderEngineFilter {
 	private boolean translateGeometry = false;

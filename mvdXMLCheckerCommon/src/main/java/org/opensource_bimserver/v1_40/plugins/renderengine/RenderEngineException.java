@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org
@@ -17,18 +17,20 @@ package org.openbimserver.plugins.renderengine;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-public interface RenderEngineModel {
-	public static final int PRECISION = Precision.BIT;
-	public static final int INDEX_BITS = IndexFormat.BIT;
-	public static final int NORMALS = 32;
-	public static final int TRANSFORM_GEOMETRY = 128;
-	public static final int TRIANGLES = 256;
-	public static final int WIREFRAME = 4096;
+import java.io.IOException;
 
-	void setFormat(int format, int mask) throws RenderEngineException;
-	void setSettings(RenderEngineSettings settings) throws RenderEngineException;
-	RenderEngineInstance getInstanceFromExpressId(int oid) throws RenderEngineException;
-	void generateGeneralGeometry() throws RenderEngineException;
-	void close() throws RenderEngineException;
-	void setFilter(RenderEngineFilter renderEngineFilter) throws RenderEngineException;
+public class RenderEngineException extends Exception {
+	private static final long serialVersionUID = 4485210826117178542L;
+
+	public RenderEngineException(String message) {
+		super(message);
+	}
+	
+	public RenderEngineException(Exception e) {
+		super(e);
+	}
+
+	public RenderEngineException(String message, IOException e) {
+		super(message, e);
+	}
 }

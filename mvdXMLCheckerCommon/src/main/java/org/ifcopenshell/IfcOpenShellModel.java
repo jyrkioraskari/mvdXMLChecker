@@ -32,11 +32,11 @@ package org.ifcopenshell;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import org.openbimserver.plugins.renderengine.RenderEngineException;
-import org.openbimserver.plugins.renderengine.RenderEngineFilter;
-import org.openbimserver.plugins.renderengine.RenderEngineInstance;
-import org.openbimserver.plugins.renderengine.RenderEngineModel;
-import org.openbimserver.plugins.renderengine.RenderEngineSettings;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineFilter;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineInstance;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

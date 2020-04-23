@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org
@@ -17,33 +17,22 @@ package org.openbimserver.plugins.renderengine;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-public class RenderEngineSurfaceProperties {
+public enum Precision {
+	SINGLE(32),
+	DOUBLE(64);
+	
+	public static final int BIT = 4;
+	private int width;
 
-	private final int modelId;
-	private final int verticesCount;
-	private final int indicesCount;
-	private final double scale;
-
-	public RenderEngineSurfaceProperties(int modelId, int verticesCount, int indicesCount, double scale) {
-		this.modelId = modelId;
-		this.verticesCount = verticesCount;
-		this.indicesCount = indicesCount;
-		this.scale = scale;
+	public int getWidth() {
+		return width;
+	}
+	
+	Precision(int width) {
+		this.width = width;
 	}
 
-	public int getModelId() {
-		return modelId;
-	}
-
-	public int getVerticesCount() {
-		return verticesCount;
-	}
-
-	public int getIndicesCount() {
-		return indicesCount;
-	}
-
-	public double getScale() {
-		return scale;
+	public int getValue() {
+		return this == SINGLE ? 0 : BIT;
 	}
 }

@@ -32,9 +32,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.openbimserver.plugins.renderengine.RenderEngine;
-import org.openbimserver.plugins.renderengine.RenderEngineException;
-import org.openbimserver.plugins.renderengine.RenderEngineModel;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngine;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

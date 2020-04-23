@@ -1,4 +1,4 @@
-package org.openbimserver.plugins.renderengine;
+package org.opensource_bimserver.v1_40.plugins.renderengine;
 
 /******************************************************************************
  * Copyright (C) 2009-2015  BIMserver.org
@@ -17,22 +17,14 @@ package org.openbimserver.plugins.renderengine;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
-public enum Precision {
-	SINGLE(32),
-	DOUBLE(64);
-	
-	public static final int BIT = 4;
-	private int width;
+import java.io.File;
+import java.io.InputStream;
 
-	public int getWidth() {
-		return width;
-	}
-	
-	Precision(int width) {
-		this.width = width;
-	}
-
-	public int getValue() {
-		return this == SINGLE ? 0 : BIT;
-	}
+public interface RenderEngine {
+	RenderEngineModel openModel(File ifcFile) throws RenderEngineException;
+	RenderEngineModel openModel(InputStream inputStream, int size) throws RenderEngineException;
+	RenderEngineModel openModel(InputStream inputStream) throws RenderEngineException;
+	RenderEngineModel openModel(byte[] bytes) throws RenderEngineException;
+	void close() throws RenderEngineException;
+	void init() throws RenderEngineException;
 }

@@ -6,11 +6,11 @@ import java.util.List;
 import javax.vecmath.Point3d;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openbimserver.geometry.Matrix;
-import org.openbimserver.plugins.renderengine.RenderEngineException;
-import org.openbimserver.plugins.renderengine.RenderEngineGeometry;
-import org.openbimserver.plugins.renderengine.RenderEngineInstance;
-import org.openbimserver.plugins.renderengine.RenderEngineModel;
+import org.opensource_bimserver.v1_40.geometry.Matrix;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineGeometry;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineInstance;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
 import org.xml.sax.SAXException;
 
 import nl.tue.ddss.bcf.BoundingBox;

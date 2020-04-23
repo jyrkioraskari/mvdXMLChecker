@@ -1,6 +1,6 @@
 package org.ifcopenshell;
 
-import org.openbimserver.geometry.Matrix;
+import org.opensource_bimserver.v1_40.geometry.Matrix;
 
 public class IfcGeomServerClientEntity {
 	private int id;

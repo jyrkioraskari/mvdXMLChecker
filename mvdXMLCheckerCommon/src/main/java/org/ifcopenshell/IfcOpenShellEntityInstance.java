@@ -19,9 +19,9 @@
 
 package org.ifcopenshell;
 
-import org.openbimserver.plugins.renderengine.RenderEngineException;
-import org.openbimserver.plugins.renderengine.RenderEngineGeometry;
-import org.openbimserver.plugins.renderengine.RenderEngineInstance;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineGeometry;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineInstance;
 
 public class IfcOpenShellEntityInstance implements RenderEngineInstance {
 	private IfcGeomServerClientEntity entity;
