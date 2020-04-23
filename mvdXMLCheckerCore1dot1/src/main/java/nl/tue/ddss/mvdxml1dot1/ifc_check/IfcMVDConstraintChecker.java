@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -19,9 +16,6 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
-import org.bimserver.plugins.renderengine.RenderEngineException;
-import org.bimserver.plugins.serializers.SerializerException;
-import org.xml.sax.SAXException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -51,7 +45,7 @@ public class IfcMVDConstraintChecker {
 	this.ifcversion = ifcversion;
     }
 
-    public IssueReport checkModel(IfcModelInterface ifcModel) throws JAXBException, DeserializeException, ParserConfigurationException, SAXException, SerializerException, IOException, RenderEngineException {
+    public IssueReport checkModel(IfcModelInterface ifcModel) throws org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException, DeserializeException, IOException {
 	IssueReport issueReport = new IssueReport(ifcModel);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();

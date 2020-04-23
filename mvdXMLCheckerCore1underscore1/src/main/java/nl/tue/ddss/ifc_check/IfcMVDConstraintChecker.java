@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -20,15 +17,12 @@ import org.antlr.runtime.TokenStream;
 import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
-import org.bimserver.plugins.renderengine.RenderEngineException;
-import org.bimserver.plugins.serializers.SerializerException;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.AbstractRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.AttributeRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.Definitions;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.Definitions.Definition;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.EntityRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.TemplateRule;
-import org.xml.sax.SAXException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -53,13 +47,15 @@ public class IfcMVDConstraintChecker {
 	this.ifcversion = ifcversion;
     }
 
-    public IssueReport checkModel(IfcModelInterface ifcModel)
-	    throws JAXBException, DeserializeException, ParserConfigurationException, SAXException, SerializerException, IOException, RenderEngineException {
+    @SuppressWarnings("unchecked")
+    public IssueReport checkModel(IfcModelInterface ifcModel) throws DeserializeException, IOException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException
+	    {
 	IssueReport reportWriter = new IssueReport(ifcModel);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
 	    try {
+		@SuppressWarnings("rawtypes")
 		Class cls = null;
 		switch (this.ifcversion) {
 		case IFC2x3:

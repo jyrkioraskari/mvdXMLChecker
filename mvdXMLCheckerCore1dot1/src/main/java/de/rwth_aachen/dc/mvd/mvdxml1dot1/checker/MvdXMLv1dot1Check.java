@@ -8,13 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
-import org.bimserver.plugins.renderengine.RenderEngineException;
-import org.bimserver.plugins.serializers.SerializerException;
-import org.xml.sax.SAXException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -23,7 +19,7 @@ import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcMVDConstraintChecker;
 
 public class MvdXMLv1dot1Check {
 
-    public static List<Issue> check(Path ifcFile , String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException, ParserConfigurationException, SAXException, SerializerException {
+    public static List<Issue> check(Path ifcFile , String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException  {
 	List<Issue> issues=new ArrayList<>();
 	        System.out.println("Check IFC: "+ifcFile);
 	        System.out.println("Check mvdXML: "+mvdXMLFile);

@@ -3,14 +3,12 @@ package de.rwth_aachen.dc.mvd.ifcvalidator.rest;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -24,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.Issue;
 import de.rwth_aachen.dc.mvd.ifcvalidator.db.MvdXMLFileHandle;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.IssueReportBean;
@@ -206,14 +205,14 @@ public class IfcValidatorAPI {
 
 		java.nio.file.Path ifcFile = Paths.get(tempIfcFile.getAbsolutePath());
 
-		if (checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1"))  {
+		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1"))  {
 		    issueReportBean.setMessage("a valid mvdXML 1.1 file");
 		    List<Issue> issues=MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
 		    issueReportBean.getIssues().addAll(issues);
 		   
 		} else {
 		    // mvdXML 1_1
-		    if (checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 			issueReportBean.setMessage("a mvdXML 1_1 file");
 			List<Issue> issues=MvdXMLv1undescore1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
 			 issueReportBean.getIssues().addAll(issues);
@@ -234,30 +233,6 @@ public class IfcValidatorAPI {
 	return issueReportBean;
     }
 
-    private boolean checkMvdXMLSchemaVersion(String filename, String schemaName) {
-	try {
-	    File myObj = new File(filename);
-	    Scanner myReader = new Scanner(myObj);
-	    for (int i = 0; i < 5; i++)
-		if (myReader.hasNextLine())
-		    if (checSchemaLine(myReader.nextLine(), schemaName))
-			return true;
-
-	    myReader.close();
-	} catch (FileNotFoundException e) {
-	    System.out.println("An error occurred.");
-	    e.printStackTrace();
-	}
-	return false;
-    }
-
-    private boolean checSchemaLine(String line, String schemaName) {
-	String[] tokens = line.split("[ =>]");
-	for (String t : tokens) {
-	    if (t.equals("\"" + schemaName + "\""))
-		return true;
-	}
-	return false;
-    }
+   
 
 }

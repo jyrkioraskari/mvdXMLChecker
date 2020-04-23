@@ -1,13 +1,11 @@
 package de.rwth_aachen.dc.mvdXMLOnlineChecker;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -30,6 +28,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.Issue;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
 import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
@@ -138,7 +137,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
 	try {
 
-	    if (checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
+	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
 		 Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
 		 n.setDelayMsec(5000);
 		 n.show(Page.getCurrent());
@@ -147,7 +146,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	    } else {
 		// mvdXML 1_1
-		if (checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 			 Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
 			 n.setDelayMsec(5000);
 			 n.show(Page.getCurrent());
@@ -170,31 +169,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
     }
 
-    private boolean checkMvdXMLSchemaVersion(String filename, String schemaName) {
-	try {
-	    File myObj = new File(filename);
-	    Scanner myReader = new Scanner(myObj);
-	    for (int i = 0; i < 5; i++)
-		if (myReader.hasNextLine())
-		    if (checSchemaLine(myReader.nextLine(), schemaName))
-			return true;
 
-	    myReader.close();
-	} catch (FileNotFoundException e) {
-	    System.out.println("An error occurred.");
-	    e.printStackTrace();
-	}
-	return false;
-    }
-
-    private boolean checSchemaLine(String line, String schemaName) {
-	String[] tokens = line.split("[ =>]");
-	for (String t : tokens) {
-	    if (t.equals("\"" + schemaName + "\""))
-		return true;
-	}
-	return false;
-    }
 
     @Subscribe
     public void onNew_ifcSTEPFile(New_ifcSTEPFile event) {

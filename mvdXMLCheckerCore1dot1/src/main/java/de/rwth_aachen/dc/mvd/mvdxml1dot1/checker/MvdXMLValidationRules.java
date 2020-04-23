@@ -1,10 +1,8 @@
 package de.rwth_aachen.dc.mvd.mvdxml1dot1.checker;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -12,6 +10,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Concept;
 import generated.buildingsmart_tech.mvd_xml_1dot1.ConceptRoot;
@@ -33,7 +32,7 @@ public class MvdXMLValidationRules {
     private boolean valid = true;
 
     public MvdXMLValidationRules(String filename) throws JAXBException {
-	if(!checkMvdXMLSchemaVersion(filename))
+	if(!MvdXMLVersionCheck.checkMvdXMLSchemaVersion(filename))
 	{
 	    System.out.println("Not valid");
 	    this.valid=false;
@@ -61,33 +60,7 @@ public class MvdXMLValidationRules {
 	}
     }
 
-    private boolean checkMvdXMLSchemaVersion(String filename) {
-	try {
-	    File myObj = new File(filename);
-	    Scanner myReader = new Scanner(myObj);
-	    for(int i=0;i<5;i++)
-	    if(myReader.hasNextLine()) 
-		if(checSchemaLine(myReader.nextLine()))
-			return true;
-	    
-	    myReader.close();
-	} catch (FileNotFoundException e) {
-	    System.out.println("An error occurred.");
-	    e.printStackTrace();
-	}
-	return false;
-    }
-    
-    private boolean checSchemaLine(String line)
-    {
-	String[] tokens=line.split("[ =>]");
-	for(String t:tokens)
-	{
-	    if(t.equals("\"http://buildingsmart-tech.org/mvd/XML/1.1\""))		
-		return true;
-	}
-	return false;
-    }
+ 
 
     private void addSubTemplates(ConceptTemplate concept_template) {
 	if (concept_template.getSubTemplates() == null)

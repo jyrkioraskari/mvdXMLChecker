@@ -4,8 +4,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.bimserver.emf.IfcModelInterface;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
@@ -17,9 +15,9 @@ import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcMVDConstraintChecker;
 
 public class MVDCheckerTest {
 
-    public MVDCheckerTest(String ifcFileName, String mvdXMLFile) throws Exception {
-	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
+    public MVDCheckerTest(String ifcFileName, String mvdXMLFile)  {
 	try {
+	    MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 	    Path ifcFile = Paths.get(ifcFileName);
 	    IfcModelInstance model = new IfcModelInstance();
 	    IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
@@ -33,7 +31,7 @@ public class MVDCheckerTest {
 		    System.out.println("Issue: "+i.getComment());
 	    }
 
-	} catch (JAXBException e) {
+	} catch (Exception e) {
 	    e.printStackTrace();
 	}
 

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
-import javax.sound.midi.Soundbank;
-
 import org.bimserver.emf.IdEObject;
 import org.eclipse.emf.common.util.Enumerator;
 

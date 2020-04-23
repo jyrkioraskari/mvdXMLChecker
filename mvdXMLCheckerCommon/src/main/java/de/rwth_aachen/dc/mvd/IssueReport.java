@@ -1,15 +1,27 @@
 package de.rwth_aachen.dc.mvd;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.emf.ModelMetaData;
 import org.bimserver.models.store.IfcHeader;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.ifcopenshell.IfcOpenShellEngine;
+import org.opensource_bimserver.bcf.Bcf;
+import org.opensource_bimserver.bcf.BcfException;
+import org.opensource_bimserver.v1_40.plugins.renderengine.IndexFormat;
+import org.opensource_bimserver.v1_40.plugins.renderengine.Precision;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
+import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineSettings;
 
+import de.rwth_aachen.dc.mvd.bcf.TempGeometry;
 import de.rwth_aachen.dc.mvd.beans.Issue;
 
 public class IssueReport {
@@ -17,10 +29,14 @@ public class IssueReport {
     private String ifcHeaderFilename;
     private Date ifcHeaderTimeStamp;
 
+    private Set<Long> roids;
+    private RenderEngineModel renderEngineModel;
+    private final TempGeometry tempGeometry = new TempGeometry();
+
     private List<Issue> issues = new ArrayList<>();
+    private final Bcf bcf = new Bcf();
 
-    public IssueReport(IfcModelInterface ifcModel) throws DeserializeException, IOException {
-
+    public IssueReport(IfcModelInterface ifcModel) throws DeserializeException, IOException, RenderEngineException {
 	ModelMetaData mmd = ifcModel.getModelMetaData();
 	IfcHeader ifcHeader = mmd.getIfcHeader();
 	System.out.println("ifcHeader schema: " + ifcHeader.getIfcSchemaVersion());
@@ -50,6 +66,23 @@ public class IssueReport {
 	    }
 	} else
 	    throw new RuntimeException("Not a supported IFC version");
+
+	    renderEngineModel = getRenderEngineModel(new File(ifcHeaderFilename));
+    }
+
+    public RenderEngineModel getRenderEngineModel(File ifcFile) throws RenderEngineException, IOException {
+	// TODO no static .exe reference
+	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine("exe/64/win/IfcGeomServer.exe");
+	RenderEngineModel model = ifcOpenShellEngine.openModel(ifcFile);
+	RenderEngineSettings settings = new RenderEngineSettings();
+	settings.setPrecision(Precision.SINGLE);
+	settings.setIndexFormat(IndexFormat.AUTO_DETECT);
+	settings.setGenerateNormals(false);
+	settings.setGenerateTriangles(true);
+	settings.setGenerateWireFrame(false);
+	model.setSettings(settings);
+	model.generateGeneralGeometry();
+	return model;
     }
 
     private void addMarkup(String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment, String topicGuid) {
@@ -87,23 +120,19 @@ public class IssueReport {
 	// comment );
 	// System.out.println();
     }
+    
+    
 
-    public static String cleanString(String txt) {
-	StringBuilder sb = new StringBuilder();
-	char ch = '\\';
-	for (int n = 0; n < txt.length(); n++) {
-	    char cch = txt.charAt(n);
-	    if (cch == '\t')
-		cch = ' ';
-	    if (!Character.isWhitespace(cch)) {
-		sb.append(cch);
-	    } else if (cch != ch) {
-		if (ch != '\n')
-		    sb.append(cch);
-	    }
-	    ch = cch;
+      public void writeReport(String output) {
+
+	FileOutputStream outputStream;
+	try {
+	    outputStream = new FileOutputStream(output);
+	    bcf.write(outputStream);
+	} catch (BcfException | IOException e) {
+	    e.printStackTrace();
 	}
-	return sb.toString();
+	new File("TempGeometry.txt").delete();
     }
 
     public String getIfcProjectGuid() {
