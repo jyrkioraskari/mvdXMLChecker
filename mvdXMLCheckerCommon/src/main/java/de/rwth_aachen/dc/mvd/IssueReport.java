@@ -37,6 +37,7 @@ import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException
 import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
 import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineSettings;
 
+import de.rwth_aachen.dc.OperatingSystemCopyOf_IfcGeomServer;
 import de.rwth_aachen.dc.mvd.bcf.TempGeometry;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
 
@@ -219,8 +220,8 @@ public class IssueReport {
     }
 
     private RenderEngineModel getRenderEngineModel(File ifcFile) throws RenderEngineException, IOException {
-	// TODO no static .exe reference
-	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine("exe/64/win/IfcGeomServer.exe");
+	String ifcGeomServerLocation=OperatingSystemCopyOf_IfcGeomServer.getIfcGeomServer();
+	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine(ifcGeomServerLocation);
 	RenderEngineModel model = ifcOpenShellEngine.openModel(ifcFile);
 	System.out.println("IfcOpenShell opens ifc: "+ifcFile.getAbsolutePath());
 	RenderEngineSettings settings = new RenderEngineSettings();
