@@ -26,7 +26,7 @@ public class MVDCheckerTest {
 
 	    if (model.getIfcversion().isPresent()) {
 		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints,model.getIfcversion().get());
-		IssueReport issuereport=ifcChecker.checkModel(bimserver_ifcModel);
+		IssueReport issuereport=ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
 		for(Issue i: issuereport.getIssues())
 		    System.out.println("Issue: "+i.getComment());
 	    }

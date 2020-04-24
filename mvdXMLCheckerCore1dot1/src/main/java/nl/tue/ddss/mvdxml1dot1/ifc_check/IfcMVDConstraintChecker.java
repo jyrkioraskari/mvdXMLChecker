@@ -1,5 +1,6 @@
 package nl.tue.ddss.mvdxml1dot1.ifc_check;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -45,8 +46,8 @@ public class IfcMVDConstraintChecker {
 	this.ifcversion = ifcversion;
     }
 
-    public IssueReport checkModel(IfcModelInterface ifcModel) throws org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException, DeserializeException, IOException {
-	IssueReport issueReport = new IssueReport(ifcModel);
+    public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException, DeserializeException, IOException {
+	IssueReport issueReport = new IssueReport(ifcModel,ifcfile);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
 	    System.out.println("attrrules: " + attributeRules.size());

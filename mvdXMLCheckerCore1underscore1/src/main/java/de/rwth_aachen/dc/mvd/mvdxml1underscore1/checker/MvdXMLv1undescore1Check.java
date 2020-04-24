@@ -33,7 +33,7 @@ public class MvdXMLv1undescore1Check {
 
 	if (model.getIfcversion().isPresent()) {
 	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel);
+	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
 	    issues.addAll(issuereport.getIssues());
 	}
 	

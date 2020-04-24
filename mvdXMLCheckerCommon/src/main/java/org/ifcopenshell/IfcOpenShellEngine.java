@@ -61,7 +61,9 @@ public class IfcOpenShellEngine implements RenderEngine {
 	public RenderEngineModel openModel(File ifcFile) throws RenderEngineException {
 		try {
 			return openModel(new FileInputStream(ifcFile),(int)ifcFile.length());
-		} catch (IOException e) {
+		} catch (Exception e) {
+		    	System.out.println("File: "+ifcFile.getAbsolutePath());
+		        e.printStackTrace();
 			throw new RenderEngineException("Failed to open model");		
 		}
 	}

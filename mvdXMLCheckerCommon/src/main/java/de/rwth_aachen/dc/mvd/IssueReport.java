@@ -36,7 +36,7 @@ public class IssueReport {
     private List<Issue> issues = new ArrayList<>();
     private final Bcf bcf = new Bcf();
 
-    public IssueReport(IfcModelInterface ifcModel) throws DeserializeException, IOException, RenderEngineException {
+    public IssueReport(IfcModelInterface ifcModel,File ifcfile) throws DeserializeException, IOException, RenderEngineException {
 	ModelMetaData mmd = ifcModel.getModelMetaData();
 	IfcHeader ifcHeader = mmd.getIfcHeader();
 	System.out.println("ifcHeader schema: " + ifcHeader.getIfcSchemaVersion());
@@ -67,7 +67,7 @@ public class IssueReport {
 	} else
 	    throw new RuntimeException("Not a supported IFC version");
 
-	    renderEngineModel = getRenderEngineModel(new File(ifcHeaderFilename));
+	    renderEngineModel = getRenderEngineModel(ifcfile);
     }
 
     public RenderEngineModel getRenderEngineModel(File ifcFile) throws RenderEngineException, IOException {

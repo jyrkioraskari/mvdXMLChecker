@@ -1,5 +1,6 @@
 package de.rwth_aachen.dc.mvd.mvdxml1dot1.checker;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -31,7 +32,7 @@ public class MvdXMLv1dot1Check {
 
 		if (model.getIfcversion().isPresent()) {
 		    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-		    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel);
+		    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
 		    issues.addAll(issuereport.getIssues());
 		}
 
