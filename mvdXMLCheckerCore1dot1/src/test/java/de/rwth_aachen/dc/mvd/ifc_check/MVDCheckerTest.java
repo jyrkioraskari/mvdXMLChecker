@@ -1,5 +1,6 @@
 package de.rwth_aachen.dc.mvd.ifc_check;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -8,14 +9,14 @@ import org.bimserver.emf.IfcModelInterface;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.beans.Issue;
+import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConstraint;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLValidationRules;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcMVDConstraintChecker;
 
 public class MVDCheckerTest {
 
-    public MVDCheckerTest(String ifcFileName, String mvdXMLFile)  {
+    public MVDCheckerTest(String ifcFileName, String mvdXMLFile) {
 	try {
 	    MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 	    Path ifcFile = Paths.get(ifcFileName);
@@ -25,10 +26,13 @@ public class MVDCheckerTest {
 	    System.out.println(constraints.size());
 
 	    if (model.getIfcversion().isPresent()) {
-		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints,model.getIfcversion().get());
-		IssueReport issuereport=ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
-		for(Issue i: issuereport.getIssues())
-		    System.out.println("Issue: "+i.getComment());
+		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+		IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
+		for (IssueBean i : issuereport.getIssues())
+		    System.out.println("Issue: " + i.getComment());
+		String outputFolder = "report/";
+		new File(outputFolder).mkdir();
+		issuereport.writeReport(outputFolder + "checking_result" + ".bcfzip");
 	    }
 
 	} catch (Exception e) {
@@ -38,12 +42,14 @@ public class MVDCheckerTest {
     }
 
     public static void main(String[] args) throws Exception {
-	
-	// Error case 1  IFC4<>IFC2x3
-	
+
+	// Error case 1 IFC4<>IFC2x3
+
 	new MVDCheckerTest("c:\\ifc\\20160125Autodesk_Hospital_Parking Garage_2015 - IFC4.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
-	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
-	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Vorlage.mvdxml");
-	
+	// new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc",
+	// "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
+	// new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc",
+	// "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Vorlage.mvdxml");
+
     }
 }

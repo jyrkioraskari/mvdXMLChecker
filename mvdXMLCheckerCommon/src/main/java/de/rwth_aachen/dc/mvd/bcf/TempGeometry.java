@@ -19,12 +19,7 @@ import nl.tue.ddss.bcf.BoundingBox;
 // nl.tue.ddss.bcf.TempGeometry
 
 public class TempGeometry {
-    private BoundingBox boundingBox;
-    private final ArrayList<String> stringList = new ArrayList<String>();
-    private final ArrayList<Float> floatList = new ArrayList<Float>();
-    private final ArrayList<Float> xList = new ArrayList<Float>();
-    private final ArrayList<Float> yList = new ArrayList<Float>();
-    private final ArrayList<Float> zList = new ArrayList<Float>();
+    private final BoundingBox boundingBox;
     private double cameraViewPointX;
     private double cameraViewPointY;
     private double cameraViewPointZ;
@@ -35,8 +30,13 @@ public class TempGeometry {
     private double cameraDirectionY;
     private double cameraDirectionZ;
 
-    public void setUpCamera(RenderEngineModel renderEngineModel, int ifcProductExpressId) throws SAXException, ParserConfigurationException {
-	boundingBox = getBoundingBox(boundingBox, renderEngineModel, ifcProductExpressId);
+    public TempGeometry(RenderEngineModel renderEngineModel, long ifcProductExpressId) {
+	this.boundingBox = getBoundingBox(renderEngineModel, ifcProductExpressId);
+	if(boundingBox==null)
+	{
+	    System.err.println("Does not have a geometry");
+	    return;
+	}
 
 	Point3d max = boundingBox.getMax();
 	Point3d min = boundingBox.getMin();
@@ -68,19 +68,18 @@ public class TempGeometry {
 
     }
 
-    public BoundingBox getBoundingBox(BoundingBox boundingBox, RenderEngineModel renderEngineModel, List<Integer> ifcProductsExpressIds) {
-	if (ifcProductsExpressIds != null && ifcProductsExpressIds.size() > 0) {
-	    for (Integer ifcProductExpressId : ifcProductsExpressIds) {
-		getBoundingBox(boundingBox, renderEngineModel, ifcProductExpressId);
-	    }
-	}
-	return boundingBox;
-    }
-
-    private BoundingBox getBoundingBox(BoundingBox boundingBox, RenderEngineModel renderEngineModel, int ifcProductExpressId) {
+   
+    private BoundingBox getBoundingBox(RenderEngineModel renderEngineModel, long ifcProductExpressId) {
+	BoundingBox boundingBox=null;
 	RenderEngineInstance renderEngineInstance;
 	try {
-	    renderEngineInstance = renderEngineModel.getInstanceFromExpressId(ifcProductExpressId);
+	    renderEngineInstance = renderEngineModel.getInstanceFromExpressId((int)ifcProductExpressId); // new version uses long
+	    System.out.println("RenderEngineInstance for "+ifcProductExpressId+" is "+renderEngineInstance);
+	    if(renderEngineInstance==null)
+	    {
+		System.err.println("Not found rendering for: "+ifcProductExpressId);
+		return null;
+	    }
 	    RenderEngineGeometry geometry = renderEngineInstance.generateGeometry();
 	    if (geometry != null && geometry.getNrIndices() > 0) {
 		boundingBox = new BoundingBox();
@@ -115,4 +114,50 @@ public class TempGeometry {
 	boundingBox.add(point);
     }
 
+    
+    // Getters
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    
+    public double getCameraViewPointX() {
+        return cameraViewPointX;
+    }
+
+    public double getCameraViewPointY() {
+        return cameraViewPointY;
+    }
+
+    public double getCameraViewPointZ() {
+        return cameraViewPointZ;
+    }
+
+    public double getCameraUpVectorX() {
+        return cameraUpVectorX;
+    }
+
+    public double getCameraUpVectorY() {
+        return cameraUpVectorY;
+    }
+
+    public double getCameraUpVectorZ() {
+        return cameraUpVectorZ;
+    }
+
+    public double getCameraDirectionX() {
+        return cameraDirectionX;
+    }
+
+    public double getCameraDirectionY() {
+        return cameraDirectionY;
+    }
+
+    public double getCameraDirectionZ() {
+        return cameraDirectionZ;
+    }
+
+    
+    
+    
 }

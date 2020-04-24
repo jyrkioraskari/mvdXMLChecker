@@ -48,7 +48,7 @@ public class IfcMVDConstraintChecker {
 
     @SuppressWarnings("unchecked")
     public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws DeserializeException, IOException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
-	IssueReport reportWriter = new IssueReport(ifcModel, ifcfile);
+	IssueReport issuereport = new IssueReport(ifcModel, ifcfile);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
@@ -103,9 +103,9 @@ public class IfcMVDConstraintChecker {
 				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
 				List<String> componantGuids = new LinkedList<String>();
 				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
-				reportWriter.addIssue(spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject), ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject), ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
 			    } else {
-				reportWriter.addIssue(null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
 			    }
 			    break;
 			case IFC4:
@@ -115,9 +115,9 @@ public class IfcMVDConstraintChecker {
 				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
 				List<String> componantGuids = new LinkedList<String>();
 				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
-				reportWriter.addIssue(spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject), ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject), ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
 			    } else {
-				reportWriter.addIssue(null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
 			    }
 			    break;
 			default:
@@ -129,7 +129,7 @@ public class IfcMVDConstraintChecker {
 		e.printStackTrace();
 	    }
 	}
-	return reportWriter;
+	return issuereport;
     }
 
     private String getIfcSpatialStructure(org.bimserver.models.ifc2x3tc1.IfcElement ifcObject) {

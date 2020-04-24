@@ -66,6 +66,7 @@ public class IfcOpenShellModel implements RenderEngineModel {
 		instancesById = new HashMap<Integer,IfcOpenShellEntityInstance>();
 		
 		final double t0 = (double) System.nanoTime();
+		System.out.println("Generate geom: filename: "+filename);
 
 		try (IfcGeomServerClient client = new IfcGeomServerClient(filename, ifcInputStream)) {
 			for (IfcGeomServerClientEntity e : client) {
@@ -76,7 +77,8 @@ public class IfcOpenShellModel implements RenderEngineModel {
 				instancesById.put(e.getId(), instance);
 			}
 		} catch (Exception e) {
-			LOGGER.error(IfcGeomServerClient.class.getName(), e);
+		    e.printStackTrace();
+		    LOGGER.error(IfcGeomServerClient.class.getName(), e);
 		}
 		
 		final double t1 = (double) System.nanoTime();

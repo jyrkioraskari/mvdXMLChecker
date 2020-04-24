@@ -29,7 +29,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
-import de.rwth_aachen.dc.mvd.beans.Issue;
+import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
 import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_ifcSTEPFile;
@@ -46,8 +46,8 @@ public class mvdXMLOnlineCheckerUI extends UI {
     private File mvdXMLFile = null;
     private File ifcFile = null;
 
-    private Grid<Issue> issues_grid = new Grid<>();
-    private List<Issue> issues = new ArrayList<>();
+    private Grid<IssueBean> issues_grid = new Grid<>();
+    private List<IssueBean> issues = new ArrayList<>();
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -89,9 +89,9 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	layout.addComponent(button_layout);
 
 	issues_grid.setItems(issues);
-	issues_grid.addColumn(Issue::getIfcClassName).setCaption("Element type");
-	issues_grid.addColumn(Issue::getName).setCaption("Name");
-	issues_grid.addColumn(Issue::getGuid).setCaption("Guid");
+	issues_grid.addColumn(IssueBean::getIfcClassName).setCaption("Element type");
+	issues_grid.addColumn(IssueBean::getName).setCaption("Name");
+	issues_grid.addColumn(IssueBean::getGuid).setCaption("Guid");
 	// issues_grid.addColumn(Issue::getComment).setCaption("Comment");
 	issues_grid.addComponentColumn(item -> createCommentPopUpButton(item)).setCaption("Comment");
 	issues_grid.setWidth("100%");
@@ -101,7 +101,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	communication.register(this);
     }
 
-    private Button createCommentPopUpButton(Issue item) {
+    private Button createCommentPopUpButton(IssueBean item) {
 	@SuppressWarnings("unchecked")
 	Button button = new Button("Show", clickEvent -> {
 	    // Create a sub-window and set the content
@@ -141,7 +141,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		 Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
 		 n.setDelayMsec(5000);
 		 n.show(Page.getCurrent());
-		List<Issue> result = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		List<IssueBean> result = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 		issues.addAll(result);
 
 	    } else {
@@ -150,7 +150,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 			 Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
 			 n.setDelayMsec(5000);
 			 n.show(Page.getCurrent());
-		    List<Issue> result = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		    List<IssueBean> result = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 		    issues.addAll(result);
 		}
 		else

@@ -71,6 +71,7 @@ public class IfcGeomServerClient implements AutoCloseable, Iterator<IfcGeomServe
 			
 			askForMore();
 		} catch (IOException e) {
+		        e.printStackTrace();
 			LOGGER.error("", e);
 		}
 	}

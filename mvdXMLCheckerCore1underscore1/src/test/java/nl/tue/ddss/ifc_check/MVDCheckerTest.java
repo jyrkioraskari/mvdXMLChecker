@@ -1,5 +1,6 @@
 package nl.tue.ddss.ifc_check;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.bimserver.emf.IfcModelInterface;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.beans.Issue;
+import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import nl.tue.ddss.mvdparser.MVDConstraint;
 import nl.tue.ddss.mvdparser.MvdXMLParser;
 
@@ -28,14 +29,18 @@ public class MVDCheckerTest {
 	    if (model.getIfcversion().isPresent()) {
 		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints,model.getIfcversion().get());
 		IssueReport issuereport=ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
-		for(Issue i: issuereport.getIssues())
+		for(IssueBean i: issuereport.getIssues())
 		    System.out.println("Issue: "+i.getComment());
+		String outputFolder="report/";
+		new File(outputFolder).mkdir();
+		issuereport.writeReport(outputFolder + "checking_result" + ".bcfzip");
 	    }
 
 	} catch (JAXBException e) {
 	    e.printStackTrace();
 	}
 
+	
     }
 
     public static void main(String[] args) throws Exception {

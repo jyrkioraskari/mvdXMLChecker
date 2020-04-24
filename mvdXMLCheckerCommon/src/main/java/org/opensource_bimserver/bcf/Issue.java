@@ -16,76 +16,79 @@ import org.opensource_bimserver.bcf.visinfo.VisualizationInfo;
 
 @SuppressWarnings("unused")
 public class Issue {
-        private byte[] imageData;
-        private Markup markup;
-        private VisualizationInfo visualizationInfo;
-        private UUID uuid;
+    private byte[] imageData;
+    private Markup markup;
+    private VisualizationInfo visualizationInfo;
+    private UUID uuid;
 
-        public Issue(UUID uuid) {
-                this.uuid = uuid;
-        }
-        
-        public Issue(UUID uuid, Markup markup,VisualizationInfo visualizationInfo){
-        	this.uuid=uuid;
-        	this.markup=markup;
-        	this.visualizationInfo=visualizationInfo;
-        }
+    public Issue(UUID uuid) {
+	this.uuid = uuid;
+    }
 
-        public void setMarkup(Markup markup) {
-                this.markup = markup;
-        }
+    public Issue(UUID uuid, Markup markup, VisualizationInfo visualizationInfo) {
+	this.uuid = uuid;
+	this.markup = markup;
+	this.visualizationInfo = visualizationInfo;
+    }
 
-        public void setVisualizationInfo(VisualizationInfo visualizationInfo) {
-                this.visualizationInfo = visualizationInfo;
-        }
+    public void setMarkup(Markup markup) {
+	this.markup = markup;
+    }
 
-        public void setImageData(byte[] imageData) {
-                this.imageData = imageData;
-        }
+    public void setVisualizationInfo(VisualizationInfo visualizationInfo) {
+	this.visualizationInfo = visualizationInfo;
+    }
 
-        public byte[] getImageData() {
-                return imageData;
-        }
+    public void setImageData(byte[] imageData) {
+	this.imageData = imageData;
+    }
 
-        public VisualizationInfo getVisualizationInfo() {
-                return visualizationInfo;
-        }
+    public byte[] getImageData() {
+	return imageData;
+    }
 
-        public Markup getMarkup() {
-                return markup;
-        }
+    public VisualizationInfo getVisualizationInfo() {
+	return visualizationInfo;
+    }
 
-        public UUID getUuid() {
-                return uuid;
-        }
+    public Markup getMarkup() {
+	return markup;
+    }
 
-        public void write(ZipOutputStream zipOutputStream) throws IOException, BcfException {
-                ZipEntry markup = new ZipEntry(getUuid().toString() + "/markup.bcf");
-                zipOutputStream.putNextEntry(markup);
-                try {
-                        JAXBContext jaxbContext = JAXBContext.newInstance(Markup.class);
-                        Marshaller marshaller = jaxbContext.createMarshaller();
-                        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                        marshaller.marshal(this.markup, zipOutputStream);
-                } catch (JAXBException e) {
-                        throw new BcfException(e);
-                }
+    public UUID getUuid() {
+	return uuid;
+    }
 
-                ZipEntry visualizationInfo = new ZipEntry(getUuid().toString() + "/viewpoint.bcfv");
-                zipOutputStream.putNextEntry(visualizationInfo);
-                try {
-                        JAXBContext jaxbContext = JAXBContext.newInstance(VisualizationInfo.class);
-                        Marshaller marshaller = jaxbContext.createMarshaller();
-                        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                        marshaller.marshal(this.visualizationInfo, zipOutputStream);
-                } catch (JAXBException e) {
-                        throw new BcfException(e);
-                }
+    public void write(ZipOutputStream zipOutputStream) throws IOException, BcfException {
+	ZipEntry markup = new ZipEntry(getUuid().toString() + "/markup.bcf");
+	zipOutputStream.putNextEntry(markup);
+	try {
+	    JAXBContext jaxbContext = JAXBContext.newInstance(Markup.class);
+	    Marshaller marshaller = jaxbContext.createMarshaller();
+	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	    marshaller.marshal(this.markup, zipOutputStream);
+	} catch (JAXBException e) {
+	    throw new BcfException(e);
+	}
+
+	// Modified by JO 24/04/2020
+	if (this.visualizationInfo != null) {
+	    ZipEntry visualizationInfo = new ZipEntry(getUuid().toString() + "/viewpoint.bcfv");
+	    zipOutputStream.putNextEntry(visualizationInfo);
+	    try {
+		JAXBContext jaxbContext = JAXBContext.newInstance(VisualizationInfo.class);
+		Marshaller marshaller = jaxbContext.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		marshaller.marshal(this.visualizationInfo, zipOutputStream);
+	    } catch (JAXBException e) {
+		throw new BcfException(e);
+	    }
+	}
 
 //                ZipEntry image = new ZipEntry(getUuid().toString() + "/snapshot.png");
 //                zipOutputStream.putNextEntry(image);
 //                ByteArrayInputStream bais = new ByteArrayInputStream(getImageData());
 //                IOUtils.copy(bais, zipOutputStream);
 //TODO SNAPSHOT AVAILABLE YET!
-        }
+    }
 }
