@@ -51,10 +51,21 @@ docker pull jyrkioraskari/webui4mvdxmlchecker:latest
 docker container run -it --publish 8084:8080 jyrkioraskari/webui4mvdxmlchecker
 
 ```
-
-
 Then the software can be accessed from the local web address:
 http://localhost:8084/
+
+## The command-line tool
+
+```
+Usage: java -jar MvdXMLCommandLineChecker.jar -ifc <file> -mvdXML <file>
+
+ -ifc <file>      The Industry Foundation Classes (IFC) file to be tested.
+                  Versions IFC2x3, and IFC4 are supported.
+ -mvdXML <file>   The mvdXML (Model View Definitions with Exchange
+                  Requirements and Validation Rules) definition file for
+                  the validation.
+
+```
 
 
 ## Cite this
