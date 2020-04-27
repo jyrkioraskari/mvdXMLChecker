@@ -15,7 +15,7 @@ Version 1.1 Final. 15. 02. 2016
 
 
 Precompiled binaries that can be used at a web application server can be found here: 
-https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases/tag/1.4
+https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases
 
 Tomcat 9 (https://tomcat.apache.org/download-90.cgi) was used as an application server for the tests.
 
