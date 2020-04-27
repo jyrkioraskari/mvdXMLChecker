@@ -1,4 +1,6 @@
 # mvdXML Checker
+1.7
+
 Online mvdXMLChecker: Use mvdXML to validate IFC models
 
 Precompiled binaries that can be used at a web application server can be found here: 
