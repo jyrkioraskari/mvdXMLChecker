@@ -22,8 +22,8 @@ import javax.ws.rs.core.MediaType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
-import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.ifcvalidator.db.MvdXMLFileHandle;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.IssueReportBean;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MVDCheck_BOTServiceDescriotor;
@@ -207,15 +207,15 @@ public class IfcValidatorAPI {
 
 		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1"))  {
 		    issueReportBean.setMessage("a valid mvdXML 1.1 file");
-		    List<IssueBean> issues=MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
-		    issueReportBean.getIssues().addAll(issues);
+		    IssueReport issueReport=MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
+		    issueReportBean.getIssues().addAll(issueReport.getIssues());
 		   
 		} else {
 		    // mvdXML 1_1
 		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 			issueReportBean.setMessage("a mvdXML 1_1 file");
-			List<IssueBean> issues=MvdXMLv1undescore1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
-			 issueReportBean.getIssues().addAll(issues);
+			IssueReport issueReport=MvdXMLv1undescore1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
+			issueReportBean.getIssues().addAll(issueReport.getIssues());
 		    }
 		}
 
@@ -232,7 +232,5 @@ public class IfcValidatorAPI {
 
 	return issueReportBean;
     }
-
-   
 
 }

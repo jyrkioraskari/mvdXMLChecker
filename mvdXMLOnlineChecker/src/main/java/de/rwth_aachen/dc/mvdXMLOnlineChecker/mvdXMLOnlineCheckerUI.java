@@ -28,6 +28,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
@@ -138,26 +139,24 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	try {
 
 	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
-		 Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
-		 n.setDelayMsec(5000);
-		 n.show(Page.getCurrent());
-		List<IssueBean> result = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-		issues.addAll(result);
+		Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+		n.setDelayMsec(5000);
+		n.show(Page.getCurrent());
+		IssueReport result = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		issues.addAll(result.getIssues());
 
 	    } else {
 		// mvdXML 1_1
 		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-			 Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
-			 n.setDelayMsec(5000);
-			 n.show(Page.getCurrent());
-		    List<IssueBean> result = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-		    issues.addAll(result);
-		}
-		else
-		{
-			 Notification n = new Notification("Unknown mvdXML version.", Notification.Type.TRAY_NOTIFICATION);
-			 n.setDelayMsec(5000);
-			 n.show(Page.getCurrent());
+		    Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
+		    n.setDelayMsec(5000);
+		    n.show(Page.getCurrent());
+		    IssueReport result = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		    issues.addAll(result.getIssues());
+		} else {
+		    Notification n = new Notification("Unknown mvdXML version.", Notification.Type.TRAY_NOTIFICATION);
+		    n.setDelayMsec(5000);
+		    n.show(Page.getCurrent());
 
 		}
 	    }
@@ -168,8 +167,6 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	    e.printStackTrace();
 	}
     }
-
-
 
     @Subscribe
     public void onNew_ifcSTEPFile(New_ifcSTEPFile event) {

@@ -21,9 +21,7 @@ import nl.tue.ddss.mvdparser.MvdXMLParser;
 
 public class MvdXMLv1undescore1Check {
 
-    public static List<IssueBean> check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
-	List<IssueBean> issues = new ArrayList<>();
-	
+    public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
 	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
 	
 	IfcModelInstance model = new IfcModelInstance();
@@ -34,11 +32,29 @@ public class MvdXMLv1undescore1Check {
 	if (model.getIfcversion().isPresent()) {
 	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
 	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
-	    issues.addAll(issuereport.getIssues());
+	    return issuereport;
 	}
 	
-	return issues;
+	return null;
     }
 
+    public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
+  	List<IssueBean> issues = new ArrayList<>();
+  	
+  	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
+  	
+  	IfcModelInstance model = new IfcModelInstance();
+  	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+  	
+  	List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
+
+  	if (model.getIfcversion().isPresent()) {
+  	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+  	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
+  	    issues.addAll(issuereport.getIssues());
+  	}
+  	
+  	return issues;
+      }
 
 }
