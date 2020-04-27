@@ -1,5 +1,17 @@
 # mvdXML Checker
-Online mvdXMLChecker: Use mvdXML to validate IFC models
+v1.7
+
+The mvdXML Checker is a tool for verifying IFC models. The validation
+rules are defined in the mvdXML schema (1). The software produces a BCF
+report and a list of the found issues. These BCFfiles can be opened with
+Solibri to review the viewpoints, and the comment of the validation issues
+found.
+
+References:
+1. Model Support Group (MSG) of buildingSMART International Ltd.
+Specification of a standardized format to define and exchange
+Model View Definitions with Exchange Requirements and Validation Rules.
+Version 1.1 Final. 15. 02. 2016
 
 Precompiled binaries that can be used at a web application server can be found here: 
 https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases/tag/1.4
