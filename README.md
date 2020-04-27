@@ -13,6 +13,7 @@ Specification of a standardized format to define and exchange
 Model View Definitions with Exchange Requirements and Validation Rules.
 Version 1.1 Final. 15. 02. 2016
 
+
 Precompiled binaries that can be used at a web application server can be found here: 
 https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases/tag/1.4
 
