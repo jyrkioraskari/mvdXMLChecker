@@ -12,7 +12,10 @@ import javax.servlet.annotation.WebServlet;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
@@ -50,6 +53,11 @@ public class mvdXMLOnlineCheckerUI extends UI {
     private Grid<IssueBean> issues_grid = new Grid<>();
     private List<IssueBean> issues = new ArrayList<>();
 
+    private Button save_as_bcfzip_button;
+    private FileDownloader fileDownloader;
+
+    private Button check_button;
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 	final VerticalLayout layout = new VerticalLayout();
@@ -57,7 +65,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	labelH1.addStyleName(ValoTheme.LABEL_H1);
 	layout.addComponent(labelH1);
 
-	final Label instruction_label = new Label("Currently supported versions are: IFC2X3 for mvdXML1-1, and IFC2x3 and IFC4 for mvdXML 1.1.");
+	final Label instruction_label = new Label("Currently supported versions are mvdXML1-1 and mvdXML 1.1.");
 	layout.addComponent(instruction_label);
 
 	layout.addComponents(mvdXMLFileLabel, ifcFileLabel);
@@ -78,12 +86,13 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	file_uploader.setButtonCaption("Upload file");
 	file_uploader.setImmediateMode(true);
 
-	Button check_button = new Button("Check");
-	check_button.addClickListener(x -> {
+	this.check_button = new Button("Check");
+	this.check_button.setEnabled(false);
+	this.check_button.addClickListener(x -> {
 	    checkIFCFile();
 	});
 	HorizontalLayout button_layout = new HorizontalLayout();
-	button_layout.addComponents(file_uploader, check_button);
+	button_layout.addComponents(file_uploader, this.check_button);
 	button_layout.setComponentAlignment(file_uploader, Alignment.BOTTOM_CENTER);
 	button_layout.setComponentAlignment(check_button, Alignment.BOTTOM_CENTER);
 
@@ -97,6 +106,11 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	issues_grid.addComponentColumn(item -> createCommentPopUpButton(item)).setCaption("Comment");
 	issues_grid.setWidth("100%");
 	layout.addComponent(issues_grid);
+
+	this.save_as_bcfzip_button = new Button("Save the result as BCF Zip");
+	this.save_as_bcfzip_button.setEnabled(false);
+
+	layout.addComponent(save_as_bcfzip_button);
 
 	setContent(layout);
 	communication.register(this);
@@ -124,26 +138,29 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     public void checkIFCFile() {
 	issues.clear();
-	if (this.ifcFile == null) {
-	    Notification n = new Notification("Upload an IFC file.", Notification.Type.TRAY_NOTIFICATION);
-	    n.setDelayMsec(5000);
-	    n.show(Page.getCurrent());
-	    return;
-	}
-	if (this.mvdXMLFile == null) {
-	    Notification n = new Notification("Upload an mvdXML file.", Notification.Type.TRAY_NOTIFICATION);
-	    n.setDelayMsec(5000);
-	    n.show(Page.getCurrent());
-	    return;
-	}
+	
 	try {
 
+	    // mvdXML 1.1
 	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
 		Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
 		n.setDelayMsec(5000);
 		n.show(Page.getCurrent());
-		IssueReport result = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-		issues.addAll(result.getIssues());
+		IssueReport issuereport = MvdXMLv1dot1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		issues.addAll(issuereport.getIssues());
+
+		File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+		tempBCFZipFile.deleteOnExit();
+		issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+
+		Resource res = new FileResource(tempBCFZipFile);
+		if (this.fileDownloader == null) {
+		    this.fileDownloader = new FileDownloader(res);
+		    this.fileDownloader.extend(this.save_as_bcfzip_button);
+		} else {
+		    this.fileDownloader.setFileDownloadResource(res);
+		}
+		this.save_as_bcfzip_button.setEnabled(true);
 
 	    } else {
 		// mvdXML 1_1
@@ -151,8 +168,21 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		    Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
 		    n.setDelayMsec(5000);
 		    n.show(Page.getCurrent());
-		    IssueReport result = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-		    issues.addAll(result.getIssues());
+		    IssueReport issuereport = MvdXMLv1undescore1Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		    issues.addAll(issuereport.getIssues());
+
+		    File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+		    tempBCFZipFile.deleteOnExit();
+		    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+		    Resource res = new FileResource(tempBCFZipFile);
+		    if (this.fileDownloader == null) {
+			this.fileDownloader = new FileDownloader(res);
+			this.fileDownloader.extend(this.save_as_bcfzip_button);
+		    } else {
+			this.fileDownloader.setFileDownloadResource(res);
+		    }
+		    this.save_as_bcfzip_button.setEnabled(true);
+
 		} else {
 		    Notification n = new Notification("Unknown mvdXML version.", Notification.Type.TRAY_NOTIFICATION);
 		    n.setDelayMsec(5000);
@@ -160,8 +190,6 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 		}
 	    }
-
-	    // issues.addAll(report.getIssues());
 	    issues_grid.setItems(issues);
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -172,12 +200,32 @@ public class mvdXMLOnlineCheckerUI extends UI {
     public void onNew_ifcSTEPFile(New_ifcSTEPFile event) {
 	this.ifcFileLabel.setValue("IFC: " + event.getFile().getName());
 	this.ifcFile = event.getFile();
+
+	if (this.ifcFile != null && this.mvdXMLFile != null) {
+	    this.check_button.setEnabled(true);
+	}
+	if (this.mvdXMLFile == null) {
+	    Notification n = new Notification("Upload an mvdXML file.", Notification.Type.TRAY_NOTIFICATION);
+	    n.setDelayMsec(5000);
+	    n.show(Page.getCurrent());
+	    return;
+	}
     }
 
     @Subscribe
     public void onNew_mvdXMLFile(New_mvdXMLFile event) {
 	this.mvdXMLFileLabel.setValue("mvdXML: " + event.getFile().getName());
 	this.mvdXMLFile = event.getFile();
+
+	if (this.ifcFile != null && this.mvdXMLFile != null) {
+	    this.check_button.setEnabled(true);
+	}
+	if (this.ifcFile == null) {
+	    Notification n = new Notification("Upload an IFC file.", Notification.Type.TRAY_NOTIFICATION);
+	    n.setDelayMsec(5000);
+	    n.show(Page.getCurrent());
+	    return;
+	}
     }
 
     @WebServlet(urlPatterns = "/*", name = "mvdXMLOnlineCheckerUIServlet", asyncSupported = true)
