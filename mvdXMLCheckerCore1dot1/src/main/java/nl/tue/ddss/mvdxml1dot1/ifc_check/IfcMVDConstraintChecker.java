@@ -50,10 +50,7 @@ public class IfcMVDConstraintChecker {
 	IssueReport issuereport = new IssueReport(ifcModel,ifcfile);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
-	    System.out.println("attrrules: " + attributeRules.size());
-	    System.out.println("attrrule: " + attributeRules.get(0).getAttributeName());
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
-	    System.out.println("class: " + constraint.getConceptRoot().getApplicableRootEntity());
 	    try {
 		Class cls = null;
 		switch (this.ifcversion) {
@@ -75,7 +72,6 @@ public class IfcMVDConstraintChecker {
 		for (Object ifcObject : allRoots) {
 		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules, this.ifcversion);
 		    List<HashMap<AbstractRule, ObjectToValue>> hashMaps = ifcHashMapBuilder.getHashMaps();
-		    System.out.println("hashmaps: " + hashMaps.size());
 
 		    String comment = new String();
 		    for (HashMap<AbstractRule, ObjectToValue> hashMap : hashMaps)
@@ -84,7 +80,6 @@ public class IfcMVDConstraintChecker {
 		    for (TemplateRule templateRule : templateRules) {
 			for (int i = 0; i < hashMaps.size(); i++) {
 			    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
-			    System.out.println("template rule:" + templateRule.hashCode() + " result:" + result.booleanValue());
 			    if (result != null && result == true)
 				break;
 			    if (result == false && i == hashMaps.size() - 1)
@@ -216,13 +211,11 @@ public class IfcMVDConstraintChecker {
     }
 
     private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, ObjectToValue> hashMap) {
-	System.out.println("Rule: " + rule);
 	rule=filterCharacters(rule);
 	Boolean result = false;
 	CharStream charStream = new ANTLRStringStream(rule);
 	MvdXMLv1_1Lexer lexer = new MvdXMLv1_1Lexer(charStream);
 	TokenStream tokenStream = new CommonTokenStream(lexer);
-	System.out.println("Tokenstream: " + tokenStream.LA(1));
 	MvdXMLv1_1Parser parser = new MvdXMLv1_1Parser(tokenStream,hashMap);
 	try {
 	    result = parser.expression();

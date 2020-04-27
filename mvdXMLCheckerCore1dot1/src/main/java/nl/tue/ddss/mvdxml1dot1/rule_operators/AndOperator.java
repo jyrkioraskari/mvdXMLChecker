@@ -33,7 +33,6 @@ public class AndOperator {
 	}
 	
 	public Boolean getResult() {
-	        System.out.println("AND: "+leftOperand+" && "+rightOperand);
 		return leftOperand && rightOperand;
 	}
 }

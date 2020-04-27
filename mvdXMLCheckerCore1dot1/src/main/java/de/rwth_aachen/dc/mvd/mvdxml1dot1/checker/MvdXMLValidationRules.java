@@ -46,7 +46,6 @@ public class MvdXMLValidationRules {
 
 	    JAXBElement<MvdXML> root = unmarshaller.unmarshal(streamSource, MvdXML.class);
 	    this.mvdXML = root.getValue();
-	    System.out.println("XML Root Templates: " + mvdXML.getTemplates().getConceptTemplate().size());
 	    if (mvdXML.getTemplates() == null)
 		return;
 	    List<ConceptTemplate> main_concept_templates = mvdXML.getTemplates().getConceptTemplate(); // can be plural
@@ -74,7 +73,6 @@ public class MvdXMLValidationRules {
 
     private List<ConceptRoot> extractConceptRoots() {
 	MvdXML.Views modelviews = this.mvdXML.getViews();
-	System.out.println("views: " + modelviews.getModelView().size());
 	List<ModelView> modelViews = modelviews.getModelView(); // can be plural: the singular name is from the mvdXML definition
 	List<ModelView.Roots> rootsCollection = new ArrayList<ModelView.Roots>();
 
@@ -85,10 +83,8 @@ public class MvdXMLValidationRules {
 
 	List<ConceptRoot> conceptRoots = new ArrayList<ConceptRoot>();
 	for (ModelView.Roots roots : rootsCollection) {
-	    System.out.println("Add concept root");
 	    conceptRoots.addAll(roots.getConceptRoot());
 	}
-	System.out.println("returned concept roots " + conceptRoots.size());
 	return conceptRoots;
     }
 
@@ -126,13 +122,9 @@ public class MvdXMLValidationRules {
 
 	for (ConceptRoot conceptRoot : extractConceptRoots()) {
 	    List<Concept> concepts = conceptRoot.getConcepts().getConcept();
-	    System.out.println("concepts: " + concepts.size());
 	    for (Concept concept : concepts) {
-		System.out.println("concept: " + concept.getUuid());
 		String templateRef = concept.getTemplate().getRef();
-		System.out.println("template ref was: " + templateRef);
 		for (ConceptTemplate conceptTemplate : concept_templates) {
-		    System.out.println("template id was: " + conceptTemplate.getUuid());
 		    if (conceptTemplate.getUuid().equals(templateRef)) {
 			conceptTrees.add(new MVDConstraint(conceptRoot, concept, conceptTemplate));
 		    }

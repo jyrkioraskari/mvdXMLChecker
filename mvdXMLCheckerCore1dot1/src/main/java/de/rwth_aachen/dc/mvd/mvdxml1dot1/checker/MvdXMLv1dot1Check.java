@@ -37,8 +37,6 @@ public class MvdXMLv1dot1Check {
 
     public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
 	List<IssueBean> issues = new ArrayList<>();
-	System.out.println("Check IFC: " + ifcFile);
-	System.out.println("Check mvdXML: " + mvdXMLFile);
 	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 
 	IfcModelInstance model = new IfcModelInstance();

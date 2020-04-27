@@ -18,7 +18,6 @@ public class Parameter {
     public Parameter(String name, HashMap<AbstractRule, ObjectToValue> hashMap) {
 	this.name = name;
 	this.hashMap = hashMap;
-	System.out.println("Param name: "+name);
     }
 
     public Object getResult() {

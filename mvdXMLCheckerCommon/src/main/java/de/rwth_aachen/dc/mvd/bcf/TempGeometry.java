@@ -34,7 +34,8 @@ public class TempGeometry {
 	this.boundingBox = getBoundingBox(renderEngineModel, ifcProductExpressId);
 	if(boundingBox==null)
 	{
-	    System.err.println("Does not have a geometry");
+	    // No need to repeat
+	    //System.err.println("Does not have a geometry");
 	    return;
 	}
 
@@ -74,10 +75,10 @@ public class TempGeometry {
 	RenderEngineInstance renderEngineInstance;
 	try {
 	    renderEngineInstance = renderEngineModel.getInstanceFromExpressId((int)ifcProductExpressId); // new version uses long
-	    System.out.println("RenderEngineInstance for "+ifcProductExpressId+" is "+renderEngineInstance);
+	    //System.out.println("RenderEngineInstance for "+ifcProductExpressId+" is "+renderEngineInstance);
 	    if(renderEngineInstance==null)
 	    {
-		System.err.println("Not found rendering for: "+ifcProductExpressId);
+		System.err.println("Product of the express id "+ifcProductExpressId+" does not have a geometry");
 		return null;
 	    }
 	    RenderEngineGeometry geometry = renderEngineInstance.generateGeometry();

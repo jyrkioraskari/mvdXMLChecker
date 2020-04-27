@@ -10,3 +10,4 @@ mvdXMLCheckerCore1dot1/target/*
 *.class
 mvdXMLCheckerCommon/target/*
 *.bcfzip
+mvdXMLCommandLineChecker/target/*
