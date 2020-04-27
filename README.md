@@ -1,5 +1,5 @@
 # mvdXML Checker
-v1.7
+v1.8
 
 The mvdXML Checker is a tool for verifying IFC models. The validation
 rules are defined in the mvdXML schema (1). The software produces a BCF
