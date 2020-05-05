@@ -5,13 +5,10 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-resources/gwt"/>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot1-1.9.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
+        <dependent-module archiveName="mvdXMLCheckerCore1dot1-2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCommon-1.9.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-1.9.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
+        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/mvdXMLOnlineChecker/target/classes"/>

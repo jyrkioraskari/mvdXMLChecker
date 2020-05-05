@@ -21,11 +21,14 @@ public class Parameter {
     }
 
     public Object getResult() {
-	Set<AbstractRule> rules = hashMap.keySet();
+	Set<AbstractRule> rules = this.hashMap.keySet();
 	Object value = null;
 	for (AbstractRule rule : rules) {
 	    if (name.equals(rule.getRuleID())) {
-		value = hashMap.get(rule).getValue();
+		System.out.println(name+" equals");
+		value = this.hashMap.get(rule).getValue();
+		System.out.println("value is: "+value);
+		break;
 	    }
 
 	}
@@ -43,8 +46,24 @@ public class Parameter {
 	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcLabelImpl) value).getWrappedValue().toString();
 	else if (value instanceof org.bimserver.models.ifc4.impl.IfcLabelImpl)
 	    result = ((org.bimserver.models.ifc4.impl.IfcLabelImpl) value).getWrappedValue().toString();
+	
+	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcRealImpl)
+	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcRealImpl) value).getWrappedValue();
+	else if (value instanceof org.bimserver.models.ifc4.impl.IfcRealImpl)
+	    result = ((org.bimserver.models.ifc4.impl.IfcRealImpl) value).getWrappedValue();
+
+	
+	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcBooleanImpl)
+	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcBooleanImpl) value).getWrappedValue().toString();
+	else if (value instanceof org.bimserver.models.ifc4.impl.IfcBooleanImpl)
+	    result = ((org.bimserver.models.ifc4.impl.IfcBooleanImpl) value).getWrappedValue().toString();
+
+	
+	
 	else if (value instanceof IdEObject)
-	    result = value;	
+	    result = value;
+	else
+	    result=value;
 	return result;
     }
 

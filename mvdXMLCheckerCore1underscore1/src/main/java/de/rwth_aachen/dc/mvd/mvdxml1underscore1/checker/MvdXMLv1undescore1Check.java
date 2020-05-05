@@ -26,7 +26,7 @@ public class MvdXMLv1undescore1Check {
 	
 	IfcModelInstance model = new IfcModelInstance();
 	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-	
+	bimserver_ifcModel.fixInverseMismatches();
 	List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
 
 	if (model.getIfcversion().isPresent()) {
@@ -45,7 +45,7 @@ public class MvdXMLv1undescore1Check {
   	
   	IfcModelInstance model = new IfcModelInstance();
   	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-  	
+  	bimserver_ifcModel.fixInverseMismatches();
   	List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
 
   	if (model.getIfcversion().isPresent()) {

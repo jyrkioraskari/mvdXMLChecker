@@ -22,6 +22,7 @@ public class MVDCheckerTest {
 	    Path ifcFile = Paths.get(ifcFileName);
 	    IfcModelInstance model = new IfcModelInstance();
 	    IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+	    bimserver_ifcModel.fixInverseMismatches();
 	    List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
 	    System.out.println(constraints.size());
 
@@ -29,7 +30,7 @@ public class MVDCheckerTest {
 		IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
 		IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
 		for (IssueBean i : issuereport.getIssues())
-		    System.out.println("Issue: " + i.getComment());
+		    System.out.println("Issue: "+ i.getComment());
 		String outputFolder = "report/";
 		new File(outputFolder).mkdir();
 		issuereport.writeReport(outputFolder + "checking_result" + ".bcfzip");
@@ -44,9 +45,9 @@ public class MVDCheckerTest {
     public static void main(String[] args) throws Exception {
 
 	// Error case 1 IFC4<>IFC2x3
-
+	new MVDCheckerTest("c:\\test\\noemi2\\BUW_HC-elevator.ifc", "c:\\test\\noemi2\\Vorlage - Kopie (2).mvdxml");
 	//new MVDCheckerTest("c:\\test\\noemi\\BUW_HC-Gebaude.ifc", "c:\\test\\noemi\\BUW_IfcTransportelement.mvdxml");
-	new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "c:\\test\\noemi\\Vorlage2.mvdxml");
+	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "c:\\test\\noemi\\Vorlage2.mvdxml");
 	// new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc",
 	// "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
 	// new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc",

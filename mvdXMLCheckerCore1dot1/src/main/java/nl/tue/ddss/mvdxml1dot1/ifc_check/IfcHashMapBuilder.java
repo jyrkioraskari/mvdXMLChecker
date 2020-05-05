@@ -13,11 +13,13 @@ import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.EntityRule;
 
+// Modified by JO 2020
+
 public class IfcHashMapBuilder {
 
     private Object ifcObject;
     private List<AttributeRule> attributeRules;
-    private List<HashMap<AbstractRule, ObjectToValue>> hashMaps;
+    private final List<HashMap<AbstractRule, ObjectToValue>> hashMaps = new ArrayList<HashMap<AbstractRule, ObjectToValue>>();
     private final String ifc_class_base;
 
     public IfcHashMapBuilder(Object ifcObject, List<AttributeRule> attributeRules, IfcVersion ifcversion) {
@@ -32,133 +34,122 @@ public class IfcHashMapBuilder {
 	    ifc_class_base = "org.bimserver.models.ifc4.";
 	    break;
 	}
+        System.out.println("ifcObject: "+ifcObject);
+	List<HashMap<AttributeRule, ObjectToValue>> initialHMs = new ArrayList<HashMap<AttributeRule, ObjectToValue>>();
+	initialHMs.add(new HashMap<AttributeRule, ObjectToValue>());
+
+	try {
+	    List<HashMap<AttributeRule, ObjectToValue>> hMs = buildHashMaps(ifcObject, attributeRules, initialHMs,0);
+
+	    for (HashMap<AttributeRule, ObjectToValue> hM : hMs)
+		this.hashMaps.add(enrichHashMap(hM));
+	} catch (ClassNotFoundException e) {
+	    e.printStackTrace();
+	}
 
     }
 
-    public List<HashMap<AbstractRule, ObjectToValue>> getHashMaps() throws ClassNotFoundException {
-	HashMap<AttributeRule, ObjectToValue> initialHM = new HashMap<AttributeRule, ObjectToValue>();
-	List<HashMap<AttributeRule, ObjectToValue>> initialHMs = new ArrayList<HashMap<AttributeRule, ObjectToValue>>();
-	initialHMs.add(initialHM);
-	List<HashMap<AttributeRule, ObjectToValue>> hMs = buildHashMaps(ifcObject, attributeRules, initialHMs);
-	hashMaps = new ArrayList<HashMap<AbstractRule, ObjectToValue>>();
-	for (HashMap<AttributeRule, ObjectToValue> hM : hMs) {
-	    HashMap<AbstractRule, ObjectToValue> hashMap = enrichHashMap(hM);
-	    hashMaps.add(hashMap);
-	}
-	return hashMaps;
+    public List<HashMap<AbstractRule, ObjectToValue>> getHashMaps() {
+	return this.hashMaps;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private List<HashMap<AttributeRule, ObjectToValue>> buildHashMaps(Object ifcObject, List<AttributeRule> attributeRules, List<HashMap<AttributeRule, ObjectToValue>> hashMaps) throws ClassNotFoundException {
+    private List<HashMap<AttributeRule, ObjectToValue>> buildHashMaps(Object ifcObject, List<AttributeRule> attributeRules, List<HashMap<AttributeRule, ObjectToValue>> hashMaps,int inx) throws ClassNotFoundException {	
 	for (AttributeRule attributeRule : attributeRules) {
-	    String attributeName = attributeRule.getAttributeName();
-	    Object value = new Object();
-	    try {
-		if (ifcObject != null) {
-		    Method m = ifcObject.getClass().getMethod("get" + attributeName);
-		    value = m.invoke(ifcObject);
-		} else {
-		    value = null;
-		}
-	    } catch (NoSuchMethodException | SecurityException e) {
-		e.printStackTrace();
-	    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-		e.printStackTrace();
+	    Object value = getAttributeValue(ifcObject, attributeRule.getAttributeName());
+	    for (int i = 0; i < inx; i++) {
+		System.out.print("--");
 	    }
-
+	    System.out.println(" "+ifcObject.getClass().getName()+" "+attributeRule.getAttributeName()+" = "+value);
 	    for (HashMap<AttributeRule, ObjectToValue> hm : hashMaps) {
 		hm.put(attributeRule, new ObjectToValue(ifcObject, value));
 	    }
 	    if (value == null) {
 		if (attributeRule.getEntityRules() != null) {
 		    List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-		    for (EntityRule entityRule : entityRules) {
-			if (entityRule.getAttributeRules() != null) {
-			    if (entityRule.getAttributeRules().getAttributeRule().size() >= 1) {
-				hashMaps = buildHashMaps(null, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
-			    }
-			}
-		    }
+		    for (EntityRule entityRule : entityRules)
+			if ((entityRule.getAttributeRules() != null) && (entityRule.getAttributeRules().getAttributeRule().size() >= 1))
+			    hashMaps = buildHashMaps(null, entityRule.getAttributeRules().getAttributeRule(), hashMaps,inx+1);
 		}
 	    }
 	    if (value instanceof Collection) {
 		List<Object> valueList = new ArrayList<Object>();
 		valueList.addAll((Collection) value);
-		if (valueList.size() == 0) {
-		    if (attributeRule.getEntityRules() != null) {
-			List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-			for (EntityRule entityRule : entityRules) {
-			    if (entityRule.getAttributeRules() != null) {
-				if (entityRule.getAttributeRules().getAttributeRule().size() >= 1) {
-				    hashMaps = buildHashMaps(null, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
-				}
-			    }
-			}
-		    }
-		} else if (valueList.size() == 1) {
-		    if (attributeRule.getEntityRules() != null) {
-			List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-			for (EntityRule entityRule : entityRules) {
 
-			    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(0))) {
-				if (entityRule.getAttributeRules() != null) {
-				    if (entityRule.getAttributeRules().getAttributeRule().size() >= 1) {
-					hashMaps = buildHashMaps(valueList.get(0), entityRule.getAttributeRules().getAttributeRule(), hashMaps);
-				    }
-				}
-			    }
+		switch (valueList.size()) {
+		case 0:
+		    if (attributeRule.getEntityRules() != null) {
+			List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
+			for (EntityRule entityRule : entityRules) {
+			    if ((entityRule.getAttributeRules() != null) && (entityRule.getAttributeRules().getAttributeRule().size() >= 1))
+				hashMaps = buildHashMaps(null, entityRule.getAttributeRules().getAttributeRule(), hashMaps,inx+1);
+
 			}
 		    }
-		} else {
+		    break;
+		case 1:
+		    if (attributeRule.getEntityRules() != null) {
+			List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
+			for (EntityRule entityRule : entityRules)
+			    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(0)))
+				if ((entityRule.getAttributeRules() != null) && (entityRule.getAttributeRules().getAttributeRule().size() >= 1))
+				    hashMaps = buildHashMaps(valueList.get(0), entityRule.getAttributeRules().getAttributeRule(), hashMaps,inx+1);
+		    }
+		    break;
+		default:
 		    List<HashMap<AttributeRule, ObjectToValue>> hMs = copyHashMaps(hashMaps);
 		    for (int i = 0; i < valueList.size(); i++) {
 			if (i == 0) {
 			    if (attributeRule.getEntityRules() != null) {
 				List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-				for (EntityRule entityRule : entityRules) {
-				    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(i))) {
-					if (entityRule.getAttributeRules() != null) {
-					    hashMaps = buildHashMaps((valueList).get(i), entityRule.getAttributeRules().getAttributeRule(), hashMaps);
-					}
-				    }
-				}
+				for (EntityRule entityRule : entityRules)
+				    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(i)))
+					if (entityRule.getAttributeRules() != null)
+					    hashMaps = buildHashMaps((valueList).get(i), entityRule.getAttributeRules().getAttributeRule(), hashMaps,inx+1);
 			    }
-			}
-			if (i >= 1) {
+			} else if (i >= 1) {
 			    List<HashMap<AttributeRule, ObjectToValue>> hashMapList = copyHashMaps(hMs);
 			    if (attributeRule.getEntityRules() != null) {
 				List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
 				for (EntityRule entityRule : entityRules) {
-				    if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(i))) {
-					if (entityRule.getAttributeRules() != null) {
+				    if ((Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(valueList.get(i))) && (entityRule.getAttributeRules() != null)) {
+					List<AttributeRule> attRuleList = entityRule.getAttributeRules().getAttributeRule();
+					if (attRuleList.size() >= 1)
+					    hashMaps.addAll(buildHashMaps(valueList.get(i), entityRule.getAttributeRules().getAttributeRule(), hashMapList,inx+1));
 
-					    List<AttributeRule> attRuleList = entityRule.getAttributeRules().getAttributeRule();
-					    if (attRuleList.size() >= 1) {
-						hashMaps.addAll(buildHashMaps(valueList.get(i), entityRule.getAttributeRules().getAttributeRule(), hashMapList));
-					    }
-					}
 				    }
 				}
 			    }
 			}
 		    }
-		}
-	    }
 
-	    else if (!(value instanceof String || value instanceof Double || value == null)) {
+		}
+	    } else if (!(value instanceof String || value instanceof Double || value == null)) {
 		if (attributeRule.getEntityRules() != null) {
 		    List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-		    for (EntityRule entityRule : entityRules) {
-			if (Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(value)) {
-			    if (entityRule.getAttributeRules() != null) {
-				hashMaps = buildHashMaps(value, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
-			    }
-			}
-		    }
+		    for (EntityRule entityRule : entityRules)
+			if ((Class.forName(this.ifc_class_base + entityRule.getEntityName()).isInstance(value)) && (entityRule.getAttributeRules() != null))
+			    hashMaps = buildHashMaps(value, entityRule.getAttributeRules().getAttributeRule(), hashMaps,inx+1);
 		}
 	    }
 	}
 	return hashMaps;
+    }
+
+    private Object getAttributeValue(Object ifcObject, String attributeName) {
+	Object value = new Object();
+	try {
+	    if (ifcObject != null)
+		value = ifcObject.getClass().getMethod("get" + attributeName).invoke(ifcObject);
+	    else {
+		value = null;
+	    }
+	} catch (NoSuchMethodException | SecurityException e) {
+	    e.printStackTrace();
+	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+	    e.printStackTrace();
+	}
+	return value;
     }
 
     @SuppressWarnings("unchecked")
@@ -190,8 +181,7 @@ public class IfcHashMapBuilder {
 					    ((ArrayList<Object>) derivedValue).add(object);
 					}
 				    } catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
+					e.printStackTrace();
 				    }
 				}
 			    } else {
@@ -201,8 +191,7 @@ public class IfcHashMapBuilder {
 					derivedValue = value;
 				    }
 				} catch (ClassNotFoundException e) {
-				    // TODO Auto-generated catch block
-				    // e.printStackTrace();
+				    e.printStackTrace();
 				}
 			    }
 			}

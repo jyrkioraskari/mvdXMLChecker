@@ -23,7 +23,7 @@ public class MVDCheckerTest {
 	    Path ifcFile = Paths.get(ifcFileName);
 	    IfcModelInstance model = new IfcModelInstance();
             IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-		
+            bimserver_ifcModel.fixInverseMismatches();	
 	    List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
 
 	    if (model.getIfcversion().isPresent()) {
