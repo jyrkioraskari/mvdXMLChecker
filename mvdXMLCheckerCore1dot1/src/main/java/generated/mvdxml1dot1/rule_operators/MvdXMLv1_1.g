@@ -1,22 +1,27 @@
 grammar MvdXMLv1_1;
 
 @header {
-package nl.tue.ddss.rule_parse;
+package generated.mvdxml1dot1.rule_operators;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import org.bimserver.ifc.IfcModel;
-import org.bimserver.models.ifc2x3tc1.IfcObject;
-import org.bimserver.models.ifc2x3tc1.IfcRoot;
-import org.buildingsmart_tech.mvdxml.mvdxml1_1.*;
-import nl.tue.ddss.ifc_check.IfcHashMapBuilder.ObjectToValue;
-import nl.tue.ddss.ifc_check.Parameter;
-import nl.tue.ddss.ifc_check.Metric;
+
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.Parser;
+import org.antlr.runtime.ParserRuleReturnScope;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
+
+import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
+import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
+import nl.tue.ddss.mvdxml1dot1.ifc_check.Metric;
+import nl.tue.ddss.mvdxml1dot1.ifc_check.Parameter;
 }
 
 @lexer::header {
-package nl.tue.ddss.rule_parse;
+package generated.mvdxml1dot1.rule_operators;
 }
 
 @members{
@@ -35,8 +40,9 @@ expression returns [Boolean expressionReturns]
 	};
 	catch[RecognitionException re]{
 	}
+	
 boolean_expression returns [Boolean result]
-    	:	left=boolean_term {$result=left;}(logical=logical_interconnection right=boolean_term
+    	:	left=boolean_term {$result=left;}(logical=logical_interconnection right=boolean_expression
     	{if (logical.equals("AND")) {
     	AndOperator andOperator=new AndOperator(left,right);
     	$result=andOperator.getResult();
@@ -46,7 +52,10 @@ boolean_expression returns [Boolean result]
       }else if (logical.equals("XOR")) {
       XorOperator xorOperator=new XorOperator(left,right);
       $result=xorOperator.getResult();
-      }} )*  ;
+      }} )  ;
+      
+
+      
 boolean_term returns [Boolean boolTermReturns]
 	:	(( leftOperand=parameter ( leftOperand=metric[leftOperand] )?) op=operator ( rightOperand=value | rightOperand=parameter ( rightOperand=metric[rightOperand] )? ) )
 	 {if (op.equals("=")){
@@ -69,18 +78,25 @@ boolean_term returns [Boolean boolTermReturns]
    $boolTermReturns=inEqualOperator.getResult();
    }  
 }|  ( LPAREN valueReturns=boolean_expression RPAREN ){$boolTermReturns=valueReturns;};
+
+
 parameter returns [Object paraReturns] 
 	:	SIMPLEID {Parameter parameter=new Parameter($SIMPLEID.text,hashMap);
 	$paraReturns=parameter.getResult();
 	};
+	
 metric [Object value]returns [Object metricReturns] 	
 	:	VALUE {Metric metric=new Metric($value);$metricReturns=metric.getMetricValue();}
 	| SIZE {Metric metric=new Metric($value);$metricReturns=metric.getMetricSize();}
 	| TYPE {Metric metric=new Metric($value);$metricReturns=metric.getMetricType();}| UNIQUE;
+	
 logical_interconnection returns [String logical]
 	:	AND {$logical="AND";}| OR{$logical="OR";} | XOR {$logical="XOR";};
+	
+	
 operator returns[String op]
 	:	EQUAL {$op="=";}| NOT_EQUAL{$op="!=";} | GREATER_THAN {$op=">";} | GREATER_THAN_OR_EQUAL {$op=">=";}| LESS_THAN {$op="<";}| LESS_THAN_OR_EQUAL{$op="<=";};
+	
 value returns[Object valueReturns]	
 	:	logical_literal{
 	$valueReturns=$logical_literal.logicalReturns;
@@ -91,12 +107,16 @@ value returns[Object valueReturns]
   }| regular_expression{
   $valueReturns=$regular_expression.regReturns;
   };
+  
 logical_literal	returns[Boolean logicalReturns]
 	: 	FALSE {$logicalReturns=false;}| TRUE {$logicalReturns=true;}| UNKNOWN ;
+	
 real_literal returns[Double realReturns]
 	:	(sign)? ( DIGIT | INT ) ('.')? ( ( DIGIT | INT ) )? ( 'e' (sign)? ( DIGIT | INT ) )? {$realReturns=Double.parseDouble($real_literal.text);};
+	
 string_literal returns [String stringReturns]
 	:	STRING {$stringReturns=$STRING.text.substring(1,$STRING.text.length()-1);};
+	
 regular_expression returns [String regReturns]
 	:	'reg' STRING {$regReturns="reg "+$STRING.text.substring(1,$STRING.text.length()-1);};
 sign 	

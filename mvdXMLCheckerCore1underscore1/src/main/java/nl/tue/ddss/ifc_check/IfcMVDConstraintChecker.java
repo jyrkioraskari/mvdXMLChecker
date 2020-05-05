@@ -27,10 +27,10 @@ import org.buildingsmart_tech.mvdxml.mvdxml1_1.TemplateRule;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.IssueReport;
+import generated.mvdxml1underscore1.rule_operators.MvdXMLv1_1Lexer;
+import generated.mvdxml1underscore1.rule_operators.MvdXMLv1_1Parser;
 import nl.tue.ddss.ifc_check.IfcHashMapBuilder.ObjectToValue;
 import nl.tue.ddss.mvdparser.MVDConstraint;
-import nl.tue.ddss.rule_parse.MvdXMLv1_1Lexer;
-import nl.tue.ddss.rule_parse.MvdXMLv1_1Parser;
 
 /*
  * Modified by J0 2020

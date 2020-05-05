@@ -125,7 +125,7 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCommon</artifactId>
-			<version>1.8</version>
+			<version>1.9</version>
 		</dependency>
 		
 	</dependencies>
@@ -143,5 +143,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	<version>1.8</version>
+	<version>1.9</version>
 </project>

@@ -27,9 +27,9 @@ import generated.buildingsmart_tech.mvd_xml_1dot1.Definitions;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Definitions.Definition;
 import generated.buildingsmart_tech.mvd_xml_1dot1.EntityRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.TemplateRules.TemplateRule;
+import generated.mvdxml1dot1.rule_operators.MvdXMLv1_1Lexer;
+import generated.mvdxml1dot1.rule_operators.MvdXMLv1_1Parser;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
-import nl.tue.ddss.mvdxml1dot1.rule_operators.MvdXMLv1_1Lexer;
-import nl.tue.ddss.mvdxml1dot1.rule_operators.MvdXMLv1_1Parser;
 
 
 /*
@@ -78,13 +78,19 @@ public class IfcMVDConstraintChecker {
 			comment = templateLevelRuleCheck(hashMap);
 
 		    for (TemplateRule templateRule : templateRules) {
+			boolean valid=false;
 			for (int i = 0; i < hashMaps.size(); i++) {
 			    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
-			    if (result != null && result == true)
+			    if(result == null)
+				continue;
+			    if (result == true)
+			    {
+				valid=true;
 				break;
-			    if (result == false && i == hashMaps.size() - 1)
-				comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
+			    }
 			}
+			if (!valid)
+				comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
 		    }
 		    if (comment.length() > 0) {
 			Definitions definitions = constraint.getConcept().getDefinitions();

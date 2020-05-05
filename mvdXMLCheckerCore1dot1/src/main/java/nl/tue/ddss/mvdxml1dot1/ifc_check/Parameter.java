@@ -29,17 +29,22 @@ public class Parameter {
 	    }
 
 	}
-	if (value == null) {
+	
+	// Fixed by JO 2020
+	if (value == null)
 	    result = null;
-	} else if (value instanceof Collection) {
+	else if (value instanceof Collection)
 	    result = value;
-	} else if (value instanceof Double || value instanceof String) {
+	else if (value instanceof Double || value instanceof String)
 	    result = value;
-	} else if (value instanceof Enumerator) {
+	else if (value instanceof Enumerator)
 	    result = ((Enumerator) value).getLiteral();
-	} else if (value instanceof IdEObject) {
-	    result = value;
-	}
+	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcLabelImpl)
+	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcLabelImpl) value).getWrappedValue().toString();
+	else if (value instanceof org.bimserver.models.ifc4.impl.IfcLabelImpl)
+	    result = ((org.bimserver.models.ifc4.impl.IfcLabelImpl) value).getWrappedValue().toString();
+	else if (value instanceof IdEObject)
+	    result = value;	
 	return result;
     }
 
