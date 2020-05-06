@@ -82,3 +82,7 @@ Usage: java -jar MvdXMLCommandLineChecker.jar -ifc <file> -mvdXML <file>
 }
 ```
 
+## Acknowledgements
+This research was funded by the EU through the H2020 project BIM4REN.
+
+
