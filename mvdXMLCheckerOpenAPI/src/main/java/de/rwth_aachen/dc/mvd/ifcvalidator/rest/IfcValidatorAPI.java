@@ -5,9 +5,11 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -98,7 +105,7 @@ public class IfcValidatorAPI {
     @Path("/mvdxml")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_JSON)
-    public ResponseBean register_mvdxml_json(String mvdxmlContent) {
+    public ResponseBean register_mvdxml_InputAsStrinBody(String mvdxmlContent) {
 	ResponseBean responseBean = new ResponseBean();
 	System.out.println("mvdxml content: \n" + mvdxmlContent);
 
@@ -132,6 +139,54 @@ public class IfcValidatorAPI {
 	return responseBean;
     }
 
+    
+    @POST
+    @Path("/mvdxml")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ResponseBean register_mvdxml__InputAsXMLFile(FormDataMultiPart ifcFileData) {
+	ResponseBean responseBean = new ResponseBean();
+	try {
+	    File tempFile = File.createTempFile("MvdXML-", ".xml");
+
+	    for (BodyPart part : ifcFileData.getBodyParts()) {
+		InputStream is = part.getEntityAs(InputStream.class);
+		ContentDisposition meta = part.getContentDisposition();
+
+		try {
+		    tempFile.deleteOnExit();
+
+		    Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+		    IOUtils.closeQuietly(is);
+		    break;
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+
+	    }
+	    MvdXMLFileHandle mvdXMLFile = new MvdXMLFileHandle(tempFile.getAbsolutePath());
+	    Transaction transaction = null;
+	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+		transaction = session.beginTransaction();
+		Serializable id = session.save(mvdXMLFile);
+		responseBean.setMessage("ID was:" + id.toString());
+		responseBean.setResult(id.toString());
+		transaction.commit();
+	    } catch (Exception e) {
+		if (transaction != null) {
+		    transaction.rollback();
+		}
+		e.printStackTrace();
+		responseBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		responseBean.setMessage("Error: " + e.getMessage());
+		responseBean.setResult("-1");
+	    }
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	return responseBean;
+    }
     /**
      * Lists the mvd 1.1 definition files in the server
      * 
@@ -189,11 +244,12 @@ public class IfcValidatorAPI {
     @Path("/check/{mvdxmlid}")
     @Consumes("application/ifc")
     @Produces(MediaType.APPLICATION_JSON)
-    public IssueReportBean check_withsSecifiedMvcxml(@PathParam("mvdxmlid") String mvdxmlid, String ifcStepContent) {
+    public IssueReportBean check_withsSecifiedMvcxml_inputAsApplicationIFC_resultAsJSON(@PathParam("mvdxmlid") String mvdxmlid, String ifcStepContent) {
 	IssueReportBean issueReportBean = new IssueReportBean();
 	System.out.println("ifc content: \n" + ifcStepContent);
 	try {
 	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
+	    tempIfcFile.deleteOnExit();
 	    FileOutputStream fos = new FileOutputStream(tempIfcFile.getAbsolutePath());
 	    DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 	    outStream.writeUTF(ifcStepContent);
@@ -205,16 +261,16 @@ public class IfcValidatorAPI {
 
 		java.nio.file.Path ifcFile = Paths.get(tempIfcFile.getAbsolutePath());
 
-		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1"))  {
+		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
 		    issueReportBean.setMessage("a valid mvdXML 1.1 file");
-		    IssueReport issueReport=MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
+		    IssueReport issueReport = MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
 		    issueReportBean.getIssues().addAll(issueReport.getIssues());
-		   
+
 		} else {
 		    // mvdXML 1_1
 		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 			issueReportBean.setMessage("a mvdXML 1_1 file");
-			IssueReport issueReport=MvdXMLv1undescore1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
+			IssueReport issueReport = MvdXMLv1undescore1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
 			issueReportBean.getIssues().addAll(issueReport.getIssues());
 		    }
 		}
@@ -228,6 +284,64 @@ public class IfcValidatorAPI {
 	    e.printStackTrace();
 	    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	    issueReportBean.setMessage("Error: " + e.getMessage());
+	}
+
+	return issueReportBean;
+    }
+
+    @POST
+    @Path("/check/{mvdxmlid}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public IssueReportBean check_withsSecifiedMvcxml_inputAsIFCFile_resultAsJSON(@PathParam("mvdxmlid") String mvdxmlid, FormDataMultiPart ifcFileData) {
+	IssueReportBean issueReportBean = new IssueReportBean();
+	try {
+	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
+
+	    for (BodyPart part : ifcFileData.getBodyParts()) {
+		InputStream is = part.getEntityAs(InputStream.class);
+		ContentDisposition meta = part.getContentDisposition();
+
+		try {
+		    tempIfcFile.deleteOnExit();
+
+		    Files.copy(is, tempIfcFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+		    IOUtils.closeQuietly(is);
+		    break;
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+
+	    }
+
+	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+		Integer id = Integer.parseInt(mvdxmlid);
+		MvdXMLFileHandle mvdXMLFileHandle = session.get(MvdXMLFileHandle.class, id);
+
+		java.nio.file.Path ifcFile = Paths.get(tempIfcFile.getAbsolutePath());
+
+		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
+		    issueReportBean.setMessage("a valid mvdXML 1.1 file");
+		    IssueReport issueReport = MvdXMLv1dot1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
+		    issueReportBean.getIssues().addAll(issueReport.getIssues());
+
+		} else {
+		    // mvdXML 1_1
+		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXMLFileHandle.getFile_path(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+			issueReportBean.setMessage("a mvdXML 1_1 file");
+			IssueReport issueReport = MvdXMLv1undescore1Check.check(ifcFile, mvdXMLFileHandle.getFile_path());
+			issueReportBean.getIssues().addAll(issueReport.getIssues());
+		    }
+		}
+
+	    } catch (Exception e) {
+		e.printStackTrace();
+		issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		issueReportBean.setMessage("Error: " + e.getMessage());
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
 
 	return issueReportBean;
