@@ -269,14 +269,16 @@ public class IfcValidatorAPI {
 	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
 	issueReportBean.setMessage("a valid mvdXML 1.1 file");
 	IssueReport issueReport = MvdXMLv1dot1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-	issueReportBean.getIssues().addAll(issueReport.getIssues());
+	if(issueReport!=null)
+	   issueReportBean.getIssues().addAll(issueReport.getIssues());
 
 	} else {
 	// mvdXML 1_1
 	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 	    issueReportBean.setMessage("a mvdXML 1_1 file");
 	    IssueReport issueReport = MvdXMLv1undescore1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-	    issueReportBean.getIssues().addAll(issueReport.getIssues());
+	    if(issueReport!=null)
+	      issueReportBean.getIssues().addAll(issueReport.getIssues());
 	}
 	 else
 		issueReportBean.setMessage("Error: Unknown mvdXML version");

@@ -24,6 +24,8 @@ public class MvdXMLv1dot1Check {
 
 	IfcModelInstance model = new IfcModelInstance();
 	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+	if(bimserver_ifcModel==null)  // IFC2x2 causes this to return null
+	    return null;
 	bimserver_ifcModel.fixInverseMismatches();
 	List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
 
