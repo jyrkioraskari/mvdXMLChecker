@@ -56,10 +56,6 @@ public class IfcHashMapBuilder {
     private List<HashMap<AttributeRule, ObjectToValue>> buildHashMaps(Object ifcObject, List<AttributeRule> attributeRules, List<HashMap<AttributeRule, ObjectToValue>> hashMaps,int inx) throws ClassNotFoundException {	
 	for (AttributeRule attributeRule : attributeRules) {
 	    Object value = getAttributeValue(ifcObject, attributeRule.getAttributeName());
-	    for (int i = 0; i < inx; i++) {
-		System.out.print("--");
-	    }
-	    System.out.println(" "+ifcObject.getClass().getName()+" "+attributeRule.getAttributeName()+" = "+value);
 	    for (HashMap<AttributeRule, ObjectToValue> hm : hashMaps) {
 		hm.put(attributeRule, new ObjectToValue(ifcObject, value));
 	    }
