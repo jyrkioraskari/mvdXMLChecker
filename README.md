@@ -29,6 +29,7 @@ http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/
 
 ## A Sample Python client source
 
+Python 3.8.  Needed modules: requests
 ```
 import requests
 import json
