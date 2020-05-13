@@ -199,7 +199,7 @@ public class IfcMVDConstraintChecker {
 	Set<AbstractRule> rules = hashMap.keySet();
 	for (AbstractRule rule : rules) {
 	    ObjectToValue objectToValue = hashMap.get(rule);
-	    Object ifcObject = objectToValue.getIfcObject();
+	    //Object ifcObject = objectToValue.getIfcObject();
 	    Object value = objectToValue.getValue();
 	    List<Object> valueList = new ArrayList<Object>();
 	    if (value == null) {

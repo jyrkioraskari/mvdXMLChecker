@@ -1,11 +1,16 @@
 package de.rwth_aachen.dc.mvd.beans;
 
 public class IssueBean {
-    private final String ifcSpatialStructureElement;
-    private final String ifcClassName;
-    private final String guid;
-    private final String name;
-    private final String comment;
+    private String ifcSpatialStructureElement;
+    private String ifcClassName;
+    private String guid;
+    private String name;
+    private String comment;
+
+    
+    public IssueBean() {
+	super();
+    }
 
     public IssueBean(String ifcSpatialStructureElement, String ifcClassName,String guid, String name, String comment) {
 	super();
@@ -36,4 +41,25 @@ public class IssueBean {
 	return comment;
     }
 
+    public void setIfcSpatialStructureElement(String ifcSpatialStructureElement) {
+        this.ifcSpatialStructureElement = ifcSpatialStructureElement;
+    }
+
+    public void setIfcClassName(String ifcClassName) {
+        this.ifcClassName = ifcClassName;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    
 }

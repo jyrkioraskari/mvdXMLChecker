@@ -117,7 +117,6 @@ public class mvdXMLOnlineCheckerUI extends UI {
     }
 
     private Button createCommentPopUpButton(IssueBean item) {
-	@SuppressWarnings("unchecked")
 	Button button = new Button("Show", clickEvent -> {
 	    // Create a sub-window and set the content
 	    Window subWindow = new Window("Comment descriptor");

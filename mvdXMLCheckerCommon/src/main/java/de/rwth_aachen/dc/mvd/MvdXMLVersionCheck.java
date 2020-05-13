@@ -12,7 +12,10 @@ public class MvdXMLVersionCheck {
 	    for (int i = 0; i < 5; i++)
 		if (myReader.hasNextLine())
 		    if (checSchemaLine(myReader.nextLine(), schemaName))
+		    {   
+			myReader.close();
 			return true;
+		    }
 
 	    myReader.close();
 	} catch (FileNotFoundException e) {

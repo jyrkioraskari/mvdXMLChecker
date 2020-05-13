@@ -17,7 +17,6 @@ import org.bimserver.emf.ModelMetaData;
 import org.bimserver.models.store.IfcHeader;
 import org.bimserver.plugins.deserializers.DeserializeException;
 import org.ifcopenshell.IfcOpenShellEngine;
-import org.ifcopenshell.IfcOpenShellModel;
 import org.opensource_bimserver.bcf.Bcf;
 import org.opensource_bimserver.bcf.BcfException;
 import org.opensource_bimserver.bcf.Issue;
@@ -233,7 +232,6 @@ public class IssueReport {
 	model.setSettings(settings);
 	model.generateGeneralGeometry();
 	System.out.println("RenderEngineModel "+model);
-	IfcOpenShellModel m=(IfcOpenShellModel) model;
 	return model;
     }
 

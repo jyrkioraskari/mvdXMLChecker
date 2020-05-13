@@ -1,12 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
 	<artifactId>mvdXMLCheckerOpenAPI</artifactId>
-	<version>2.0</version>
+	<version>2.1</version>
 	<packaging>war</packaging>
 	<name>mvdXMLChecker OpenAPI Interface</name>
+	
 	<developers>
 		<developer>
 			<id>jyrkio</id>
@@ -112,6 +114,11 @@
 			<version>${jersey2.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey2.version}</version> <!-- Make sure the Jersey version matches the one you are currently using -->
+		</dependency>
+		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-servlet-api</artifactId>
 			<version>${tomcat.version}</version>
@@ -120,24 +127,24 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>2.0</version>
+			<version>2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>2.0</version>
+			<version>2.1</version>
 		</dependency>
-		
-		 <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.200</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>5.3.7.Final</version>
-        </dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.200</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.3.7.Final</version>
+		</dependency>
 	</dependencies>
 </project>

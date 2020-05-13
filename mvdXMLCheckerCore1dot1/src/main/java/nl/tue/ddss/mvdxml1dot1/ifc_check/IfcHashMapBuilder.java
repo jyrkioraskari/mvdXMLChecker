@@ -1,7 +1,6 @@
 package nl.tue.ddss.mvdxml1dot1.ifc_check;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
