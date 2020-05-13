@@ -53,7 +53,7 @@ if resp.status_code == 200:
 else:
     print ("Failure")
 ```
-https://github.com/jyrkioraskari/OnlineMvdXMLChecker/mvdXMLCheckerClient_Python
+https://github.com/jyrkioraskari/OnlineMvdXMLChecker/tree/master/mvdXMLCheckerClient_Python
 
 
 ## Docker
