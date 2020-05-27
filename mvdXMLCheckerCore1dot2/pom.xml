@@ -1,0 +1,147 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>mvdXMLCheckerCore1dot2</artifactId>
+	<name>mvdXMLChecker Core 1.1</name>
+	<groupId>de.rwth-aachen.dc.mvd</groupId>
+
+	<description>
+		This is based on the original work of
+		Chi Zhang
+		https://github.com/BenzclyZhang/mvdXMLChecker</description>
+
+	<developers>
+		<developer>
+			<name>Jyrki Oraskari</name>
+			<email>Jyrki.Oraskari@dc.rwth-aachen.de</email>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License</name>
+			<url>http://www.gnu.org/licenses/agpl-3.0.en.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.common</artifactId>
+			<version>2.17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.vecmath/vecmath -->
+		<dependency>
+			<groupId>javax.vecmath</groupId>
+			<artifactId>vecmath</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.antlr/antlr-runtime -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<!-- -UPDATE THIS -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<!-- UPDATE THIS -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>16.0.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<!-- UPDATE THIS -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore -->
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore</artifactId>
+			<version>2.20.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore.xmi -->
+		<!-- NEEDED for Ifc2x3tc1StepDeserializerReplace -->
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<version>2.16.0</version>
+		</dependency>
+		
+				<!-- the newest version: can cause needs to update the source -->
+		<dependency>
+			<groupId>org.opensourcebim</groupId>
+			<artifactId>bimserverclientlib</artifactId>
+			<version>1.5.182</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.opensourcebim/shared -->
+		<dependency>
+			<groupId>org.opensourcebim</groupId>
+			<artifactId>shared</artifactId>
+			<version>1.5.182</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opensourcebim</groupId>
+			<artifactId>bimserver</artifactId>
+			<version>1.5.182</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.opensourcebim/bcf -->
+		<dependency>
+			<groupId>org.opensourcebim</groupId>
+			<artifactId>bcf</artifactId>
+			<version>0.0.35</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.rwth-aachen.dc.mvd</groupId>
+			<artifactId>mvdXMLCheckerCommon</artifactId>
+			<version>2.12</version>
+		</dependency>
+		
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.4.1</version>
+				<configuration>
+					<rules>
+						<dependencyConvergence />
+					</rules>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<version>2.12</version>
+</project>

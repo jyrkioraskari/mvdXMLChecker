@@ -5,6 +5,8 @@ mvdXMLCheckerOpenAPI/target/*
 mvdXMLOnlineChecker/target/*
 mvdXMLCheckerCore1underscore1/target/*
 mvdXMLCheckerCore1dot1/example/*
+mvdXMLCheckerCore1underscore2/target/*
+mvdXMLCheckerCore1dot2/example/*
 mvdXMLCheckerCore1underscore1/example/*
 mvdXMLCheckerCore1dot1/target/*
 *.class

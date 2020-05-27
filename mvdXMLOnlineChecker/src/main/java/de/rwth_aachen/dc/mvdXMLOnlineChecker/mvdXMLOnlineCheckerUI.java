@@ -35,6 +35,7 @@ import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
+import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLv1dot2Check;
 import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_ifcSTEPFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_mvdXMLFile;
@@ -65,7 +66,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	labelH1.addStyleName(ValoTheme.LABEL_H1);
 	layout.addComponent(labelH1);
 
-	final Label instruction_label = new Label("Currently supported versions are mvdXML1-1 and mvdXML 1.1.");
+	final Label instruction_label = new Label("Currently supported versions are mvdXML V1-1, V1.1 and  V1.2 draft3.");
 	layout.addComponent(instruction_label);
 
 	layout.addComponents(mvdXMLFileLabel, ifcFileLabel);
@@ -161,7 +162,31 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		}
 		this.save_as_bcfzip_button.setEnabled(true);
 
-	    } else {
+	    } 
+	    else 
+		// mvdXML 1.2
+		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
+			Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+			n.setDelayMsec(5000);
+			n.show(Page.getCurrent());
+			IssueReport issuereport = MvdXMLv1dot2Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+			issues.addAll(issuereport.getIssues());
+
+			File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+			tempBCFZipFile.deleteOnExit();
+			issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+
+			Resource res = new FileResource(tempBCFZipFile);
+			if (this.fileDownloader == null) {
+			    this.fileDownloader = new FileDownloader(res);
+			    this.fileDownloader.extend(this.save_as_bcfzip_button);
+			} else {
+			    this.fileDownloader.setFileDownloadResource(res);
+			}
+			this.save_as_bcfzip_button.setEnabled(true);
+
+		    } 
+	    else {
 		// mvdXML 1_1
 		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 		    Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);

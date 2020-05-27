@@ -1,5 +1,5 @@
 # mvdXML Checker
-v2.11
+v2.12
 
 
 The mvdXMLChecker is a generic tool for verifying IFC models. I
@@ -12,6 +12,8 @@ Specification of a standardized format to define and exchange
 Model View Definitions with Exchange Requirements and Validation Rules.
 Version 1.1 Final. 15. 02. 2016
 
+
+Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3.
 
 Precompiled binaries that can be used at a web application server can be found here: 
 https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases
@@ -44,7 +46,7 @@ mvdxml_file = open(mvdxml_file_path, 'rb')
 files = {"ifcFile": (ifc_file_path, ifc_file),"mvdXMLfile": (mvdxml_file_path, mvdxml_file)}
 headers={}
 
-resp = requests.post("http://lbd.arch.rwth-aachen.de/mvdXMLChecker/api/check", files=files, headers=headers )
+resp = requests.post("http://lbd.arch.rwth-aachen.de/mvdXMLChecker/api/check_plain", files=files, headers=headers )
 print(resp.text)
 print("status code " + str(resp.status_code))
 

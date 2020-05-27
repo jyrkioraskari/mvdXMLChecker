@@ -1,0 +1,4 @@
+// https://technical.buildingsmart.org/standards/mvd/mvdxml/
+
+mkdir src
+"C:\Program Files\Java\jdk1.8.0_212\bin\xjc.exe" -d src -p generated.buildingsmart_tech.mvd_xml_1dot1 mvdXML_V1.1.xsd.xml
