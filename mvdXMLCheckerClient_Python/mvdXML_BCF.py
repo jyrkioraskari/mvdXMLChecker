@@ -14,8 +14,8 @@ print("status code " + str(resp.status_code))
 
 if resp.status_code == 200:
     print ("Success")
-    text_file = open("c:\\temp\\results.bcfzip", "w", encoding="utf8")
-    text_file.write(resp.text)
-    text_file.close()
+    bcf_file = open("c:\\temp\\results.bcfzip", "wb")
+    bcf_file.write(bytearray(resp.content))
+    bcf_file.close()
 else:
     print ("Failure")
