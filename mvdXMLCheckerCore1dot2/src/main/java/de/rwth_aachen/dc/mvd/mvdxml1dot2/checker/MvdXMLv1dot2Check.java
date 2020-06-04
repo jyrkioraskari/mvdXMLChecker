@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.bimserver.plugins.renderengine.RenderEngineException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -19,7 +20,7 @@ import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcMVDConstraintChecker;
 
 public class MvdXMLv1dot2Check {
 
-    public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
+    public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
 	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 
 	IfcModelInstance model = new IfcModelInstance();
@@ -38,7 +39,7 @@ public class MvdXMLv1dot2Check {
 	return null;
     }
 
-    public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
+    public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
 	List<IssueBean> issues = new ArrayList<>();
 	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 

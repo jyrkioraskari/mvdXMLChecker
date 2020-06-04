@@ -8,10 +8,11 @@
   <modules>
   	<module>../mvdXMLCheckerCore1underscore1</module>
   	<module>../mvdXMLCheckerCore1dot1</module>
+  	<module>../mvdXMLCheckerCore1dot2</module>
   	<module>../mvdXMLCheckerOpenAPI</module>
   	<module>../mvdXMLOnlineChecker</module>
   	<module>../mvdXMLCheckerCommon</module>
   	<module>../mvdXMLCommandLineChecker</module>
   </modules>
-  <version>2.12</version>
+  <version>2.14</version>
 </project>

@@ -27,10 +27,10 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
 
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;

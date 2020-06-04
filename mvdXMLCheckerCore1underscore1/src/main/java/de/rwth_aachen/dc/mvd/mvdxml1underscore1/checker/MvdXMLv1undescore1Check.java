@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.bimserver.plugins.renderengine.RenderEngineException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -21,7 +22,7 @@ import nl.tue.ddss.mvdparser.MvdXMLParser;
 
 public class MvdXMLv1undescore1Check {
 
-    public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
+    public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
 	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
 	
 	IfcModelInstance model = new IfcModelInstance();
@@ -40,7 +41,7 @@ public class MvdXMLv1undescore1Check {
 	return null;
     }
 
-    public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
+    public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
   	List<IssueBean> issues = new ArrayList<>();
   	
   	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);

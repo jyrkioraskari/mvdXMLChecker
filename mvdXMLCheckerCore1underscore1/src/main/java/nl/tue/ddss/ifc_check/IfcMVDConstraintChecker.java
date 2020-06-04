@@ -18,6 +18,7 @@ import org.antlr.runtime.TokenStream;
 import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.AbstractRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.AttributeRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.Definitions;
@@ -47,7 +48,7 @@ public class IfcMVDConstraintChecker {
     }
 
     @SuppressWarnings("unchecked")
-    public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws DeserializeException, IOException, org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException {
+    public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws DeserializeException, IOException, RenderEngineException {
 	IssueReport issuereport = new IssueReport(ifcModel, ifcfile);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
