@@ -88,7 +88,7 @@ public class IfcOpenShellEngine implements RenderEngine {
 	@Override
 	public RenderEngineModel openModel(InputStream inputStream, long size) throws RenderEngineException {
 		if (!client.isRunning()) {
-			client = new IfcGeomServerClient(executableFilename);
+			init();
 		}
 		try {
 			return new IfcOpenShellModel(client, inputStream, size);
@@ -102,7 +102,7 @@ public class IfcOpenShellEngine implements RenderEngine {
 	        // Added by JO,  4/6/2020
 	        if(client==null)
 	        {
-	            client = new IfcGeomServerClient(executableFilename);
+	            init();
 	        }
 		if (!client.isRunning()) {
 			client = new IfcGeomServerClient(executableFilename);

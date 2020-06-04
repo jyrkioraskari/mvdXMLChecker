@@ -32,7 +32,7 @@ public class OperatingSystemCopyOf_IfcGeomServer {
 	if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
 	    ixsystem = true;
 	    if (os64bit)
-		IfcGeomServerLocation = "/exe/32/linux/IfcGeomServer";
+		IfcGeomServerLocation = "/exe/64/linux/IfcGeomServer";
 	    else
 		IfcGeomServerLocation = "/exe/32/linux/IfcGeomServer";
 	}
@@ -40,11 +40,12 @@ public class OperatingSystemCopyOf_IfcGeomServer {
 	if (OS.contains("sunos")) {
 	    ixsystem = true;
 	    if (os64bit)
-		IfcGeomServerLocation = "/exe/32/linux/IfcGeomServer";
+		IfcGeomServerLocation = "/exe/64/linux/IfcGeomServer";
 	    else
 		IfcGeomServerLocation = "/exe/32/linux/IfcGeomServer";
 	}
 	String tempPath = System.getProperty("java.io.tmpdir");
+	
 	if (!tempPath.endsWith(File.separator))
 	    tempPath += File.separator;
 	if (ixsystem)
@@ -52,9 +53,7 @@ public class OperatingSystemCopyOf_IfcGeomServer {
 	else
 	    tempPath += "IfcGeomServer.exe";
 	Path geomserverPath = Paths.get(tempPath);
-	if (geomserverPath.toFile().exists())
-	    geomserverPath.toFile().delete();
-	    
+	if (!geomserverPath.toFile().exists())
 	    if (IfcGeomServerLocation != null) {
 		InputStream in = OperatingSystemCopyOf_IfcGeomServer.class.getResourceAsStream(IfcGeomServerLocation);
 		try {

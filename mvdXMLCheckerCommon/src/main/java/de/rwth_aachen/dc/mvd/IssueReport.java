@@ -225,12 +225,9 @@ public class IssueReport {
 	String ifcGeomServerLocation=OperatingSystemCopyOf_IfcGeomServer.getIfcGeomServer();
 	Path ifcGeomServerLocationPath=Paths.get(ifcGeomServerLocation);
 	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine(ifcGeomServerLocationPath,false,false);
+	ifcOpenShellEngine.init();
 	FileInputStream ifcFileInputStream = new FileInputStream(ifcFile);
-	if(ifcOpenShellEngine==null)
-	{
-	    System.err.println("ifcOpenShellEngine not found");
-	    return null;
-	}
+	
 	RenderEngineModel model = ifcOpenShellEngine.openModel(ifcFileInputStream);
 	System.out.println("IfcOpenShell opens ifc: "+ifcFile.getAbsolutePath());
 	RenderEngineSettings settings = new RenderEngineSettings();

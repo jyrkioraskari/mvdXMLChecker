@@ -128,7 +128,13 @@ Usage: java -jar MvdXMLCommandLineChecker.jar -ifc <file> -mvdXML <file>
                   Requirements and Validation Rules) definition file for
                   the validation.
 ```
+## Installation commands in Linux
 
+```
+sudo cp  mvdXMLChecker.war /var/lib/tomcat8/webapps
+suco chmod 777 /var/lib/tomcat8/webapps/mvdXMLChecker.war
+sudo systemctl restart tomcat8 
+```
 
 ## Cite this
 
