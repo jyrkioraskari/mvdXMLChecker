@@ -80,7 +80,9 @@ if resp.status_code == 200:
     bcf_file.write(bytearray(resp.content))
     bcf_file.close()
 else:
-    print ("Failure")```
+    print ("Failure")
+
+```
 
 https://github.com/jyrkioraskari/OnlineMvdXMLChecker/tree/master/mvdXMLCheckerClient_Python
 
