@@ -1,25 +1,68 @@
 package org.ifcopenshell;
 
-import org.opensource_bimserver.v1_40.geometry.Matrix;
+/******************************************************************************
+ * Copyright (C) 2009-2019  BIMserver.org
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see {@literal<http://www.gnu.org/licenses/>}.
+ *****************************************************************************/
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+/******************************************************************************
+ * Copyright (C) 2009-2018  BIMserver.org
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see {@literal<http://www.gnu.org/licenses/>}.
+ *****************************************************************************/
+
+import org.bimserver.geometry.Matrix;
+import org.bimserver.plugins.renderengine.RenderEngineException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class IfcGeomServerClientEntity {
-	private int id;
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private long id;
 	private String guid;
 	private String name;
 	private String type;
-	private int parentId;
-	private float[] matrix;
+	private long parentId;
+	private double[] matrix;
 	private int repId;
-	private float[] positions;
-	private float[] normals;
-	private int[] indices;
-	private float[] colors;
-	private int[] materialIndices;
+	private ByteBuffer positions;
+	private ByteBuffer normals;
+	private ByteBuffer indices;
+	private ByteBuffer colors;
+	private ByteBuffer materialIndices;
+	private ObjectNode extendedData;
 	
-	public IfcGeomServerClientEntity(int id, String guid, String name,
-			String type, int parentId, float[] matrix, int repId,
-			float[] positions, float[] normals, int[] indices, float[] colors,
-			int[] materialIndices) {
+	public IfcGeomServerClientEntity(long id, String guid, String name,
+			String type, long parentId, double[] matrix, int repId,
+			ByteBuffer positions, ByteBuffer normals, ByteBuffer indices, ByteBuffer colors,
+			ByteBuffer materialIndices, String messageRemainder) {
 		super();
 		this.id = id;
 		this.guid = guid;
@@ -33,9 +76,18 @@ public class IfcGeomServerClientEntity {
 		this.indices = indices;
 		this.colors = colors;
 		this.materialIndices = materialIndices;
+		
+		if (messageRemainder != null && messageRemainder.length() > 0) {
+			// un-pad string
+			try {
+				this.extendedData = OBJECT_MAPPER.readValue(messageRemainder.trim(), ObjectNode.class);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -51,11 +103,11 @@ public class IfcGeomServerClientEntity {
 		return type;
 	}
 
-	public int getParentId() {
+	public long getParentId() {
 		return parentId;
 	}
 
-	public float[] getMatrix() {
+	public double[] getMatrix() {
 		return matrix;
 	}
 
@@ -63,31 +115,27 @@ public class IfcGeomServerClientEntity {
 		return repId;
 	}
 
-	public float[] getPositions() {
+	public ByteBuffer getPositions() {
 		return positions;
 	}
 
-	public float[] getNormals() {
+	public ByteBuffer getNormals() {
 		return normals;
 	}
 
-	public int[] getIndices() {
+	public ByteBuffer getIndices() {
 		return indices;
 	}
 
-	public float[] getColors() {
+	public ByteBuffer getColors() {
 		return colors;
 	}
 
-	public int[] getMaterialIndices() {
+	public ByteBuffer getMaterialIndices() {
 		return materialIndices;
 	}
 	
-	public int getNumberOfPrimitives() {
-		return indices.length / 3;
-	}
-	
-	public int getNumberOfColors() {
-		return colors.length / 4;
+	public ObjectNode getAllExtendedData() throws RenderEngineException {
+		return this.extendedData;
 	}
 }

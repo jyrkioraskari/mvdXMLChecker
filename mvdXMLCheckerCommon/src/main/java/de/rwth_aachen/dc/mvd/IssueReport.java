@@ -1,8 +1,11 @@
 package de.rwth_aachen.dc.mvd;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -16,6 +19,11 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.emf.ModelMetaData;
 import org.bimserver.models.store.IfcHeader;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.bimserver.plugins.renderengine.IndexFormat;
+import org.bimserver.plugins.renderengine.Precision;
+import org.bimserver.plugins.renderengine.RenderEngineException;
+import org.bimserver.plugins.renderengine.RenderEngineModel;
+import org.bimserver.plugins.renderengine.RenderEngineSettings;
 import org.ifcopenshell.IfcOpenShellEngine;
 import org.opensource_bimserver.bcf.Bcf;
 import org.opensource_bimserver.bcf.BcfException;
@@ -30,11 +38,6 @@ import org.opensource_bimserver.bcf.visinfo.Direction;
 import org.opensource_bimserver.bcf.visinfo.PerspectiveCamera;
 import org.opensource_bimserver.bcf.visinfo.Point;
 import org.opensource_bimserver.bcf.visinfo.VisualizationInfo;
-import org.opensource_bimserver.v1_40.plugins.renderengine.IndexFormat;
-import org.opensource_bimserver.v1_40.plugins.renderengine.Precision;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineSettings;
 
 import de.rwth_aachen.dc.OperatingSystemCopyOf_IfcGeomServer;
 import de.rwth_aachen.dc.mvd.bcf.TempGeometry;
@@ -220,8 +223,15 @@ public class IssueReport {
 
     private RenderEngineModel getRenderEngineModel(File ifcFile) throws RenderEngineException, IOException {
 	String ifcGeomServerLocation=OperatingSystemCopyOf_IfcGeomServer.getIfcGeomServer();
-	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine(ifcGeomServerLocation);
-	RenderEngineModel model = ifcOpenShellEngine.openModel(ifcFile);
+	Path ifcGeomServerLocationPath=Paths.get(ifcGeomServerLocation);
+	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine(ifcGeomServerLocationPath,false,false);
+	FileInputStream ifcFileInputStream = new FileInputStream(ifcFile);
+	if(ifcOpenShellEngine==null)
+	{
+	    System.err.println("ifcOpenShellEngine not found");
+	    return null;
+	}
+	RenderEngineModel model = ifcOpenShellEngine.openModel(ifcFileInputStream);
 	System.out.println("IfcOpenShell opens ifc: "+ifcFile.getAbsolutePath());
 	RenderEngineSettings settings = new RenderEngineSettings();
 	settings.setPrecision(Precision.SINGLE);

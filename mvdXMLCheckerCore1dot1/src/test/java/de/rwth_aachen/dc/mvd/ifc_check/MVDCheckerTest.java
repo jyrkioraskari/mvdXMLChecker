@@ -31,7 +31,7 @@ public class MVDCheckerTest {
 		IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
 		for (IssueBean i : issuereport.getIssues())
 		    System.out.println("Issue: "+ i.getComment());
-		String outputFolder = "report/";
+		String outputFolder = "c:\\temp\\";
 		new File(outputFolder).mkdir();
 		issuereport.writeReport(outputFolder + "checking_result" + ".bcfzip.zip");
 	    }
@@ -45,7 +45,7 @@ public class MVDCheckerTest {
     public static void main(String[] args) throws Exception {
 
 	// Error case 1 IFC4<>IFC2x3
-	new MVDCheckerTest("c:\\test\\BUW_HC-elevator.ifc", "c:\\test\\Vorlage.mvdxml");
+	new MVDCheckerTest("c:\\temp\\A.ifc", "c:\\temp\\A.mvdxml");
 	//new MVDCheckerTest("c:\\test\\noemi2\\BUW_HC-elevator.ifc", "c:\\test\\noemi2\\Vorlage - Kopie (2).mvdxml");
 	//new MVDCheckerTest("c:\\test\\noemi\\BUW_HC-Gebaude.ifc", "c:\\test\\noemi\\BUW_IfcTransportelement.mvdxml");
 	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "c:\\test\\noemi\\Vorlage2.mvdxml");

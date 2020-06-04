@@ -26,59 +26,112 @@
 
 package org.ifcopenshell;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+/******************************************************************************
+ * Copyright (C) 2009-2019  BIMserver.org
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see {@literal<http://www.gnu.org/licenses/>}.
+ *****************************************************************************/
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngine;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
+import org.bimserver.plugins.renderengine.Metrics;
+import org.bimserver.plugins.renderengine.RenderEngine;
+import org.bimserver.plugins.renderengine.RenderEngineException;
+import org.bimserver.plugins.renderengine.RenderEngineModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IfcOpenShellEngine implements RenderEngine {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IfcOpenShellEngine.class);
-	public static final Boolean debug = false;
-	private String filename;
+	private Path executableFilename;
 
-	public IfcOpenShellEngine(String fn) throws IOException {
-		filename = fn;
+	private IfcGeomServerClient client;
+	private boolean calculateQuantities;
+	private boolean applyLayerSets;
+	
+	public IfcOpenShellEngine(Path executableFilename, boolean calculateQuantities, boolean applyLayerSets) throws IOException {
+		this.executableFilename = executableFilename;
+		this.setCalculateQuantities(calculateQuantities);
+		this.setApplyLayerSets(applyLayerSets);
 	}
 
 	@Override
 	public void init() throws RenderEngineException {
-		LOGGER.info("Initializing IfcOpenShell engine");
+		LOGGER.debug("Initializing IfcOpenShell engine");
+		
+		client = new IfcGeomServerClient(executableFilename);
+		client.setCalculateQuantities(isCalculateQuantities());
+		client.setApplyLayersets(isApplyLayerSets());
 	}
 	
 	@Override
-	public void close() {
-		LOGGER.info("Closing IfcOpenShell engine");
-	}
-
-	@Override
-	public RenderEngineModel openModel(File ifcFile) throws RenderEngineException {
-		try {
-			return openModel(new FileInputStream(ifcFile),(int)ifcFile.length());
-		} catch (Exception e) {
-		    	System.out.println("File: "+ifcFile.getAbsolutePath());
-		        e.printStackTrace();
-			throw new RenderEngineException("Failed to open model");		
+	public void close() throws RenderEngineException {
+		LOGGER.debug("Closing IfcOpenShell engine");
+		if (client.isRunning()) {
+			client.close();
 		}
 	}
 
 	@Override
-	public RenderEngineModel openModel(InputStream inputStream, int size) throws RenderEngineException {
-		return new IfcOpenShellModel(filename, inputStream);
-	}
-
-	public RenderEngineModel openModel(InputStream inputStream) throws RenderEngineException {
-		return new IfcOpenShellModel(filename, inputStream);
+	public RenderEngineModel openModel(InputStream inputStream, long size) throws RenderEngineException {
+		if (!client.isRunning()) {
+			client = new IfcGeomServerClient(executableFilename);
+		}
+		try {
+			return new IfcOpenShellModel(client, inputStream, size);
+		} catch (IOException e) {
+			throw new RenderEngineException(e);
+		}
 	}
 
 	@Override
-	public RenderEngineModel openModel(byte[] bytes) throws RenderEngineException {
-		return new IfcOpenShellModel(filename, new ByteArrayInputStream(bytes));
+	public RenderEngineModel openModel(InputStream inputStream) throws RenderEngineException {
+	        // Added by JO,  4/6/2020
+	        if(client==null)
+	        {
+	            client = new IfcGeomServerClient(executableFilename);
+	        }
+		if (!client.isRunning()) {
+			client = new IfcGeomServerClient(executableFilename);
+		}
+		try {
+			return new IfcOpenShellModel(client, inputStream);
+		} catch (IOException e) {
+			throw new RenderEngineException(e);
+		}
+	}
+
+	public boolean isCalculateQuantities() {
+		return calculateQuantities;
+	}
+
+	public void setCalculateQuantities(boolean calculateQuantities) {
+		this.calculateQuantities = calculateQuantities;
+	}
+
+	public boolean isApplyLayerSets() {
+		return applyLayerSets;
+	}
+
+	public void setApplyLayerSets(boolean applyLayerSets) {
+		this.applyLayerSets = applyLayerSets;
+	}
+
+	@Override
+	public Metrics getMetrics() {
+		return null;
 	}
 }

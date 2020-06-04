@@ -29,28 +29,59 @@
 
 package org.ifcopenshell;
 
-import java.io.InputStream;
-import java.util.HashMap;
+/******************************************************************************
+ * Copyright (C) 2009-2019  BIMserver.org
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see {@literal<http://www.gnu.org/licenses/>}.
+ *****************************************************************************/
 
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineFilter;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineInstance;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineSettings;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bimserver.plugins.renderengine.EntityNotFoundException;
+import org.bimserver.plugins.renderengine.RenderEngineException;
+import org.bimserver.plugins.renderengine.RenderEngineFilter;
+import org.bimserver.plugins.renderengine.RenderEngineInstance;
+import org.bimserver.plugins.renderengine.RenderEngineModel;
+import org.bimserver.plugins.renderengine.RenderEngineSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IfcOpenShellModel implements RenderEngineModel {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IfcOpenShellModel.class);
 	
-	private String filename;
 	private InputStream ifcInputStream;
 
-	private HashMap<Integer,IfcOpenShellEntityInstance> instancesById;
+	private Map<Long, IfcOpenShellEntityInstance> instancesById;
+
+	private IfcGeomServerClient client;
 	
-	public IfcOpenShellModel(String filename, InputStream ifcInputStream) throws RenderEngineException {
-		this.filename = filename;
+	public IfcOpenShellModel(IfcGeomServerClient client, InputStream ifcInputStream) throws RenderEngineException, IOException {
+		this.client = client;
 		this.ifcInputStream = ifcInputStream;
+		
+		client.loadModel(ifcInputStream);
+	}
+
+	public IfcOpenShellModel(IfcGeomServerClient client, InputStream ifcInputStream, long length) throws RenderEngineException, IOException {
+		this.client = client;
+		this.ifcInputStream = ifcInputStream;
+		
+		client.loadModel(ifcInputStream, length);
 	}
 
 	@Override
@@ -58,40 +89,41 @@ public class IfcOpenShellModel implements RenderEngineModel {
 		if (instancesById != null) {
 			instancesById.clear();
 		}
+		try {
+			ifcInputStream.close();
+		} catch (IOException e) {
+			LOGGER.error("", e);
+		}
 	}
 
 	@Override
 	public void generateGeneralGeometry() throws RenderEngineException {
 		// We keep track of instances ourselves
-		instancesById = new HashMap<Integer,IfcOpenShellEntityInstance>();
-		
-		final double t0 = (double) System.nanoTime();
-		System.out.println("Generate geom: filename: "+filename);
+		instancesById = new HashMap<Long, IfcOpenShellEntityInstance>();
 
-		try (IfcGeomServerClient client = new IfcGeomServerClient(filename, ifcInputStream)) {
-			for (IfcGeomServerClientEntity e : client) {
-				if (e == null) break;
-				
-				// Store the instance in our dictionary
-				IfcOpenShellEntityInstance instance = new IfcOpenShellEntityInstance(e);
-				instancesById.put(e.getId(), instance);
-			}
-		} catch (Exception e) {
-		    e.printStackTrace();
-		    LOGGER.error(IfcGeomServerClient.class.getName(), e);
+		final double t0 = (double) System.nanoTime();
+
+		while (client.hasNext()) {
+			IfcGeomServerClientEntity next = client.getNext();
+			// Store the instance in our dictionary
+			IfcOpenShellEntityInstance instance = new IfcOpenShellEntityInstance(next);
+			instancesById.put(next.getId(), instance);
 		}
 		
 		final double t1 = (double) System.nanoTime();
 		
-		LOGGER.info(String.format("Took %.2f seconds to obtain representations for %d entities", (t1-t0) / 1.E9, instancesById.size()));
+		LOGGER.debug(String.format("Took %.2f seconds to obtain representations for %d entities", (t1-t0) / 1.E9, instancesById.size()));
 	}
 
 	@Override
-	public RenderEngineInstance getInstanceFromExpressId(int oid) throws RenderEngineException {
-		if ( instancesById.containsKey(oid) ) {
-			return instancesById.get(oid);
-		} else{
-			return null;
+	public RenderEngineInstance getInstanceFromExpressId(long expressId) throws RenderEngineException {
+		if (instancesById.containsKey(expressId)) {
+			return instancesById.get(expressId);
+		} else {
+			// Probably something went wrong with the processing of this element in
+			// the IfcOpenShell binary, as it has not been included in the enumerated
+			// set of elements with geometry.
+			throw new EntityNotFoundException("Entity " + expressId + " not found in model");
 		}
 	}
 	
@@ -104,9 +136,11 @@ public class IfcOpenShellModel implements RenderEngineModel {
 	}
 
 	@Override
-	public void setFilter(RenderEngineFilter arg0) throws RenderEngineException {
-		// TODO Auto-generated method stub
-		
+	public void setFilter(RenderEngineFilter renderEngineFilter) {
 	}
 
+	@Override
+	public Collection<RenderEngineInstance> listInstances() throws RenderEngineException {
+		return null;
+	}
 }

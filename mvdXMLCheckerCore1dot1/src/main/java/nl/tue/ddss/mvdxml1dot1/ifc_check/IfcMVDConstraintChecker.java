@@ -17,6 +17,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
+import org.bimserver.plugins.renderengine.RenderEngineException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -46,7 +47,7 @@ public class IfcMVDConstraintChecker {
 	this.ifcversion = ifcversion;
     }
 
-    public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException, DeserializeException, IOException {
+    public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws RenderEngineException, DeserializeException, IOException {
 	IssueReport issuereport = new IssueReport(ifcModel,ifcfile);
 	for (MVDConstraint constraint : constraints) {
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();

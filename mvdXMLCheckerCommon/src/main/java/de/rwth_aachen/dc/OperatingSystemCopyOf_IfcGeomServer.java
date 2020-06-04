@@ -11,10 +11,12 @@ import java.nio.file.attribute.PosixFilePermissions;
 public class OperatingSystemCopyOf_IfcGeomServer {
 
     public static String getIfcGeomServer() {
+	
 	String OS = System.getProperty("os.name").toLowerCase();
 	String IfcGeomServerLocation = null;
 	boolean os64bit = false;
 	boolean ixsystem = false;
+
 	if (System.getProperty("sun.arch.data.model").equals("64"))
 	    os64bit = true;
 
@@ -50,7 +52,9 @@ public class OperatingSystemCopyOf_IfcGeomServer {
 	else
 	    tempPath += "IfcGeomServer.exe";
 	Path geomserverPath = Paths.get(tempPath);
-	if (!geomserverPath.toFile().exists())
+	if (geomserverPath.toFile().exists())
+	    geomserverPath.toFile().delete();
+	    
 	    if (IfcGeomServerLocation != null) {
 		InputStream in = OperatingSystemCopyOf_IfcGeomServer.class.getResourceAsStream(IfcGeomServerLocation);
 		try {

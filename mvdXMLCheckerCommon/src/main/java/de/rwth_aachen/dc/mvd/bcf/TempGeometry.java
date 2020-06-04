@@ -1,16 +1,18 @@
 package de.rwth_aachen.dc.mvd.bcf;
 
+import java.nio.ByteBuffer;
+
 import javax.vecmath.Point3d;
 
-import org.opensource_bimserver.v1_40.geometry.Matrix;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineException;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineGeometry;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineInstance;
-import org.opensource_bimserver.v1_40.plugins.renderengine.RenderEngineModel;
+import org.bimserver.geometry.Matrix;
+import org.bimserver.plugins.renderengine.RenderEngineException;
+import org.bimserver.plugins.renderengine.RenderEngineGeometry;
+import org.bimserver.plugins.renderengine.RenderEngineInstance;
+import org.bimserver.plugins.renderengine.RenderEngineModel;
 
 import nl.tue.ddss.bcf.BoundingBox;
 
-// Modified ny JO, 22/04/2020 from the original 
+//Modified ny JO, 22/04/2020 and 4/05/2020 from the original 
 // nl.tue.ddss.bcf.TempGeometry
 
 public class TempGeometry {
@@ -74,12 +76,13 @@ public class TempGeometry {
 	    if(renderEngineInstance==null)
 	    {
 		System.err.println("Product of the express id "+ifcProductExpressId+" does not have a geometry");
+		
 		return null;
 	    }
 	    RenderEngineGeometry geometry = renderEngineInstance.generateGeometry();
 	    if (geometry != null && geometry.getNrIndices() > 0) {
 		boundingBox = new BoundingBox();
-		float[] tranformationMatrix = new float[16];
+		double[] tranformationMatrix = new double[16];
 		if (renderEngineInstance.getTransformationMatrix() != null) {
 		    tranformationMatrix = renderEngineInstance.getTransformationMatrix();
 		    tranformationMatrix = Matrix.changeOrientation(tranformationMatrix);
@@ -87,8 +90,8 @@ public class TempGeometry {
 		    Matrix.setIdentityM(tranformationMatrix, 0);
 		}
 
-		for (int i = 0; i < geometry.getIndices().length; i++) {
-		    processExtends(boundingBox, tranformationMatrix, geometry.getVertices(), geometry.getIndices()[i] * 3);
+		for (int i = 0; i < geometry.getNrVertices(); i+=3) {
+		    processExtends(boundingBox, tranformationMatrix, geometry.getVertex(i),geometry.getVertex(i+1),geometry.getVertex(i+2));
 		}
 	    }
 	} catch (RenderEngineException e) {
@@ -97,12 +100,9 @@ public class TempGeometry {
 	return boundingBox;
     }
 
-    private void processExtends(BoundingBox boundingBox, float[] transformationMatrix, float[] vertices, int index) {
-	float x = vertices[index];
-	float y = vertices[index + 1];
-	float z = vertices[index + 2];
-	float[] result = new float[4];
-	Matrix.multiplyMV(result, 0, transformationMatrix, 0, new float[] { x, y, z, 1 }, 0);
+    private void processExtends(BoundingBox boundingBox, double[] transformationMatrix, double x, double y, double z) {
+	double[] result = new double[4];
+	Matrix.multiplyMV(result, 0, transformationMatrix, 0, new double[] { x, y, z, 1 }, 0);
 	x = result[0];
 	y = result[1];
 	z = result[2];
