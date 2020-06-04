@@ -125,11 +125,11 @@ Usage: java -jar MvdXMLCommandLineChecker.jar -ifc <file> -mvdXML <file>
  -mvdXML <file>   The mvdXML (Model View Definitions with Exchange
                   Requirements and Validation Rules) definition file for
                   the validation.
-
 ```
 
 
 ## Cite this
+
 ```
 @software{jyrki_oraskari_2020_3760756,
   author       = {Jyrki Oraskari},
