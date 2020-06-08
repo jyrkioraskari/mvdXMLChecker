@@ -21,8 +21,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.bimserver.utils.FakeClosingInputStream;
-import org.opensource_bimserver.bcf.markup.Markup;
-import org.opensource_bimserver.bcf.visinfo.VisualizationInfo;
+
+import generated.buildingsmart.bcf.markup.Markup;
+import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
 
 public class Bcf {
 	private final Map<UUID, Issue> issues = new HashMap<UUID, Issue>();
@@ -96,6 +97,7 @@ public class Bcf {
 	public void write(OutputStream outputStream) throws BcfException, IOException {
 		ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 		for (Issue issue : issues.values()) {
+		      if(issue.getVisualizationInfo()!=null)
 			issue.write(zipOutputStream);
 		}
 		zipOutputStream.finish();

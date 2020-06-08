@@ -1,18 +1,19 @@
 package org.opensource_bimserver.bcf;
 
-import java.io.ByteArrayInputStream;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.commons.io.IOUtils;
-import org.opensource_bimserver.bcf.markup.Markup;
-import org.opensource_bimserver.bcf.visinfo.VisualizationInfo;
+import generated.buildingsmart.bcf.markup.Markup;
+import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
 
 @SuppressWarnings("unused")
 public class Issue {
@@ -83,6 +84,7 @@ public class Issue {
 	    } catch (JAXBException e) {
 		throw new BcfException(e);
 	    }
+	    createDummySnapshot(zipOutputStream);
 	}
 
 //                ZipEntry image = new ZipEntry(getUuid().toString() + "/snapshot.png");
@@ -91,4 +93,18 @@ public class Issue {
 //                IOUtils.copy(bais, zipOutputStream);
 //TODO SNAPSHOT AVAILABLE YET!
     }
+    
+    private void createDummySnapshot(ZipOutputStream zipOutputStream) throws IOException {
+	ZipEntry snapshot = new ZipEntry(getUuid().toString() + "/snapshot.png");
+	    zipOutputStream.putNextEntry(snapshot);
+   	int width = 200, height = 200;
+   	BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+   	Graphics2D ig2 = bi.createGraphics();
+   	try {
+   	    ImageIO.write(bi, "PNG", zipOutputStream);
+   	} catch (IOException e) {
+   	    e.printStackTrace();
+   	}
+   	 
+       }
 }

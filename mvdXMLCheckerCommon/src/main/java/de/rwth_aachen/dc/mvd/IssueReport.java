@@ -28,20 +28,23 @@ import org.ifcopenshell.IfcOpenShellEngine;
 import org.opensource_bimserver.bcf.Bcf;
 import org.opensource_bimserver.bcf.BcfException;
 import org.opensource_bimserver.bcf.Issue;
-import org.opensource_bimserver.bcf.markup.Comment;
-import org.opensource_bimserver.bcf.markup.CommentStatus;
-import org.opensource_bimserver.bcf.markup.Header;
-import org.opensource_bimserver.bcf.markup.Markup;
-import org.opensource_bimserver.bcf.markup.Topic;
-import org.opensource_bimserver.bcf.visinfo.Component;
-import org.opensource_bimserver.bcf.visinfo.Direction;
-import org.opensource_bimserver.bcf.visinfo.PerspectiveCamera;
-import org.opensource_bimserver.bcf.visinfo.Point;
-import org.opensource_bimserver.bcf.visinfo.VisualizationInfo;
 
 import de.rwth_aachen.dc.OperatingSystemCopyOf_IfcGeomServer;
 import de.rwth_aachen.dc.mvd.bcf.TempGeometry;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
+import generated.buildingsmart.bcf.markup.Comment;
+import generated.buildingsmart.bcf.markup.Header;
+import generated.buildingsmart.bcf.markup.Markup;
+import generated.buildingsmart.bcf.markup.Topic;
+import generated.buildingsmart.bcf.markup.ViewPoint;
+import generated.buildingsmart.bcf.visinfo.Component;
+import generated.buildingsmart.bcf.visinfo.ComponentSelection;
+import generated.buildingsmart.bcf.visinfo.ComponentVisibility;
+import generated.buildingsmart.bcf.visinfo.Components;
+import generated.buildingsmart.bcf.visinfo.Direction;
+import generated.buildingsmart.bcf.visinfo.PerspectiveCamera;
+import generated.buildingsmart.bcf.visinfo.Point;
+import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
 
 public class IssueReport {
     private final String ifcProjectGuid;
@@ -58,7 +61,8 @@ public class IssueReport {
 	ModelMetaData mmd = ifcModel.getModelMetaData();
 	IfcHeader ifcHeader = mmd.getIfcHeader();
 	System.out.println("ifcHeader schema: " + ifcHeader.getIfcSchemaVersion());
-	ifcHeaderFilename = ifcHeader.getFilename();
+	// ifcHeaderFilename = ifcHeader.getFilename();
+	ifcHeaderFilename = ifcFile.getName();
 	ifcHeaderTimeStamp = ifcHeader.getTimeStamp();
 
 	if (ifcHeader.getIfcSchemaVersion().equals("IFC2X3")) {
@@ -85,33 +89,53 @@ public class IssueReport {
 	    ifcProjectGuid = null;
 	    throw new RuntimeException("Not a supported IFC version");
 	}
-	
+
     }
 
     public void addIssue(String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
 	issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
 
-	UUID uuid = UUID.randomUUID();
-	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, uuid.toString());
+	UUID markup_uuid = UUID.randomUUID();
+	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString());
 	VisualizationInfo visInfo = null;
 	if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
 	    visInfo = addVisInfo(ifcRoot.getExpressId(), ifcRoot.getGlobalId());
 	}
-	Issue issue = new Issue(uuid, markup, visInfo);
+	UUID viewpoint_uuid = UUID.randomUUID();
+	ViewPoint vp = new ViewPoint();
+	vp.setGuid(viewpoint_uuid.toString());
+	if (visInfo != null) {
+	    vp.setViewpoint("viewpoint.bcfv");
+	    vp.setSnapshot("snapshot.png");
+	}
+	markup.getViewpoints().add(vp);
+
+	Issue issue = new Issue(markup_uuid, markup, visInfo);
 	bcf.addIssue(issue);
 
     }
 
+   
+
     public void addIssue(String ifcSpatialStructureElement, org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
 	issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
 
-	UUID uuid = UUID.randomUUID();
-	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, uuid.toString());
+	UUID markup_uuid = UUID.randomUUID();
+	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString());
 	VisualizationInfo visInfo = null;
 	if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) {
 	    visInfo = addVisInfo(ifcRoot.getExpressId(), ifcRoot.getGlobalId());
 	}
-	Issue issue = new Issue(uuid, markup, visInfo);
+	UUID viewpoint_uuid = UUID.randomUUID();
+	ViewPoint vp = new ViewPoint();
+	vp.setGuid(viewpoint_uuid.toString());
+	if (visInfo != null) {
+	    vp.setViewpoint("viewpoint.bcfv");
+	    vp.setSnapshot("snapshot.png");
+	}
+	markup.getViewpoints().add(vp);
+
+	Issue issue = new Issue(markup_uuid, markup, visInfo);
 	bcf.addIssue(issue);
     }
 
@@ -127,6 +151,7 @@ public class IssueReport {
 	Header.File headerFile = new Header.File();
 	headerFile.setIfcProject(ifcProjectGuid);
 	headerFile.setIfcSpatialStructureElement(ifcSpatialStructureElement);
+	System.out.println("headerfile name: " + this.ifcHeaderFilename);
 	headerFile.setFilename(this.ifcHeaderFilename);
 	GregorianCalendar gregorianCalender = new GregorianCalendar();
 	gregorianCalender.setTime(this.ifcHeaderTimeStamp);
@@ -140,9 +165,13 @@ public class IssueReport {
 
 	Topic topic = new Topic();
 	topic.setGuid(topicGuid);
-	topic.setReferenceLink("None Available"); // e.g. URL to external mvdXML
-						  // file
 	topic.setTitle("Issue regarding: " + ifc_guid);
+	topic.setCreationAuthor("RWTH");
+	try {
+	    topic.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalender));
+	} catch (DatatypeConfigurationException e1) {
+	    e1.printStackTrace();
+	}
 	markup.setTopic(topic);
 
 	Comment comments = new Comment();
@@ -153,14 +182,10 @@ public class IssueReport {
 	}
 	String commentGuid = UUID.randomUUID().toString();
 	comments.setGuid(commentGuid);
-	comments.setVerbalStatus("Open");
-	comments.setStatus(CommentStatus.ERROR);
 	String commentAuthor = System.getProperty("user.name");
 	comments.setAuthor(commentAuthor);
 	comments.setComment(comment);
-	Comment.Topic commentTopic = new Comment.Topic();
-	commentTopic.setGuid(topicGuid);
-	comments.setTopic(commentTopic);
+
 	markup.getComment().add(comments);
 	return markup;
     }
@@ -174,24 +199,25 @@ public class IssueReport {
 	} catch (BcfException | IOException e) {
 	    e.printStackTrace();
 	}
-	new File("TempGeometry.txt").delete();
     }
 
     private VisualizationInfo addVisInfo(long ifcProductExpressId, String ifc_guid) {
 	VisualizationInfo visualizationInfo = new VisualizationInfo();
-	
-	TempGeometry geometry = new TempGeometry(renderEngineModel, ifcProductExpressId);
-	if(geometry.getBoundingBox()==null)
-	    return null;
 
+	TempGeometry geometry = new TempGeometry(renderEngineModel, ifcProductExpressId);
+	if (geometry.getBoundingBox() == null)
+	    return null;
 	Component component1 = new Component();
 	component1.setIfcGuid(ifc_guid);
-	component1.setOriginatingSystem("BCFReportWriter");
-	component1.setAuthoringToolId("BCFReportWriter");
-
-	VisualizationInfo.Components components = new VisualizationInfo.Components();
+	Components components = new Components();
 	visualizationInfo.setComponents(components);
-	components.getComponent().add(component1);
+	
+	ComponentSelection cs=new ComponentSelection();
+	cs.getComponent().add(component1);	    
+	components.setSelection(cs);
+	ComponentVisibility cv=new ComponentVisibility();
+	cv.setDefaultVisibility(true);
+	components.setVisibility(cv);
 
 	Direction cameraDirection = new Direction();
 	cameraDirection.setX(geometry.getCameraDirectionX());
@@ -215,21 +241,21 @@ public class IssueReport {
 	perspectiveCamera.setCameraDirection(cameraDirection);
 
 	visualizationInfo.setPerspectiveCamera(perspectiveCamera);
-	visualizationInfo.setLines(new VisualizationInfo.Lines());
-	visualizationInfo.setClippingPlanes(new VisualizationInfo.ClippingPlanes());
+	// visualizationInfo.setLines(new VisualizationInfo.Lines());
+	// visualizationInfo.setClippingPlanes(new VisualizationInfo.ClippingPlanes());
 
 	return visualizationInfo;
     }
 
     private RenderEngineModel getRenderEngineModel(File ifcFile) throws RenderEngineException, IOException {
-	String ifcGeomServerLocation=OperatingSystemCopyOf_IfcGeomServer.getIfcGeomServer();
-	Path ifcGeomServerLocationPath=Paths.get(ifcGeomServerLocation);
-	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine(ifcGeomServerLocationPath,false,false);
+	String ifcGeomServerLocation = OperatingSystemCopyOf_IfcGeomServer.getIfcGeomServer();
+	Path ifcGeomServerLocationPath = Paths.get(ifcGeomServerLocation);
+	IfcOpenShellEngine ifcOpenShellEngine = new IfcOpenShellEngine(ifcGeomServerLocationPath, false, false);
 	ifcOpenShellEngine.init();
 	FileInputStream ifcFileInputStream = new FileInputStream(ifcFile);
-	
+
 	RenderEngineModel model = ifcOpenShellEngine.openModel(ifcFileInputStream);
-	System.out.println("IfcOpenShell opens ifc: "+ifcFile.getAbsolutePath());
+	System.out.println("IfcOpenShell opens ifc: " + ifcFile.getAbsolutePath());
 	RenderEngineSettings settings = new RenderEngineSettings();
 	settings.setPrecision(Precision.SINGLE);
 	settings.setIndexFormat(IndexFormat.AUTO_DETECT);
@@ -238,7 +264,7 @@ public class IssueReport {
 	settings.setGenerateWireFrame(false);
 	model.setSettings(settings);
 	model.generateGeneralGeometry();
-	System.out.println("RenderEngineModel "+model);
+	System.out.println("RenderEngineModel " + model);
 	return model;
     }
 
