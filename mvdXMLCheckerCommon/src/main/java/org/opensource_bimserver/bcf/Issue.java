@@ -1,6 +1,10 @@
 package org.opensource_bimserver.bcf;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
@@ -93,18 +97,28 @@ public class Issue {
 //                IOUtils.copy(bais, zipOutputStream);
 //TODO SNAPSHOT AVAILABLE YET!
     }
-    
+
     private void createDummySnapshot(ZipOutputStream zipOutputStream) throws IOException {
 	ZipEntry snapshot = new ZipEntry(getUuid().toString() + "/snapshot.png");
-	    zipOutputStream.putNextEntry(snapshot);
-   	int width = 200, height = 200;
-   	BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-   	Graphics2D ig2 = bi.createGraphics();
-   	try {
-   	    ImageIO.write(bi, "PNG", zipOutputStream);
-   	} catch (IOException e) {
-   	    e.printStackTrace();
-   	}
-   	 
-       }
+	zipOutputStream.putNextEntry(snapshot);
+	int width = 200, height = 200;
+	BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	Graphics2D ig2 = bi.createGraphics();
+	paint(ig2); 
+	try {
+	    ImageIO.write(bi, "PNG", zipOutputStream);
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+
+    }
+
+    private void paint(Graphics g) {
+	Graphics2D g2 = (Graphics2D) g;
+	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	Font font = new Font("Serif", Font.PLAIN, 32);
+	g2.setColor(Color.RED);
+	g2.setFont(font);
+	g2.drawString("To be done", 50, 70);
+    }
 }

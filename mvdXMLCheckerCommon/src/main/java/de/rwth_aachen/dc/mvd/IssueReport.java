@@ -38,13 +38,11 @@ import generated.buildingsmart.bcf.markup.Markup;
 import generated.buildingsmart.bcf.markup.Topic;
 import generated.buildingsmart.bcf.markup.ViewPoint;
 import generated.buildingsmart.bcf.visinfo.Component;
-import generated.buildingsmart.bcf.visinfo.ComponentSelection;
-import generated.buildingsmart.bcf.visinfo.ComponentVisibility;
-import generated.buildingsmart.bcf.visinfo.Components;
 import generated.buildingsmart.bcf.visinfo.Direction;
 import generated.buildingsmart.bcf.visinfo.PerspectiveCamera;
 import generated.buildingsmart.bcf.visinfo.Point;
 import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
+import generated.buildingsmart.bcf.visinfo.VisualizationInfo.Components;
 
 public class IssueReport {
     private final String ifcProjectGuid;
@@ -96,7 +94,6 @@ public class IssueReport {
 	issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
 
 	UUID markup_uuid = UUID.randomUUID();
-	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString());
 	VisualizationInfo visInfo = null;
 	if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
 	    visInfo = addVisInfo(ifcRoot.getExpressId(), ifcRoot.getGlobalId());
@@ -108,6 +105,7 @@ public class IssueReport {
 	    vp.setViewpoint("viewpoint.bcfv");
 	    vp.setSnapshot("snapshot.png");
 	}
+	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
 	markup.getViewpoints().add(vp);
 
 	Issue issue = new Issue(markup_uuid, markup, visInfo);
@@ -121,7 +119,6 @@ public class IssueReport {
 	issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
 
 	UUID markup_uuid = UUID.randomUUID();
-	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString());
 	VisualizationInfo visInfo = null;
 	if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) {
 	    visInfo = addVisInfo(ifcRoot.getExpressId(), ifcRoot.getGlobalId());
@@ -133,6 +130,7 @@ public class IssueReport {
 	    vp.setViewpoint("viewpoint.bcfv");
 	    vp.setSnapshot("snapshot.png");
 	}
+	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
 	markup.getViewpoints().add(vp);
 
 	Issue issue = new Issue(markup_uuid, markup, visInfo);
@@ -145,7 +143,7 @@ public class IssueReport {
 
     }
 
-    private Markup addMarkup(String ifcSpatialStructureElement, String ifc_guid, String comment, String topicGuid) {
+    private Markup addMarkup(String ifcSpatialStructureElement, String ifc_guid, String comment, String topicGuid,ViewPoint vp) {
 	Markup markup = new Markup();
 	Header header = new Header();
 	Header.File headerFile = new Header.File();
@@ -172,6 +170,7 @@ public class IssueReport {
 	} catch (DatatypeConfigurationException e1) {
 	    e1.printStackTrace();
 	}
+	topic.setDescription(comment);
 	markup.setTopic(topic);
 
 	Comment comments = new Comment();
@@ -180,6 +179,13 @@ public class IssueReport {
 	} catch (DatatypeConfigurationException e1) {
 	    e1.printStackTrace();
 	}
+	if(vp!=null)
+	{
+	    Comment.Viewpoint cv=new Comment.Viewpoint();
+	    cv.setGuid(vp.getGuid());
+	    comments.setViewpoint(cv);
+	}
+
 	String commentGuid = UUID.randomUUID().toString();
 	comments.setGuid(commentGuid);
 	String commentAuthor = System.getProperty("user.name");
@@ -210,15 +216,18 @@ public class IssueReport {
 	Component component1 = new Component();
 	component1.setIfcGuid(ifc_guid);
 	Components components = new Components();
+	components.getComponent().add(component1);
 	visualizationInfo.setComponents(components);
-	
+
+	/*
 	ComponentSelection cs=new ComponentSelection();
 	cs.getComponent().add(component1);	    
 	components.setSelection(cs);
 	ComponentVisibility cv=new ComponentVisibility();
 	cv.setDefaultVisibility(true);
 	components.setVisibility(cv);
-
+        */
+	
 	Direction cameraDirection = new Direction();
 	cameraDirection.setX(geometry.getCameraDirectionX());
 	cameraDirection.setY(geometry.getCameraDirectionY());
