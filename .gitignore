@@ -13,3 +13,5 @@ mvdXMLCheckerCore1dot1/target/*
 mvdXMLCheckerCommon/target/*
 *.bcfzip
 mvdXMLCommandLineChecker/target/*
+mvdXMLOnlineChecker/.settings/org.eclipse.wst.common.component
+mvdXMLOnlineChecker/.settings/org.eclipse.wst.common.component
