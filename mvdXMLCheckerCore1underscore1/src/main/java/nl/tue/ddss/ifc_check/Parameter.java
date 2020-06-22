@@ -58,7 +58,11 @@ public class Parameter {
 	else if (value instanceof org.bimserver.models.ifc4.impl.IfcBooleanImpl)
 	    result = ((org.bimserver.models.ifc4.impl.IfcBooleanImpl) value).getWrappedValue().toString();
 
-	
+	else if (value instanceof org.bimserver.models.ifc4.impl.IfcTextImpl)
+	    result = ((org.bimserver.models.ifc4.impl.IfcTextImpl) value).getWrappedValue().toString();
+	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl)
+	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl) value).getWrappedValue().toString();
+
 	
 	else if (value instanceof IdEObject)
 	    result = value;

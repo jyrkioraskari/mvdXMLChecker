@@ -50,11 +50,11 @@ public class EqualOperator {
 		    if (((String) leftOperand).matches(reg.substring(4).replace("\\\\", "\\"))) {
 			result = true;
 		    } else {
-			//System.out.println("No match" + leftOperand + " <> " + rightOperand);
+			System.out.println("No match" + leftOperand + " <> " + rightOperand);
 			result = false;
 		    }
 		} else {
-		    //System.out.println("No matching type 1" + leftOperand + " <> " + rightOperand);
+		    System.out.println("No matching type 1 " + leftOperand + " <> " + rightOperand);
 		    result = false;
 		}
 	    } else {
@@ -65,7 +65,7 @@ public class EqualOperator {
 			if (((String) leftOperand).toLowerCase().equals(rightOperand.toString().toLowerCase())) {
 			    result = true;
 			} else {
-			    //System.out.println("No matching type 2" + leftOperand + " <> " + rightOperand);
+			    System.out.println("No matching type 2 " + leftOperand + " <> " + rightOperand);
 			    result = false;
 			}
 		    }
@@ -75,7 +75,7 @@ public class EqualOperator {
 		    if (typeName.equals(rightOperand)) {
 			result = true;
 		    } else {
-			//System.out.println("No matching type 3" + leftOperand + " <> " + rightOperand);
+			System.out.println("No matching type 3" + leftOperand + " <> " + rightOperand);
 			result = false;
 		    }
 		} else if (leftOperand instanceof Collection) {
@@ -88,7 +88,7 @@ public class EqualOperator {
 				break;
 			    }
 			    if (!valueList.get(i).equals(rightOperand) && i == valueList.size() - 1) {
-				//System.out.println("Not equal " + leftOperand + " <> " + rightOperand);
+				System.out.println("Not equal " + leftOperand + " <> " + rightOperand);
 				result = false;
 			    }
 			} else if (valueList.get(i) instanceof IdEObject) {
@@ -99,16 +99,16 @@ public class EqualOperator {
 				break;
 			    }
 			    if (!typeName.equals(rightOperand) && i == valueList.size() - 1) {
-				//System.out.println("Not matching type 4 " + leftOperand + " <> " + rightOperand);
+				System.out.println("Not matching type 4 " + leftOperand + " <> " + rightOperand);
 				result = false;
 			    }
 			} else {
-			    //System.out.println("Not matching type 5 " + leftOperand + " <> " + rightOperand);
+			    System.out.println("Not matching type 5 " + leftOperand + " <> " + rightOperand);
 			    result = false;
 			}
 		    }
 		} else {
-		    //System.out.println("Not matching type 6 " + leftOperand + " <> " + rightOperand);
+		    System.out.println("Not matching type 6 " + leftOperand + " <> " + rightOperand);
 		    result = false;
 		}
 	    }
@@ -117,7 +117,7 @@ public class EqualOperator {
 		if (leftOperand.equals(rightOperand))
 		    result = true;
 		else {
-		    //System.out.println("Not matching type 7 " + leftOperand + " <> " + rightOperand);
+		    System.out.println("Not matching type 7 " + leftOperand + " <> " + rightOperand);
 		    result = false;
 		}
 	    } else if (leftOperand instanceof Integer) {
@@ -126,7 +126,7 @@ public class EqualOperator {
 		if (doub.equals(rightOperand))
 		    result = true;
 		else {
-		    //System.out.println("Not matching type 8 " + leftOperand + " <> " + rightOperand);
+		    System.out.println("Not matching type 8 " + leftOperand + " <> " + rightOperand);
 		    result = false;
 		}
 	    }
@@ -138,18 +138,18 @@ public class EqualOperator {
 	    } else {
 		System.out.println("To be later supported");
 		result = false;
-		//System.out.println("Not matching type 9 " + leftOperand + " <> " + rightOperand);
+		System.out.println("Not matching type 9 " + leftOperand + " <> " + rightOperand);
 	    }
 
 	} else if (rightOperand instanceof Collection) {
 	    System.out.println("To be later supported");
 	    result = false;
-	    //System.out.println("Matching type 1  bug " + leftOperand + " <> " + rightOperand);
+	    System.out.println("Matching type 1  bug " + leftOperand + " <> " + rightOperand);
 	} else if (rightOperand instanceof Boolean) {
 	    if (leftOperand instanceof Boolean) {
 		result = leftOperand.equals(rightOperand);
 	    } else {
-		//System.out.println("No matching type 10  bug " + leftOperand + " <> " + rightOperand);
+		System.out.println("No matching type 10  bug " + leftOperand + " <> " + rightOperand);
 		result = false;
 	    }
 	}

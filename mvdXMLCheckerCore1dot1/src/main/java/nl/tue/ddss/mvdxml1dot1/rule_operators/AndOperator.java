@@ -1,5 +1,6 @@
 package nl.tue.ddss.mvdxml1dot1.rule_operators;
 
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 public class AndOperator {
 	// fields

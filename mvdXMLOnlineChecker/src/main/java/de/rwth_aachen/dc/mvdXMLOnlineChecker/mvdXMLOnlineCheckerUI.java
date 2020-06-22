@@ -34,6 +34,10 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
+import de.rwth_aachen.dc.mvd.events.CheckerBreakEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLv1dot2Check;
 import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
@@ -59,6 +63,11 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     private Button check_button;
 
+ // Create a rich text area
+    final RichTextArea reasoning_area = new RichTextArea();
+    final StringBuilder reasoning = new StringBuilder();
+    
+    
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 	final VerticalLayout layout = new VerticalLayout();
@@ -113,6 +122,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	layout.addComponent(save_as_bcfzip_button);
 
+	reasoning_area.setCaption("Reasoning for the results");
+	reasoning_area.setWidth("100%");
+	//reasoning_area.setHeight("70px");;
+	reasoning_area.setReadOnly(true);
+	layout.addComponent(reasoning_area);
+
 	setContent(layout);
 	communication.register(this);
     }
@@ -138,7 +153,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     public void checkIFCFile() {
 	issues.clear();
-	
+	reasoning.setLength(0); // clean the content
 	try {
 
 	    // mvdXML 1.1
@@ -252,6 +267,30 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
     }
 
+    @Subscribe
+    public void infoEvent(CheckerInfoEvent event) {
+	reasoning.append(event.getTopic()+": "+event.getValue()+"<BR>");
+	reasoning_area.setValue(reasoning.toString());
+    }
+    
+    @Subscribe
+    public void errorEvent(CheckerErrorEvent event) {
+	reasoning.append(event.getClass_name()+": "+event.getMessage()+"<BR>");
+	reasoning_area.setValue(reasoning.toString());
+    }
+
+    @Subscribe
+    public void notificationEvent(CheckerNotificationEvent event) {
+	reasoning.append(""+event.getValue()+"<BR>");
+	reasoning_area.setValue(reasoning.toString());
+    }
+    
+    @Subscribe
+    public void breakEvent(CheckerBreakEvent event) {
+	reasoning.append("<HR>");
+	reasoning_area.setValue(reasoning.toString());
+    }
+    
     @WebServlet(urlPatterns = "/*", name = "mvdXMLOnlineCheckerUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = mvdXMLOnlineCheckerUI.class, productionMode = false)
     public static class mvdXMLOnlineCheckerUIServlet extends VaadinServlet {

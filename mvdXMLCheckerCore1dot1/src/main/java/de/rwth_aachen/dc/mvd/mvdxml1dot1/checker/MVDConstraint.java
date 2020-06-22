@@ -18,12 +18,18 @@ public class MVDConstraint {
     private final List<AttributeRule> attributeRules;
     @SuppressWarnings("unused")
     private final String requirement;
+    private String operator;
 
     public MVDConstraint(ConceptRoot conceptRoot, Concept concept, ConceptTemplate conceptTemplate) {
 	this(conceptRoot, concept, conceptTemplate, null);
+
     }
 
     public MVDConstraint(ConceptRoot conceptRoot, Concept concept, ConceptTemplate conceptTemplate, String requirement) {
+	if (concept.getTemplateRules() != null)
+	    this.operator = concept.getTemplateRules().getOperator();
+	if (operator == null)
+	    this.operator = "and";
 	this.conceptRoot = conceptRoot;
 	this.concept = concept;
 	this.conceptTemplate = conceptTemplate;
@@ -36,29 +42,31 @@ public class MVDConstraint {
     }
 
     public ConceptRoot getConceptRoot() {
-        return conceptRoot;
+	return conceptRoot;
     }
 
     public Concept getConcept() {
-        return concept;
+	return concept;
     }
 
     public List<TemplateRule> getTemplateRules() {
-        return templateRules;
+	return templateRules;
     }
 
     public ConceptTemplate getConceptTemplate() {
-        return conceptTemplate;
+	return conceptTemplate;
     }
 
     public List<AttributeRule> getAttributeRules() {
-        return attributeRules;
+	return attributeRules;
     }
 
     public String getRequirement() {
-        return requirement;
+	return requirement;
     }
 
-  
+    public String getOperator() {
+	return operator;
+    }
 
 }
