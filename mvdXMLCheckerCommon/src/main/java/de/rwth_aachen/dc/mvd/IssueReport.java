@@ -32,6 +32,8 @@ import org.opensource_bimserver.bcf.Issue;
 import de.rwth_aachen.dc.OperatingSystemCopyOf_IfcGeomServer;
 import de.rwth_aachen.dc.mvd.bcf.TempGeometry;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart.bcf.markup.Comment;
 import generated.buildingsmart.bcf.markup.Header;
 import generated.buildingsmart.bcf.markup.Markup;
@@ -45,6 +47,7 @@ import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
 import generated.buildingsmart.bcf.visinfo.VisualizationInfo.Components;
 
 public class IssueReport {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
     private final String ifcProjectGuid;
     private final String ifcHeaderFilename;
     private final Date ifcHeaderTimeStamp;
@@ -156,6 +159,7 @@ public class IssueReport {
 	try {
 	    headerFile.setDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalender));
 	} catch (DatatypeConfigurationException e1) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e1.getMessage()));
 	    e1.printStackTrace();
 	}
 	header.getFile().add(headerFile);
@@ -168,6 +172,7 @@ public class IssueReport {
 	try {
 	    topic.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalender));
 	} catch (DatatypeConfigurationException e1) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e1.getMessage()));
 	    e1.printStackTrace();
 	}
 	topic.setDescription(comment);
@@ -177,6 +182,7 @@ public class IssueReport {
 	try {
 	    comments.setDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 	} catch (DatatypeConfigurationException e1) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e1.getMessage()));
 	    e1.printStackTrace();
 	}
 	if(vp!=null)
@@ -203,6 +209,7 @@ public class IssueReport {
 	    outputStream = new FileOutputStream(output);
 	    bcf.write(outputStream);
 	} catch (BcfException | IOException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
     }

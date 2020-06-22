@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Set;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.EntityRule;
 
 // Modified by JO 2020
 
 public class IfcHashMapBuilder {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
 
     private Object ifcObject;
     private List<AttributeRule> attributeRules;
@@ -43,6 +46,7 @@ public class IfcHashMapBuilder {
 	    for (HashMap<AttributeRule, ObjectToValue> hM : hMs)
 		this.hashMaps.add(enrichHashMap(hM));
 	} catch (ClassNotFoundException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 
@@ -140,8 +144,10 @@ public class IfcHashMapBuilder {
 		value = null;
 	    }
 	} catch (NoSuchMethodException | SecurityException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 	return value;
@@ -176,6 +182,7 @@ public class IfcHashMapBuilder {
 					    ((ArrayList<Object>) derivedValue).add(object);
 					}
 				    } catch (ClassNotFoundException e) {
+					communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 					e.printStackTrace();
 				    }
 				}
@@ -186,6 +193,7 @@ public class IfcHashMapBuilder {
 					derivedValue = value;
 				    }
 				} catch (ClassNotFoundException e) {
+				    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 				    e.printStackTrace();
 				}
 			    }

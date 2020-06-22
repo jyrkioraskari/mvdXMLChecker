@@ -10,12 +10,15 @@ import org.bimserver.plugins.renderengine.RenderEngineGeometry;
 import org.bimserver.plugins.renderengine.RenderEngineInstance;
 import org.bimserver.plugins.renderengine.RenderEngineModel;
 
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import nl.tue.ddss.bcf.BoundingBox;
 
 //Modified ny JO, 22/04/2020 and 4/05/2020 from the original 
 // nl.tue.ddss.bcf.TempGeometry
 
 public class TempGeometry {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
     private final BoundingBox boundingBox;
     private double cameraViewPointX;
     private double cameraViewPointY;
@@ -95,6 +98,7 @@ public class TempGeometry {
 		}
 	    }
 	} catch (RenderEngineException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 	return boundingBox;

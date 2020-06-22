@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
+
 public class MvdXMLVersionCheck {
     public static boolean checkMvdXMLSchemaVersion(String filename, String schemaName) {
 	try {
@@ -19,7 +22,6 @@ public class MvdXMLVersionCheck {
 
 	    myReader.close();
 	} catch (FileNotFoundException e) {
-	    System.out.println("An error occurred.");
 	    e.printStackTrace();
 	}
 	return false;

@@ -19,9 +19,14 @@ import org.bimserver.models.ifc4.Ifc4Package;
 import org.bimserver.plugins.deserializers.Deserializer;
 import org.bimserver.utils.DeserializerUtils;
 
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
+
 @SuppressWarnings("deprecation")
 public class IfcModelInstance {
-    
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
+
     public enum IfcVersion {
 	  IFC2x3,
 	  IFC4,
@@ -41,6 +46,7 @@ public class IfcModelInstance {
 		try {
 		    return DeserializerUtils.readFromFile(deserializer2x3, ifcFilePath);
 		} catch (Exception e) {
+		    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		    e.printStackTrace();
 		}
 		break;
@@ -52,6 +58,7 @@ public class IfcModelInstance {
 		try {
 		    return DeserializerUtils.readFromFile(deserializer4, ifcFilePath);
 		} catch (Exception e) {
+		    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		    e.printStackTrace();
 		}
 		break;
@@ -85,6 +92,7 @@ public class IfcModelInstance {
 		br.close();
 	    }
 	} catch (IOException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 	return IfcModelInstance.IfcVersion.UNKNOWN;

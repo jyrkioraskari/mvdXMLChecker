@@ -173,6 +173,7 @@ public class IfcMVDConstraintChecker {
 
 		}
 	    } catch (ClassNotFoundException e) {
+		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    }
 	}
@@ -361,6 +362,7 @@ public class IfcMVDConstraintChecker {
 	try {
 	    result = parser.expression();
 	} catch (RecognitionException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 	return result;
@@ -402,6 +404,7 @@ public class IfcMVDConstraintChecker {
 		Class cls = Class.forName("org.bimserver.models.ifc2x3tc1." + entityRule.getEntityName());
 		entityTypes.add(cls);
 	    } catch (ClassNotFoundException e) {
+		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    }
 	}

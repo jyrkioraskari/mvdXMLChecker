@@ -215,6 +215,7 @@ public class IfcMVDConstraintChecker {
 
 		}
 	    } catch (ClassNotFoundException e) {
+		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    }
 	}
@@ -347,6 +348,7 @@ public class IfcMVDConstraintChecker {
 	    result = parser.expression();
 	    System.out.println("conceptLevelRuleCheck RESULT: " + result);
 	} catch (RecognitionException e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 	return result;
@@ -381,6 +383,7 @@ public class IfcMVDConstraintChecker {
 		}
 		entityTypes.add(cls);
 	    } catch (ClassNotFoundException e) {
+		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    }
 	}

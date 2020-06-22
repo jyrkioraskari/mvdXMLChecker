@@ -12,8 +12,11 @@ import org.buildingsmart_tech.mvdxml.mvdxml1_1.AbstractRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.AttributeRule;
 import org.buildingsmart_tech.mvdxml.mvdxml1_1.EntityRule;
 
-public class IfcHashMapBuilder {
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
+public class IfcHashMapBuilder {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
     private Object ifcObject;
     private List<AttributeRule> attributeRules;
     private List<HashMap<AbstractRule, ObjectToValue>> hashMaps;
@@ -57,10 +60,10 @@ public class IfcHashMapBuilder {
 		    value = null;
 		}
 	    } catch (NoSuchMethodException | SecurityException e) {
-		// TODO Auto-generated catch block
+		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-		// TODO Auto-generated catch block
+		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    }
 
@@ -188,9 +191,7 @@ public class IfcHashMapBuilder {
 					    ((ArrayList<Object>) derivedValue).add(object);
 					}
 				    } catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
-				    }
+					communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));				    }
 				}
 			    } else {
 				derivedValue = null;
@@ -199,9 +200,8 @@ public class IfcHashMapBuilder {
 					derivedValue = value;
 				    }
 				} catch (ClassNotFoundException e) {
-				    // TODO Auto-generated catch block
-				    // e.printStackTrace();
-				}
+				    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+				    }
 			    }
 			}
 			enrichedHashMap.put(entityRule, new ObjectToValue(ifcObject, derivedValue));

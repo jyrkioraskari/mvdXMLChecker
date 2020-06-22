@@ -11,6 +11,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Concept;
 import generated.buildingsmart_tech.mvd_xml_1dot1.ConceptRoot;
@@ -26,6 +28,7 @@ import nl.tue.ddss.mvdxml1dot1.mvdparser.MvdXMLException;
 // Based on nl.tue.ddss.mvdparser.MvdXMLParser
 
 public class MvdXMLValidationRules {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
 
     private MvdXML mvdXML;
     private List<ConceptTemplate> concept_templates = new ArrayList<ConceptTemplate>();
@@ -54,6 +57,7 @@ public class MvdXMLValidationRules {
 		addSubTemplates(t);
 	    this.concept_templates.addAll(main_concept_templates);
 	} catch (Exception e) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
 	    this.valid = false;
 	    e.printStackTrace();
 	}
