@@ -28,7 +28,7 @@ import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConstraint;
+import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConceptConstraint;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Definitions;
@@ -44,12 +44,12 @@ import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
  */
 
 public class IfcMVDConstraintChecker {
-    private EventBusCommunication communication = EventBusCommunication.getInstance();
-    private List<MVDConstraint> constraints;
+    private final EventBusCommunication communication = EventBusCommunication.getInstance();
+    private final List<MVDConceptConstraint> constraints;
 
     private IfcVersion ifcversion;
 
-    public IfcMVDConstraintChecker(List<MVDConstraint> constraints, IfcVersion ifcversion) throws DeserializeException, IOException, URISyntaxException {
+    public IfcMVDConstraintChecker(List<MVDConceptConstraint> constraints, IfcVersion ifcversion) throws DeserializeException, IOException, URISyntaxException {
 	this.constraints = constraints;
 	this.ifcversion = ifcversion;
     }
@@ -57,13 +57,13 @@ public class IfcMVDConstraintChecker {
     public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws RenderEngineException, DeserializeException, IOException {
 	IssueReport issuereport = new IssueReport(ifcModel, ifcfile);
 
-	for (MVDConstraint constraint : constraints) {
+	for (MVDConceptConstraint constraint : constraints) {
 	    if (constraint == null) {
 		communication.post(new CheckerNotificationEvent("Constraint was null <P>"));
 		continue;
 	    }
-	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
-	    List<TemplateRule> templateRules = constraint.getTemplateRules();
+	    List<AttributeRule> applicability_attributeRules = constraint.getApplicability_attributeRules();
+	    List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
 	    try {
 		Class cls = null;
 		switch (this.ifcversion) {
@@ -81,27 +81,90 @@ public class IfcMVDConstraintChecker {
 		}
 		communication.post(new CheckerInfoEvent("Checking against", "mvdXML 1.1 <P>"));
 
-		List<Object> allRoots = ifcModel.getAllWithSubTypes(cls);
+		List<Object> allClassInstances = ifcModel.getAllWithSubTypes(cls);
 
-		if (allRoots.size() == 0) {
+		if (allClassInstances.size() == 0) {
 		    issuereport.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
 		    communication.post(new CheckerErrorEvent(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model"));
 		}
 
-		for (Object ifcObject : allRoots) {
-		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules, this.ifcversion);
-		    List<HashMap<AbstractRule, ObjectToValue>> hashMaps = ifcHashMapBuilder.getHashMaps();
+		for (Object ifcObject : allClassInstances) {
+		    IfcHashMapBuilder applicability_ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, applicability_attributeRules, this.ifcversion);
+		    List<HashMap<AbstractRule, ObjectToValue>> applicability_hashMaps = applicability_ifcHashMapBuilder.getHashMaps();
+
+		    IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, concept_attributeRules, this.ifcversion);
+		    List<HashMap<AbstractRule, ObjectToValue>> concept_hashMaps = concept_ifcHashMapBuilder.getHashMaps();
 
 		    String comment = new String();
-		    for (HashMap<AbstractRule, ObjectToValue> hashMap : hashMaps)
+		    for (HashMap<AbstractRule, ObjectToValue> hashMap : concept_hashMaps)
 			comment = templateLevelRuleCheck(hashMap);
 
+		    //
+
+		    if (applicability_attributeRules != null) {
+			boolean applicable = false;
+			if (constraint.getApplicability_operator() != null)
+			    if (constraint.getApplicability_operator().toLowerCase().trim().equals("or")) {
+				for (TemplateRule applicability_templateRule : constraint.getApplicability_templateRules()) {
+				    for (int i = 0; i < applicability_hashMaps.size(); i++) {
+					Boolean result = conceptLevelRuleCheck(applicability_templateRule.getParameters(), applicability_hashMaps.get(i));
+					if (result == null)
+					    continue;
+					if (result == true) {
+					    applicable = true;
+					    break;
+					}
+				    }
+				}
+
+			    } else {
+				applicable = true;
+				for (TemplateRule applicability_templateRule : constraint.getApplicability_templateRules()) {
+				    boolean template_validity = false;
+				    for (int i = 0; i < applicability_hashMaps.size(); i++) {
+					Boolean result = conceptLevelRuleCheck(applicability_templateRule.getParameters(), applicability_hashMaps.get(i));
+					if (result == null)
+					    continue;
+					if (result == true) {
+					    template_validity = true;
+					    break;
+					}
+				    }
+				    if (!template_validity) {
+					applicable = false;
+				    }
+
+				}
+			    }
+			if (!applicable) {
+			    communication.post(new CheckerBreakEvent());
+
+			    if (this.ifcversion == ifcversion.IFC2x3)
+				communication.post(new CheckerNotificationEvent("<B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " was not applicable.</B>"));
+			    else if (this.ifcversion == ifcversion.IFC4)
+				communication.post(new CheckerNotificationEvent("<B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " was not applicable.</B>"));
+
+			    if (applicability_hashMaps.size() > 0) {
+				communication.post(new CheckerNotificationEvent("<B>Values were:</B>"));
+				int i = 1;
+				for (HashMap<AbstractRule, ObjectToValue> hashMap : applicability_hashMaps) {
+				    communication.post(new CheckerNotificationEvent("<BR>Set: " + i++ + ""));
+				    showParameterValue(hashMap);
+				}
+			    } else
+				communication.post(new CheckerNotificationEvent("<B>No applicability values.</B>"));
+
+			    continue; // No check since not applicable
+			}
+		    }
+		    //
+
 		    boolean valid = false;
-		    if (constraint.getOperator() != null)
-			if (constraint.getOperator().toLowerCase().trim().equals("or")) {
-			    for (TemplateRule templateRule : templateRules) {
-				for (int i = 0; i < hashMaps.size(); i++) {
-				    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
+		    if (constraint.getConcept_operator() != null)
+			if (constraint.getConcept_operator().toLowerCase().trim().equals("or")) {
+			    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
+				for (int i = 0; i < concept_hashMaps.size(); i++) {
+				    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
 				    if (result == null)
 					continue;
 				    if (result == true) {
@@ -112,10 +175,10 @@ public class IfcMVDConstraintChecker {
 			    }
 			    if (!valid) {
 				comment = comment + "\n This Object has to fulfil one of the template requirements. ";
-				for (TemplateRule templateRule : templateRules) {
+				for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
 				    boolean template_validity = false;
-				    for (int i = 0; i < hashMaps.size(); i++) {
-					Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
+				    for (int i = 0; i < concept_hashMaps.size(); i++) {
+					Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
 					if (result == null)
 					    continue;
 					if (result == true) {
@@ -129,10 +192,10 @@ public class IfcMVDConstraintChecker {
 			    }
 			} else {
 			    valid = true;
-			    for (TemplateRule templateRule : templateRules) {
+			    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
 				boolean template_validity = false;
-				for (int i = 0; i < hashMaps.size(); i++) {
-				    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), hashMaps.get(i));
+				for (int i = 0; i < concept_hashMaps.size(); i++) {
+				    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
 				    if (result == null)
 					continue;
 				    if (result == true) {
@@ -206,16 +269,21 @@ public class IfcMVDConstraintChecker {
 			    throw new RuntimeException("Unsupported IFC version");
 			}
 		    }
-		    communication.post(new CheckerNotificationEvent("<B>Values were:</B>"));
-		    int i = 1;
-		    for (HashMap<AbstractRule, ObjectToValue> hashMap : hashMaps) {
-			communication.post(new CheckerNotificationEvent("<BR>Set: " + i++ + ""));
-			showParameterValue(hashMap);
-		    }
+		    
+		    
+		    if (concept_hashMaps.size() > 0) {
+			communication.post(new CheckerNotificationEvent("<B>Values were:</B>"));
+			int i = 1;
+			for (HashMap<AbstractRule, ObjectToValue> hashMap : concept_hashMaps) {
+			    communication.post(new CheckerNotificationEvent("<BR>Set: " + i++ + ""));
+			    showParameterValue(hashMap);
+			}
+		    } else
+			communication.post(new CheckerNotificationEvent("<B>No concept values.</B>"));
 
 		}
 	    } catch (ClassNotFoundException e) {
-		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+		communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
 		e.printStackTrace();
 	    }
 	}
@@ -261,7 +329,7 @@ public class IfcMVDConstraintChecker {
 		paramValue = value;
 	    else
 		paramValue = value;
-	    communication.post(new CheckerInfoEvent(" " + rule.getRuleID(), "" + paramValue));
+	    communication.post(new CheckerInfoEvent(">> " + rule.getRuleID(), "" + paramValue));
 	}
 
     }
@@ -346,9 +414,8 @@ public class IfcMVDConstraintChecker {
 	MvdXMLv1_1Parser parser = new MvdXMLv1_1Parser(tokenStream, hashMap);
 	try {
 	    result = parser.expression();
-	    System.out.println("conceptLevelRuleCheck RESULT: " + result);
 	} catch (RecognitionException e) {
-	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
 	    e.printStackTrace();
 	}
 	return result;
@@ -383,7 +450,7 @@ public class IfcMVDConstraintChecker {
 		}
 		entityTypes.add(cls);
 	    } catch (ClassNotFoundException e) {
-		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+		communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
 		e.printStackTrace();
 	    }
 	}

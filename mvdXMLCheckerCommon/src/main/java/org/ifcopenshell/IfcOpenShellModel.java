@@ -115,7 +115,6 @@ public class IfcOpenShellModel implements RenderEngineModel {
 		LOGGER.debug(String.format("Took %.2f seconds to obtain representations for %d entities", (t1-t0) / 1.E9, instancesById.size()));
 	}
 
-	@Override
 	public RenderEngineInstance getInstanceFromExpressId(long expressId) throws RenderEngineException {
 		if (instancesById.containsKey(expressId)) {
 			return instancesById.get(expressId);
@@ -142,5 +141,17 @@ public class IfcOpenShellModel implements RenderEngineModel {
 	@Override
 	public Collection<RenderEngineInstance> listInstances() throws RenderEngineException {
 		return null;
+	}
+
+	@Override
+	public RenderEngineInstance getInstanceFromExpressId(int expressId) throws RenderEngineException {
+	    if (instancesById.containsKey(expressId)) {
+		return instancesById.get(expressId);
+	} else {
+		// Probably something went wrong with the processing of this element in
+		// the IfcOpenShell binary, as it has not been included in the enumerated
+		// set of elements with geometry.
+		throw new EntityNotFoundException("Entity " + expressId + " not found in model");
+	}
 	}
 }

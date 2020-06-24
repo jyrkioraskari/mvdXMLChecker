@@ -275,7 +275,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
     
     @Subscribe
     public void errorEvent(CheckerErrorEvent event) {
-	reasoning.append(event.getClass_name()+": "+event.getMessage()+"<BR>");
+	reasoning.append("Issue: "+event.getClass_name()+": "+event.getMessage()+"<BR>");
 	reasoning_area.setValue(reasoning.toString());
     }
 

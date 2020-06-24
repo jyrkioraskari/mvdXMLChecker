@@ -63,13 +63,12 @@ public class Parameter {
 	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl)
 	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl) value).getWrappedValue().toString();
 
-	
 	else if (value instanceof IdEObject)
 	    result = value;
 	else
 	    result=value;
 	
-	System.out.println("Parameter "+name+" value vas: "+result);
+	System.out.println("Parameter "+name+" value was: "+result);
 	return result;
     }
 

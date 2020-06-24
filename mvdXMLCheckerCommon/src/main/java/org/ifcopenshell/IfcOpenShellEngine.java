@@ -47,7 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import org.bimserver.plugins.renderengine.Metrics;
+import org.bimserver.models.store.Metrics;
 import org.bimserver.plugins.renderengine.RenderEngine;
 import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.bimserver.plugins.renderengine.RenderEngineModel;
@@ -130,7 +130,6 @@ public class IfcOpenShellEngine implements RenderEngine {
 		this.applyLayerSets = applyLayerSets;
 	}
 
-	@Override
 	public Metrics getMetrics() {
 		return null;
 	}

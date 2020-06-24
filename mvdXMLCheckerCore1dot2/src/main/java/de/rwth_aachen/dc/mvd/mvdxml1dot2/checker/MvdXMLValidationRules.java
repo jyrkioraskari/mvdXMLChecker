@@ -41,9 +41,9 @@ public class MvdXMLValidationRules {
 	    this.valid=false;
 	    return;
 	}
-	System.out.println("Valid mvdXML 1.1");
+	System.out.println("Valid mvdXML 1.2");
 	try {
-	    JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_1dot1");
+	    JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_1dot2");
 	    Unmarshaller unmarshaller = mvdXMLSchema.createUnmarshaller();
 	    StreamSource streamSource = new StreamSource(new File(filename));
 

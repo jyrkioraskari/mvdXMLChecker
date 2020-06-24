@@ -69,7 +69,7 @@ public class Parameter {
 	else
 	    result=value;
 	
-	System.out.println("Parameter "+name+" value vas: "+result);
+	System.out.println("Parameter "+name+" value was: "+result);
 	return result;
     }
 

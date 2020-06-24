@@ -44,8 +44,8 @@ import nl.tue.ddss.mvdparser.MVDConstraint;
  */
 
 public class IfcMVDConstraintChecker {
-    private EventBusCommunication communication = EventBusCommunication.getInstance();
-    private List<MVDConstraint> constraints;
+    private final EventBusCommunication communication = EventBusCommunication.getInstance();
+    private final List<MVDConstraint> constraints;
 
     private IfcVersion ifcversion;
 
@@ -79,13 +79,13 @@ public class IfcMVDConstraintChecker {
 
 		communication.post(new CheckerInfoEvent("Checking against", "mvdXML 1-1 <P>"));
 
-		List<Object> allRoots = ifcModel.getAllWithSubTypes(cls);
-		if (allRoots.size() == 0) {
+		List<Object> allClassInstances = ifcModel.getAllWithSubTypes(cls);
+		if (allClassInstances.size() == 0) {
 		    issuereport.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
 		    communication.post(new CheckerErrorEvent(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model"));
 		}
 
-		for (Object ifcObject : allRoots) {
+		for (Object ifcObject : allClassInstances) {
 		    IfcHashMapBuilder ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, attributeRules);
 		    List<HashMap<AbstractRule, ObjectToValue>> hashMaps = ifcHashMapBuilder.getHashMaps();
 		    String comment = new String();
