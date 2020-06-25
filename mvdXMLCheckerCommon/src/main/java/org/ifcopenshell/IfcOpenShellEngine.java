@@ -130,7 +130,9 @@ public class IfcOpenShellEngine implements RenderEngine {
 		this.applyLayerSets = applyLayerSets;
 	}
 
-	public Metrics getMetrics() {
-		return null;
+	@Override
+	public org.bimserver.plugins.renderengine.Metrics getMetrics() {
+	    return null;
 	}
+
 }

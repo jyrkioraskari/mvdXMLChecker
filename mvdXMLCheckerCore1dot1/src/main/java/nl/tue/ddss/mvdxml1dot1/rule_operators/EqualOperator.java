@@ -6,7 +6,11 @@ import java.util.List;
 
 import org.bimserver.emf.IdEObject;
 
+import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
+
 public class EqualOperator {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
     // fields
     private Object leftOperand;
     private Object rightOperand;
@@ -51,6 +55,7 @@ public class EqualOperator {
 			result = true;
 		    } else {
 			System.out.println("No match" + leftOperand + " <> " + rightOperand);
+			communication.post(new CheckerNotificationEvent("  <B style=\"color:red\"> --> "+leftOperand+ " <> " + rightOperand+"</B>"));
 			result = false;
 		    }
 		} else {
@@ -65,6 +70,7 @@ public class EqualOperator {
 			if (((String) leftOperand).toLowerCase().equals(rightOperand.toString().toLowerCase())) {
 			    result = true;
 			} else {
+			    communication.post(new CheckerNotificationEvent("   <B style=\"color:red\"> --> "+leftOperand+ " <> " + rightOperand+"</B>"));
 			    System.out.println("No matching type 2 " + leftOperand + " <> " + rightOperand);
 			    result = false;
 			}

@@ -47,8 +47,7 @@ public class IfcHashMapBuilder {
 	    for (HashMap<AttributeRule, ObjectToValue> hM : hMs)
 		this.hashMaps.add(enrichHashMap(hM));
 	} catch (ClassNotFoundException e) {
-	    communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
-	    e.printStackTrace();
+	    communication.post(new CheckerNotificationEvent("The Java class  was not found. Is the spelling correct in mvdXML ? "));
 	}
 
     }
@@ -200,8 +199,7 @@ public class IfcHashMapBuilder {
 					    ((ArrayList<Object>) derivedValue).add(object);
 					}
 				    } catch (ClassNotFoundException e) {
-					communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
+					    communication.post(new CheckerNotificationEvent( "The IFC Java class for "+entityName+" was not found. Is the spelling correct in mvdXML ?"));
 				    }
 				}
 			    } else {
@@ -211,8 +209,7 @@ public class IfcHashMapBuilder {
 					derivedValue = value;
 				    }
 				} catch (ClassNotFoundException e) {
-				    communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
-				    e.printStackTrace();
+				    communication.post(new CheckerNotificationEvent("The IFC Java class for "+entityName+" was not found. Is the spelling correct in mvdXML ?"));
 				}
 			    }
 			}

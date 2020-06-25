@@ -7,10 +7,13 @@ import java.util.Set;
 import org.bimserver.emf.IdEObject;
 import org.eclipse.emf.common.util.Enumerator;
 
+import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
 
 public class Parameter {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
     Object result;
     String name;
     HashMap<AbstractRule, ObjectToValue> hashMap;
@@ -63,12 +66,15 @@ public class Parameter {
 	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl)
 	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl) value).getWrappedValue().toString();
 
+	
 	else if (value instanceof IdEObject)
 	    result = value;
 	else
 	    result=value;
 	
 	System.out.println("Parameter "+name+" value was: "+result);
+	communication.post(new CheckerNotificationEvent("   "+this.name+" = "+result));
+
 	return result;
     }
 

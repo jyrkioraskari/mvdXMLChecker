@@ -21,39 +21,39 @@ import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcMVDConstraintChecker;
 public class MvdXMLv1dot2Check {
 
     public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
-	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
+  	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 
-	IfcModelInstance model = new IfcModelInstance();
-	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-	if(bimserver_ifcModel==null)  // IFC2x2 causes this to return null
-	    return null;
-	bimserver_ifcModel.fixInverseMismatches();
-	List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
+  	IfcModelInstance model = new IfcModelInstance();
+  	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+  	if(bimserver_ifcModel==null)  // IFC2x2 causes this to return null
+  	    return null;
+  	bimserver_ifcModel.fixInverseMismatches();
+  	List<MVDConceptConstraint> constraints = mvdXML.getMVDConstraints();
 
-	if (model.getIfcversion().isPresent()) {
-	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
-	    return issuereport;
-	}
+  	if (model.getIfcversion().isPresent()) {
+  	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+  	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
+  	    return issuereport;
+  	}
 
-	return null;
-    }
+  	return null;
+      }
 
-    public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
-	List<IssueBean> issues = new ArrayList<>();
-	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
+      public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
+  	List<IssueBean> issues = new ArrayList<>();
+  	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 
-	IfcModelInstance model = new IfcModelInstance();
-	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-	bimserver_ifcModel.fixInverseMismatches();
-	List<MVDConstraint> constraints = mvdXML.getMVDConstraints();
+  	IfcModelInstance model = new IfcModelInstance();
+  	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+  	bimserver_ifcModel.fixInverseMismatches();
+  	List<MVDConceptConstraint> constraints = mvdXML.getMVDConstraints();
 
-	if (model.getIfcversion().isPresent()) {
-	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
-	    issues.addAll(issuereport.getIssues());
-	}
+  	if (model.getIfcversion().isPresent()) {
+  	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+  	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
+  	    issues.addAll(issuereport.getIssues());
+  	}
 
-	return issues;
-    }
+  	return issues;
+      }
 }

@@ -1,5 +1,5 @@
 # mvdXML Checker
-v2.17
+v2.20
 
 
 The mvdXMLChecker is a generic tool for verifying IFC models. I
