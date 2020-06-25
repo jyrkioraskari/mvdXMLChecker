@@ -1,6 +1,8 @@
 # mvdXML Checker
 v2.20
 
+![General View](https://raw.githubusercontent.com/jyrkioraskari/OnlineMvdXMLChecker/master/doc/mvdXMLAPI.png)
+
 
 The mvdXMLChecker is a generic tool for verifying IFC models. I
 The validation rules are defined in the mvdXML schema. The software produces a BIM Collabolarion Format (BCF) report that can be used in BIM tools like Solibri to review the viewpoints, 
@@ -92,7 +94,7 @@ Docker (https://www.docker.com/) installations are available for the interfaces.
 
 ### Docker for the Open API interface
 
-![Open API](https://raw.githubusercontent.com/jyrkioraskari/OnlineMvdXMLChecker/master/doc/mvdXMLAPI.png)
+![Open API](https://raw.githubusercontent.com/jyrkioraskari/OnlineMvdXMLChecker/master/doc/OpenAPIInterface.PNG)
 
 
 Command-line commands needed to start the server at your computer;
@@ -106,6 +108,8 @@ Then the software can be accessed from the local web address:
 http://localhost:8081/
 
 ### Docker for the Web interface
+![User Interface](https://raw.githubusercontent.com/jyrkioraskari/OnlineMvdXMLChecker/master/doc/OnlineUserInterface.PNG)
+
 
 Command-line commands needed to start the server at your computer;
 ```
