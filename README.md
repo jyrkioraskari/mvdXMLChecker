@@ -157,6 +157,7 @@ sudo systemctl restart tomcat8
 ```
 
 ## Acknowledgements
-This research was funded by the EU through the H2020 project BIM4REN.
+This work has been written in RWTH-Aachen. The research was funded by the EU through the H2020 project BIM4REN.
 
+https://dc.rwth-aachen.de/de/forschung/bim4ren
 
