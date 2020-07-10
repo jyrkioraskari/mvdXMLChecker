@@ -15,7 +15,7 @@ Model View Definitions with Exchange Requirements and Validation Rules.
 Version 1.1 Final. 15. 02. 2016
 
 
-Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3.
+Supported mvdXML versions are v1.1. v1-1 and v1.2 draft 3.
 
 Precompiled binaries that can be used at a web application server can be found here: 
 https://github.com/jyrkioraskari/OnlineMvdXMLChecker/releases
