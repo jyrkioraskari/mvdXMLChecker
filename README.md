@@ -139,6 +139,9 @@ sudo cp  mvdXMLChecker.war /var/lib/tomcat8/webapps
 suco chmod 777 /var/lib/tomcat8/webapps/mvdXMLChecker.war
 sudo systemctl restart tomcat8 
 ```
+## Swagger.json description for the services
+
+http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/ui/swagger.json
 
 ## Cite this
 
