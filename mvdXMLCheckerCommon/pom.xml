@@ -66,8 +66,23 @@
 			<artifactId>ifcplugins</artifactId>
 			<version>0.0.99</version>
 		</dependency>
-		
-		<!-- Thanks for using https://jar-download.com -->
+		<!-- https://mvnrepository.com/artifact/org.lwjgl/lwjgl -->
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.gluegen</groupId>
+			<artifactId>gluegen-rt-main</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl-all-main</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
 
 	</dependencies>
 	<build>

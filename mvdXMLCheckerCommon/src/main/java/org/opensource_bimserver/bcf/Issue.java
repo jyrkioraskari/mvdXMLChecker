@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -15,6 +16,14 @@ import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLDrawableFactory;
+import com.jogamp.opengl.GLOffscreenAutoDrawable;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
 import generated.buildingsmart.bcf.markup.Markup;
 import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
@@ -104,7 +113,7 @@ public class Issue {
 	int width = 200, height = 200;
 	BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	Graphics2D ig2 = bi.createGraphics();
-	paint(ig2); 
+	paint(ig2);
 	try {
 	    ImageIO.write(bi, "PNG", zipOutputStream);
 	} catch (IOException e) {
@@ -120,5 +129,32 @@ public class Issue {
 	g2.setColor(Color.RED);
 	g2.setFont(font);
 	g2.drawString("To be done", 50, 70);
+    }
+
+    public BufferedImage makeImage(int width, int height) {
+
+	GLProfile gl_profile = GLProfile.getDefault();
+	GLCapabilities capabilities = new GLCapabilities(gl_profile);
+	capabilities.setOnscreen(false);
+
+	GLDrawableFactory factory = GLDrawableFactory.getFactory(gl_profile);
+	GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null,capabilities,null,width,height);
+	drawable.display();
+	drawable.getContext().makeCurrent();
+
+	GL2 gl = drawable.getGL().getGL2();
+
+	gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+	gl.glLoadIdentity();    
+	gl.glOrtho(0d, width, height, 0d, -1d, 1d);
+
+	gl.glPointSize(4f);
+	gl.glColor3f(1f,0f,0f);    
+	gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+	
+
+	BufferedImage im = new AWTGLReadBufferUtil(drawable.getGLProfile(), false).readPixelsToBufferedImage(drawable.getGL(), 0, 0, width, height, true );
+	
+	return im;
     }
 }
