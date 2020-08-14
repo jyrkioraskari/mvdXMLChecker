@@ -18,7 +18,6 @@ package org.ifcopenshell;
  *****************************************************************************/
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /******************************************************************************
  * Copyright (C) 2009-2018  BIMserver.org
@@ -45,24 +44,24 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class IfcGeomServerClientEntity {
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-	private long id;
+	private int id;
 	private String guid;
 	private String name;
 	private String type;
-	private long parentId;
+	private int parentId;
 	private double[] matrix;
 	private int repId;
-	private ByteBuffer positions;
-	private ByteBuffer normals;
-	private ByteBuffer indices;
-	private ByteBuffer colors;
-	private ByteBuffer materialIndices;
+	private float[] positions;
+	private float[] normals;
+	private int[] indices;
+	private float[] colors;
+	private int[] materialIndices;
 	private ObjectNode extendedData;
 	
-	public IfcGeomServerClientEntity(long id, String guid, String name,
-			String type, long parentId, double[] matrix, int repId,
-			ByteBuffer positions, ByteBuffer normals, ByteBuffer indices, ByteBuffer colors,
-			ByteBuffer materialIndices, String messageRemainder) {
+	public IfcGeomServerClientEntity(int id, String guid, String name,
+			String type, int parentId, double[] matrix, int repId,
+			float[] positions, float[] normals, int[] indices, float[] colors,
+			int[] materialIndices, String messageRemainder) {
 		super();
 		this.id = id;
 		this.guid = guid;
@@ -87,7 +86,7 @@ public class IfcGeomServerClientEntity {
 		}
 	}
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -103,7 +102,7 @@ public class IfcGeomServerClientEntity {
 		return type;
 	}
 
-	public long getParentId() {
+	public int getParentId() {
 		return parentId;
 	}
 
@@ -115,24 +114,32 @@ public class IfcGeomServerClientEntity {
 		return repId;
 	}
 
-	public ByteBuffer getPositions() {
+	public float[] getPositions() {
 		return positions;
 	}
 
-	public ByteBuffer getNormals() {
+	public float[] getNormals() {
 		return normals;
 	}
 
-	public ByteBuffer getIndices() {
+	public int[] getIndices() {
 		return indices;
 	}
 
-	public ByteBuffer getColors() {
+	public float[] getColors() {
 		return colors;
 	}
 
-	public ByteBuffer getMaterialIndices() {
+	public int[] getMaterialIndices() {
 		return materialIndices;
+	}
+	
+	public int getNumberOfPrimitives() {
+		return indices.length / 3;
+	}
+	
+	public int getNumberOfColors() {
+		return colors.length / 4;
 	}
 	
 	public ObjectNode getAllExtendedData() throws RenderEngineException {

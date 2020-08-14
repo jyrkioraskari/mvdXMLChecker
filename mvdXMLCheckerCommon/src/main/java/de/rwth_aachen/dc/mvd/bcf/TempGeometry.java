@@ -1,7 +1,5 @@
 package de.rwth_aachen.dc.mvd.bcf;
 
-import java.nio.ByteBuffer;
-
 import javax.vecmath.Point3d;
 
 import org.bimserver.geometry.Matrix;
@@ -9,6 +7,9 @@ import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.bimserver.plugins.renderengine.RenderEngineGeometry;
 import org.bimserver.plugins.renderengine.RenderEngineInstance;
 import org.bimserver.plugins.renderengine.RenderEngineModel;
+import org.ifcopenshell.IfcGeomServerClientEntity;
+import org.ifcopenshell.IfcOpenShellEntityInstance;
+import org.ifcopenshell.IfcOpenShellModel;
 
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
@@ -30,7 +31,7 @@ public class TempGeometry {
     private double cameraDirectionY;
     private double cameraDirectionZ;
 
-    public TempGeometry(RenderEngineModel renderEngineModel, long ifcProductExpressId) {
+    public TempGeometry(IfcOpenShellModel renderEngineModel, long ifcProductExpressId) {
 	this.boundingBox = getBoundingBox(renderEngineModel, ifcProductExpressId);
 	if(boundingBox==null)
 	{
@@ -70,9 +71,9 @@ public class TempGeometry {
     }
 
    
-    private BoundingBox getBoundingBox(RenderEngineModel renderEngineModel, long ifcProductExpressId) {
+    private BoundingBox getBoundingBox(IfcOpenShellModel renderEngineModel, long ifcProductExpressId) {
 	BoundingBox boundingBox=null;
-	RenderEngineInstance renderEngineInstance;
+	IfcOpenShellEntityInstance renderEngineInstance;
 	try {
 	    renderEngineInstance = renderEngineModel.getInstanceFromExpressId((int)ifcProductExpressId); // new version uses long
 	    //System.out.println("RenderEngineInstance for "+ifcProductExpressId+" is "+renderEngineInstance);
@@ -82,8 +83,8 @@ public class TempGeometry {
 		
 		return null;
 	    }
-	    RenderEngineGeometry geometry = renderEngineInstance.generateGeometry();
-	    if (geometry != null && geometry.getNrIndices() > 0) {
+	    IfcGeomServerClientEntity geometry = renderEngineInstance.generateGeometry();
+	    if (geometry != null && geometry.getIndices().length > 0) {
 		boundingBox = new BoundingBox();
 		double[] tranformationMatrix = new double[16];
 		if (renderEngineInstance.getTransformationMatrix() != null) {
@@ -93,8 +94,9 @@ public class TempGeometry {
 		    Matrix.setIdentityM(tranformationMatrix, 0);
 		}
 
-		for (int i = 0; i < geometry.getNrVertices(); i+=3) {
-		    processExtends(boundingBox, tranformationMatrix, geometry.getVertex(i),geometry.getVertex(i+1),geometry.getVertex(i+2));
+		float[] vertices=geometry.getPositions();
+		for (int i = 0; i < geometry.getPositions().length; i+=3) {
+		    processExtends(boundingBox, tranformationMatrix, vertices[i],vertices[i+1],vertices[i+2]);
 		}
 	    }
 	} catch (RenderEngineException e) {
