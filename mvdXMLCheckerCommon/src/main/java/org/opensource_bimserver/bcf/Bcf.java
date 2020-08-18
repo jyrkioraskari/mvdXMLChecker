@@ -99,6 +99,7 @@ public class Bcf {
 		for (Issue issue : issues.values()) {
 		      //if(issue.getVisualizationInfo()!=null)   // JO 2020, without visualization should be possible
 			issue.write(zipOutputStream);
+			
 		}
 		zipOutputStream.finish();
 		zipOutputStream.close();
