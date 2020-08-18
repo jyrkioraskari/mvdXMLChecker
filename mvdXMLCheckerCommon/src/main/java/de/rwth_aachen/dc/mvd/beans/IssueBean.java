@@ -1,7 +1,7 @@
 package de.rwth_aachen.dc.mvd.beans;
 
 public class IssueBean {
-    private String ifcSpatialStructureElement;
+    private String ifcSpatialStructureElement=null;
     private String ifcClassName;
     private String guid;
     private String name;
@@ -20,6 +20,14 @@ public class IssueBean {
 	this.name = name;
 	this.comment = comment;
     }
+
+    public IssueBean(String ifcClassName,String guid, String name, String comment) {
+ 	super();
+ 	this.ifcClassName = ifcClassName;
+ 	this.guid = guid;
+ 	this.name = name;
+ 	this.comment = comment;
+     }
 
     public String getIfcSpatialStructureElement() {
 	return ifcSpatialStructureElement;

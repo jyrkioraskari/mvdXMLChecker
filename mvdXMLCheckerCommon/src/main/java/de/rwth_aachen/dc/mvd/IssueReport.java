@@ -123,6 +123,34 @@ public class IssueReport {
         bcf.addIssue(issue);
     }
 
+    public void addIssue(org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
+        issues.add(new IssueBean(ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+    
+        UUID markup_uuid = UUID.randomUUID();
+        VisualizationInfo visInfo = null;
+        if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
+            visInfo = addVisInfo(ifcRoot.getExpressId(), ifcRoot.getGlobalId());
+        }
+        UUID viewpoint_uuid = UUID.randomUUID();
+        ViewPoint vp = new ViewPoint();
+        vp.setGuid(viewpoint_uuid.toString());
+        if (visInfo != null) {
+            vp.setViewpoint("viewpoint.bcfv");
+            vp.setSnapshot("snapshot.png");
+        }
+        Markup markup = addMarkup(null, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
+        markup.getViewpoints().add(vp);
+    
+        Issue issue = new Issue(markup_uuid, markup, visInfo);
+    
+        if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) 
+            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+        else if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) 
+            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+        else
+            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+        bcf.addIssue(issue);
+    }
    
 
     public void addIssue(String ifcSpatialStructureElement, org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
@@ -154,6 +182,36 @@ public class IssueReport {
 	bcf.addIssue(issue);
     }
 
+    
+    public void addIssue(org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
+ 	issues.add(new IssueBean(ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+
+ 	UUID markup_uuid = UUID.randomUUID();
+ 	VisualizationInfo visInfo = null;
+ 	if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) {
+ 	    visInfo = addVisInfo(ifcRoot.getExpressId(), ifcRoot.getGlobalId());
+ 	}
+ 	UUID viewpoint_uuid = UUID.randomUUID();
+ 	ViewPoint vp = new ViewPoint();
+ 	vp.setGuid(viewpoint_uuid.toString());
+ 	if (visInfo != null) {
+ 	    vp.setViewpoint("viewpoint.bcfv");
+ 	    vp.setSnapshot("snapshot.png");
+ 	}
+ 	Markup markup = addMarkup(null, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
+ 	markup.getViewpoints().add(vp);
+
+ 	Issue issue = new Issue(markup_uuid, markup, visInfo);
+ 	 if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) 
+ 	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+ 	 else if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) 
+ 	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+ 	 else
+ 	     issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+ 	 System.out.println("Add Issue into BCD!!");
+ 	bcf.addIssue(issue);
+     }
+
     // For generic comments... for the user interface.
     public void addIssue(String elementClass, String comment) {
 	issues.add(new IssueBean(null, elementClass, "", "", comment));
@@ -165,8 +223,8 @@ public class IssueReport {
 	Header header = new Header();
 	Header.File headerFile = new Header.File();
 	headerFile.setIfcProject(ifcProjectGuid);
-	headerFile.setIfcSpatialStructureElement(ifcSpatialStructureElement);
-	System.out.println("headerfile name: " + this.ifcHeaderFilename);
+	if(ifcSpatialStructureElement!=null)
+	  headerFile.setIfcSpatialStructureElement(ifcSpatialStructureElement);
 	headerFile.setFilename(this.ifcHeaderFilename);
 	GregorianCalendar gregorianCalender = new GregorianCalendar();
 	gregorianCalender.setTime(this.ifcHeaderTimeStamp);
