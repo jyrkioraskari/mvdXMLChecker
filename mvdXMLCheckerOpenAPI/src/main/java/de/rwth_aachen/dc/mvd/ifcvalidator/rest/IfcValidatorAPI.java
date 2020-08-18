@@ -56,179 +56,180 @@ public class IfcValidatorAPI {
 	}
     }
 
-    /**
-     * 
-     * 
-     * A HTTP GET interface to test the REST API connection.
-     * 
-     * @return Hello from IfcValidator! It works.
-     */
-    @GET
-    @Path("/hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-	return "Hello from IfcValidatorAPI! It works. ";
-    }
-
-    /**
-     * 
-     * 
-     * A HTTP GET Interface to return the BOT service descriptor for the service
-     * 
-     * @return Service list
-     */
-    @GET
-    @Path("/servicelist")
-    @Produces(MediaType.APPLICATION_JSON)
-    public MVDCheck_BOTServiceDescriotor servicelist() {
-
-	return new MVDCheck_BOTServiceDescriotor();
-    }
-
-    /**
-     * The Bot interface definition service list
-     * 
-     * @return human readable list of the services at the system
-     */
-    @GET
-    @Path("/servicelist")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String servicelist_plain() {
-
-	return "list";
-    }
-
-    /**
-     * Saves the mvd 1.1 definition to the server for a later usage
-     * 
-     * @param mvdXMLfile mvdXML file as a string
-     * @return Returns the Id number of the file in the system. -1 if not succeed.
-     */
-
-    @POST
-    @Path("/mvdxml")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ResponseBean register_mvdxml__InputAsXMLFile(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile) {
-	ResponseBean responseBean = new ResponseBean();
-	try {
-	    File tempMvdxmlFile = File.createTempFile("ifcChecker-", ".mvdxml");
-	    tempMvdxmlFile.deleteOnExit();
-
-	    Files.copy(mvdXMLfile, tempMvdxmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	    IOUtils.closeQuietly(mvdXMLfile);
-	    MvdXMLFileHandle mvdXMLFile = new MvdXMLFileHandle(tempMvdxmlFile.getAbsolutePath());
-	    Transaction transaction = null;
-	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-		transaction = session.beginTransaction();
-		Serializable id = session.save(mvdXMLFile);
-		responseBean.setMessage("ID was:" + id.toString());
-		responseBean.setResult(id.toString());
-		transaction.commit();
-	    } catch (Exception e) {
-		if (transaction != null) {
-		    transaction.rollback();
-		}
-		e.printStackTrace();
-		responseBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		responseBean.setMessage("Error: " + e.getMessage());
-		responseBean.setResult("-1");
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-	return responseBean;
-    }
-
-    /**
-     * Lists the mvd 1.1 definition files in the server
-     * 
-     * @return Retuns the mvdXML files in the server
-     */
-
-    @GET
-    @Path("/mvdxml")
-    @Produces(MediaType.APPLICATION_JSON)
-    public MvdXMLFileHandleList list_mvdxml_json() {
-	final MvdXMLFileHandleList mvdlist = new MvdXMLFileHandleList();
-	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-	    List<MvdXMLFileHandle> mvdXMLFiles = session.createQuery("from MvdXMLFileHandle", MvdXMLFileHandle.class).list();
-	    mvdXMLFiles.forEach(f -> mvdlist.append(f));
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    mvdlist.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	    mvdlist.setMessage("Error: " + e.getMessage());
-	}
-	return mvdlist;
-    }
-
-    /**
-     * Lists the mvd 1.1 definition files in the server
-     * 
-     * @return Retuns the mvdXML files in the server
-     */
-
-    @GET
-    @Path("/mvdxml")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String list_mvdxml_plain() {
-	final StringBuilder sb = new StringBuilder();
-	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-	    List<MvdXMLFileHandle> mvdXMLFiles = session.createQuery("from MvdXMLFileHandle", MvdXMLFileHandle.class).list();
-	    mvdXMLFiles.forEach(s -> sb.append(s.getFile_path() + "\n"));
-	} catch (Exception e) {
-
-	    e.printStackTrace();
-	}
-	return sb.toString();
-    }
-
-    /**
-     * Checks the validity the validity of the given IFC Step file content against
-     * the referred mvdXML. Provides a JSON result.
-     * 
-     * Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3. 
-     * 
-     * @param mvdxmlid       The reference Id for the mvdXML file that has been
-     *                       saved to the server earlier
-     * @param ifcStepContent The IFC STEP file
-     * @return JSON result of the validation
-     */
-
-    @POST
-    @Path("/check_plain/{mvdxmlid}")
-    @Consumes("application/ifc")
-    @Produces(MediaType.APPLICATION_JSON)
-    public IssueReportBean check_withsSecifiedMvcxml_inputAsApplicationIFC_resultAsJSON(@PathParam("mvdxmlid") String mvdxmlid, String ifcStepContent) {
-	IssueReportBean issueReportBean = new IssueReportBean();
-	System.out.println("ifc content: \n" + ifcStepContent);
-	try {
-	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
-	    tempIfcFile.deleteOnExit();
-	    FileOutputStream fos = new FileOutputStream(tempIfcFile.getAbsolutePath());
-	    DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-	    outStream.writeUTF(ifcStepContent);
-	    outStream.close();
-
-	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-		Integer id = Integer.parseInt(mvdxmlid);
-		MvdXMLFileHandle mvdXMLFileHandle = session.get(MvdXMLFileHandle.class, id);
-
-		check(issueReportBean, tempIfcFile, new File(mvdXMLFileHandle.getFile_path()));
-
-	    } catch (Exception e) {
-		e.printStackTrace();
-		issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		issueReportBean.setMessage("Error: " + e.getMessage());
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	    issueReportBean.setMessage("Error: " + e.getMessage());
-	}
-
-	return issueReportBean;
-    }
+//    
+//    /**
+//     * 
+//     * 
+//     * A HTTP GET interface to test the REST API connection.
+//     * 
+//     * @return Hello from IfcValidator! It works.
+//     */
+//    @GET
+//    @Path("/hello")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String hello() {
+//	return "Hello from IfcValidatorAPI! It works. ";
+//    }
+//
+//    /**
+//     * 
+//     * 
+//     * A HTTP GET Interface to return the BOT service descriptor for the service
+//     * 
+//     * @return Service list
+//     */
+//    @GET
+//    @Path("/servicelist")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public MVDCheck_BOTServiceDescriotor servicelist() {
+//
+//	return new MVDCheck_BOTServiceDescriotor();
+//    }
+//
+//    /**
+//     * The Bot interface definition service list
+//     * 
+//     * @return human readable list of the services at the system
+//     */
+//    @GET
+//    @Path("/servicelist")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String servicelist_plain() {
+//
+//	return "list";
+//    }
+//
+//    /**
+//     * Saves the mvd 1.1 definition to the server for a later usage
+//     * 
+//     * @param mvdXMLfile mvdXML file as a string
+//     * @return Returns the Id number of the file in the system. -1 if not succeed.
+//     */
+//
+//    @POST
+//    @Path("/mvdxml")
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public ResponseBean register_mvdxml__InputAsXMLFile(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile) {
+//	ResponseBean responseBean = new ResponseBean();
+//	try {
+//	    File tempMvdxmlFile = File.createTempFile("ifcChecker-", ".mvdxml");
+//	    tempMvdxmlFile.deleteOnExit();
+//
+//	    Files.copy(mvdXMLfile, tempMvdxmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//	    IOUtils.closeQuietly(mvdXMLfile);
+//	    MvdXMLFileHandle mvdXMLFile = new MvdXMLFileHandle(tempMvdxmlFile.getAbsolutePath());
+//	    Transaction transaction = null;
+//	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//		transaction = session.beginTransaction();
+//		Serializable id = session.save(mvdXMLFile);
+//		responseBean.setMessage("ID was:" + id.toString());
+//		responseBean.setResult(id.toString());
+//		transaction.commit();
+//	    } catch (Exception e) {
+//		if (transaction != null) {
+//		    transaction.rollback();
+//		}
+//		e.printStackTrace();
+//		responseBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//		responseBean.setMessage("Error: " + e.getMessage());
+//		responseBean.setResult("-1");
+//	    }
+//	} catch (IOException e) {
+//	    e.printStackTrace();
+//	}
+//	return responseBean;
+//    }
+//
+//    /**
+//     * Lists the mvd 1.1 definition files in the server
+//     * 
+//     * @return Retuns the mvdXML files in the server
+//     */
+//
+//    @GET
+//    @Path("/mvdxml")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public MvdXMLFileHandleList list_mvdxml_json() {
+//	final MvdXMLFileHandleList mvdlist = new MvdXMLFileHandleList();
+//	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//	    List<MvdXMLFileHandle> mvdXMLFiles = session.createQuery("from MvdXMLFileHandle", MvdXMLFileHandle.class).list();
+//	    mvdXMLFiles.forEach(f -> mvdlist.append(f));
+//	} catch (Exception e) {
+//	    e.printStackTrace();
+//	    mvdlist.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//	    mvdlist.setMessage("Error: " + e.getMessage());
+//	}
+//	return mvdlist;
+//    }
+//
+//    /**
+//     * Lists the mvd 1.1 definition files in the server
+//     * 
+//     * @return Retuns the mvdXML files in the server
+//     */
+//
+//    @GET
+//    @Path("/mvdxml")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String list_mvdxml_plain() {
+//	final StringBuilder sb = new StringBuilder();
+//	try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//	    List<MvdXMLFileHandle> mvdXMLFiles = session.createQuery("from MvdXMLFileHandle", MvdXMLFileHandle.class).list();
+//	    mvdXMLFiles.forEach(s -> sb.append(s.getFile_path() + "\n"));
+//	} catch (Exception e) {
+//
+//	    e.printStackTrace();
+//	}
+//	return sb.toString();
+//    }
+//
+//    /**
+//     * Checks the validity the validity of the given IFC Step file content against
+//     * the referred mvdXML. Provides a JSON result.
+//     * 
+//     * Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3. 
+//     * 
+//     * @param mvdxmlid       The reference Id for the mvdXML file that has been
+//     *                       saved to the server earlier
+//     * @param ifcStepContent The IFC STEP file
+//     * @return JSON result of the validation
+//     */
+//
+//    @POST
+//    @Path("/check_plain/{mvdxmlid}")
+//    @Consumes("application/ifc")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public IssueReportBean check_withsSecifiedMvcxml_inputAsApplicationIFC_resultAsJSON(@PathParam("mvdxmlid") String mvdxmlid, String ifcStepContent) {
+//	IssueReportBean issueReportBean = new IssueReportBean();
+//	System.out.println("ifc content: \n" + ifcStepContent);
+//	try {
+//	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
+//	    tempIfcFile.deleteOnExit();
+//	    FileOutputStream fos = new FileOutputStream(tempIfcFile.getAbsolutePath());
+//	    DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+//	    outStream.writeUTF(ifcStepContent);
+//	    outStream.close();
+//
+//	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//		Integer id = Integer.parseInt(mvdxmlid);
+//		MvdXMLFileHandle mvdXMLFileHandle = session.get(MvdXMLFileHandle.class, id);
+//
+//		check(issueReportBean, tempIfcFile, new File(mvdXMLFileHandle.getFile_path()));
+//
+//	    } catch (Exception e) {
+//		e.printStackTrace();
+//		issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//		issueReportBean.setMessage("Error: " + e.getMessage());
+//	    }
+//	} catch (IOException e) {
+//	    e.printStackTrace();
+//	    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//	    issueReportBean.setMessage("Error: " + e.getMessage());
+//	}
+//
+//	return issueReportBean;
+//    }
 
     /**
      * Checks the validity the validity of the given IFC Step file content against

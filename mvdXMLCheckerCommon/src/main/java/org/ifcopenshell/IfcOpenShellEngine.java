@@ -47,14 +47,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import org.bimserver.models.store.Metrics;
 import org.bimserver.plugins.renderengine.RenderEngine;
 import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.bimserver.plugins.renderengine.RenderEngineModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IfcOpenShellEngine implements RenderEngine {
+public class IfcOpenShellEngine  {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IfcOpenShellEngine.class);
 	private Path executableFilename;
 
@@ -68,7 +67,6 @@ public class IfcOpenShellEngine implements RenderEngine {
 		this.setApplyLayerSets(applyLayerSets);
 	}
 
-	@Override
 	public void init() throws RenderEngineException {
 		LOGGER.debug("Initializing IfcOpenShell engine");
 		
@@ -77,7 +75,6 @@ public class IfcOpenShellEngine implements RenderEngine {
 		client.setApplyLayersets(isApplyLayerSets());
 	}
 	
-	@Override
 	public void close() throws RenderEngineException {
 		LOGGER.debug("Closing IfcOpenShell engine");
 		if (client.isRunning()) {
@@ -85,10 +82,9 @@ public class IfcOpenShellEngine implements RenderEngine {
 		}
 	}
 
-	@Override
-	public RenderEngineModel openModel(InputStream inputStream, long size) throws RenderEngineException {
+	public IfcOpenShellModel openModel(InputStream inputStream, long size) throws RenderEngineException {
 		if (!client.isRunning()) {
-			init();
+			client = new IfcGeomServerClient(executableFilename);
 		}
 		try {
 			return new IfcOpenShellModel(client, inputStream, size);
@@ -97,13 +93,7 @@ public class IfcOpenShellEngine implements RenderEngine {
 		}
 	}
 
-	@Override
-	public RenderEngineModel openModel(InputStream inputStream) throws RenderEngineException {
-	        // Added by JO,  4/6/2020
-	        if(client==null)
-	        {
-	            init();
-	        }
+	public IfcOpenShellModel openModel(InputStream inputStream) throws RenderEngineException {
 		if (!client.isRunning()) {
 			client = new IfcGeomServerClient(executableFilename);
 		}
@@ -129,10 +119,4 @@ public class IfcOpenShellEngine implements RenderEngine {
 	public void setApplyLayerSets(boolean applyLayerSets) {
 		this.applyLayerSets = applyLayerSets;
 	}
-
-	@Override
-	public org.bimserver.plugins.renderengine.Metrics getMetrics() {
-	    return null;
-	}
-
 }
