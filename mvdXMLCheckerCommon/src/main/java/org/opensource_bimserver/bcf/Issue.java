@@ -90,6 +90,9 @@ public class Issue {
     }
 
     public void write(ZipOutputStream zipOutputStream) throws IOException, BcfException {
+	ZipEntry markup_dir = new ZipEntry(getUuid().toString() + "/");  // JO 2020  fix to be inline with the standard
+	zipOutputStream.putNextEntry(markup_dir);
+	
 	ZipEntry markup = new ZipEntry(getUuid().toString() + "/markup.bcf");
 	zipOutputStream.putNextEntry(markup);
 	try {
