@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermissions;
 
 public class OperatingSystemCopyOf_IfcGeomServer {
@@ -53,11 +54,11 @@ public class OperatingSystemCopyOf_IfcGeomServer {
 	else
 	    tempPath += "IfcGeomServer.exe";
 	Path geomserverPath = Paths.get(tempPath);
-	if (!geomserverPath.toFile().exists())
+	//if (!geomserverPath.toFile().exists())  // update always
 	    if (IfcGeomServerLocation != null) {
 		InputStream in = OperatingSystemCopyOf_IfcGeomServer.class.getResourceAsStream(IfcGeomServerLocation);
 		try {
-		    Files.copy(in, geomserverPath);
+		    Files.copy(in, geomserverPath,StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e1) {
 		    e1.printStackTrace();
 		}

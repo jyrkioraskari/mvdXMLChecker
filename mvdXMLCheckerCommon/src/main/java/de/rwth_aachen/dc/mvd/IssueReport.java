@@ -150,6 +150,7 @@ public class IssueReport {
 	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
 	 else
 	     issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+	 System.out.println("Add Issue into BCD!!");
 	bcf.addIssue(issue);
     }
 

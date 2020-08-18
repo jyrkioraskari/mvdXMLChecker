@@ -104,6 +104,7 @@ public class IfcOpenShellModel  {
 			IfcGeomServerClientEntity next = client.getNext();
 			// Store the instance in our dictionary
 			IfcOpenShellEntityInstance instance = new IfcOpenShellEntityInstance(next);
+			System.out.println("GEN GEOM:  "+next.getId());
 			instancesById.put(next.getId(), instance);
 		}
 		
@@ -119,7 +120,8 @@ public class IfcOpenShellModel  {
 			// Probably something went wrong with the processing of this element in
 			// the IfcOpenShell binary, as it has not been included in the enumerated
 			// set of elements with geometry.
-			throw new EntityNotFoundException("Entity " + oid + " not found in model");
+			//throw new EntityNotFoundException("Entity " + oid + " not found in model");
+		    return null;
 		}
 	}
 	

@@ -97,7 +97,7 @@ public class Bcf {
 	public void write(OutputStream outputStream) throws BcfException, IOException {
 		ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 		for (Issue issue : issues.values()) {
-		      if(issue.getVisualizationInfo()!=null)
+		      //if(issue.getVisualizationInfo()!=null)   // JO 2020, without visualization should be possible
 			issue.write(zipOutputStream);
 		}
 		zipOutputStream.finish();
