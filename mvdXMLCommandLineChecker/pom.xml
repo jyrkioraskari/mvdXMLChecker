@@ -30,17 +30,17 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>2.40</version>
+			<version>2.41</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot2</artifactId>
-			<version>2.40</version>
+			<version>2.41</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>2.40</version>
+			<version>2.41</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
 		<dependency>
@@ -63,5 +63,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	<version>2.40</version>
+	<version>2.41</version>
 </project>

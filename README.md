@@ -1,5 +1,5 @@
 # mvdXML Checker
-v2.40
+v2.41
 
 ![General View](https://raw.githubusercontent.com/jyrkioraskari/OnlineMvdXMLChecker/master/doc/mvdXMLAPI.png)
 
