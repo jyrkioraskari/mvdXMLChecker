@@ -60,6 +60,7 @@ public class IfcMVDConstraintChecker {
 	for (MVDConceptConstraint constraint : constraints) {
 	    if (constraint == null) {
 		communication.post(new CheckerNotificationEvent("Constraint was null <P>"));
+		issuereport.addIssue( "Constraint was null");
 		continue;
 	    }
 	    List<AttributeRule> applicability_attributeRules = constraint.getApplicability_attributeRules();
@@ -77,14 +78,15 @@ public class IfcMVDConstraintChecker {
 		    break;
 		default:
 		    communication.post(new CheckerInfoEvent("IFC Version", "Unsupported"));
-		    throw new RuntimeException("Unsupported IFC type");
+		    issuereport.addIssue("Unsupported IFC version");
+		    return issuereport;
 		}
 		communication.post(new CheckerInfoEvent("Checking against", "mvdXML 1.1 <P>"));
 
 		List<Object> allClassInstances = ifcModel.getAllWithSubTypes(cls);
 
 		if (allClassInstances.size() == 0) {
-		    issuereport.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
+		    issuereport.addIssue( "No " + cls.getCanonicalName() + " element in the model");
 		    communication.post(new CheckerErrorEvent(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model"));
 		}
 

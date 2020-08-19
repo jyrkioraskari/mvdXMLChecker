@@ -212,11 +212,16 @@ public class IssueReport {
  	bcf.addIssue(issue);
      }
 
-    // For generic comments... for the user interface.
-    public void addIssue(String elementClass, String comment) {
-	issues.add(new IssueBean(null, elementClass, "", "", comment));
+    
+    public void addIssue(String comment) {
+ 	issues.add(new IssueBean(null, "General", "", "", comment));
 
-    }
+ 	UUID markup_uuid = UUID.randomUUID();
+ 	Markup markup = addMarkup(comment, markup_uuid.toString());
+
+ 	Issue issue = new Issue(markup_uuid, markup, null);
+ 	bcf.addIssue(issue);
+     }
 
     private Markup addMarkup(String ifcSpatialStructureElement, String ifc_guid, String comment, String topicGuid,ViewPoint vp) {
 	Markup markup = new Markup();
@@ -274,6 +279,53 @@ public class IssueReport {
 	return markup;
     }
 
+    
+    private Markup addMarkup(String comment, String topicGuid) {
+	Markup markup = new Markup();
+	Header header = new Header();
+	Header.File headerFile = new Header.File();
+	headerFile.setIfcProject(ifcProjectGuid);
+	headerFile.setFilename(this.ifcHeaderFilename);
+	GregorianCalendar gregorianCalender = new GregorianCalendar();
+	gregorianCalender.setTime(this.ifcHeaderTimeStamp);
+	try {
+	    headerFile.setDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalender));
+	} catch (DatatypeConfigurationException e1) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e1.getMessage()));
+	    e1.printStackTrace();
+	}
+	header.getFile().add(headerFile);
+	markup.setHeader(header);
+
+	Topic topic = new Topic();
+	topic.setGuid(topicGuid);
+	topic.setTitle("Seneral issue");
+	topic.setCreationAuthor("RWTH");
+	try {
+	    topic.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalender));
+	} catch (DatatypeConfigurationException e1) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e1.getMessage()));
+	    e1.printStackTrace();
+	}
+	topic.setDescription(comment);
+	markup.setTopic(topic);
+
+	Comment comments = new Comment();
+	try {
+	    comments.setDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
+	} catch (DatatypeConfigurationException e1) {
+	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e1.getMessage()));
+	    e1.printStackTrace();
+	}
+	String commentGuid = UUID.randomUUID().toString();
+	comments.setGuid(commentGuid);
+	String commentAuthor = System.getProperty("user.name");
+	comments.setAuthor(commentAuthor);
+	comments.setComment(comment);
+
+	markup.getComment().add(comments);
+	return markup;
+    }
     public void writeReport(String output) {
 
 	FileOutputStream outputStream;

@@ -118,12 +118,6 @@ public class Issue {
 	    }
 	    createDummySnapshot(zipOutputStream);
 	}
-
-//                ZipEntry image = new ZipEntry(getUuid().toString() + "/snapshot.png");
-//                zipOutputStream.putNextEntry(image);
-//                ByteArrayInputStream bais = new ByteArrayInputStream(getImageData());
-//                IOUtils.copy(bais, zipOutputStream);
-//TODO SNAPSHOT AVAILABLE YET!
     }
 
     private void createDummySnapshot(ZipOutputStream zipOutputStream) throws IOException {
@@ -169,12 +163,10 @@ public class Issue {
 	gl.glLoadIdentity();
 	System.out.println("this.renderEngineModel.isPresent(): "+this.renderEngineModel.isPresent());
 	if (this.renderEngineModel.isPresent()) {
-	    System.out.println("GEO");
 
 	    IfcOpenShellEntityInstance renderEngineInstance;
 	    try {
 		renderEngineInstance = this.renderEngineModel.get().getInstanceFromExpressId(ifcProductExpressId.get().intValue());
-		System.out.println("RE: " + ifcProductExpressId);
 		if (renderEngineInstance != null) {
 		    IfcGeomServerClientEntity geometry = renderEngineInstance.generateGeometry();
 		    if (geometry != null && geometry.getIndices().length > 0) {
@@ -188,7 +180,6 @@ public class Issue {
 
 			int[] indices = geometry.getIndices();
 			float[] vertices=geometry.getPositions();
-			System.out.println("inx len: "+indices.length);
 			for (int i = 0; i < indices.length; i = i + 3) {
 			    double x1 = vertices[indices[i] * 3];
 			    double y1 = vertices[indices[i] * 3 + 1];
@@ -303,7 +294,6 @@ public class Issue {
 
 	    gl.glFlush();
 	}
-	System.out.println("done");
 	BufferedImage im = new AWTGLReadBufferUtil(drawable.getGLProfile(), false).readPixelsToBufferedImage(drawable.getGL(), 0, 0, width, height, true);
 	return im;
     }

@@ -58,6 +58,11 @@ public class IfcMVDConstraintChecker {
     public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws DeserializeException, IOException, RenderEngineException {
 	IssueReport issuereport = new IssueReport(ifcModel, ifcfile);
 	for (MVDConstraint constraint : constraints) {
+	    if (constraint == null) {
+		communication.post(new CheckerNotificationEvent("Constraint was null <P>"));
+		issuereport.addIssue( "Constraint was null");
+		continue;
+	    }
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
 	    try {
@@ -74,14 +79,15 @@ public class IfcMVDConstraintChecker {
 		    break;
 		default:
 		    communication.post(new CheckerInfoEvent("IFC Version", "Unsupported"));
-		    throw new RuntimeException("Unsupported IFC type");
+		    issuereport.addIssue("Unsupported IFC version");
+		    return issuereport;
 		}
 
 		communication.post(new CheckerInfoEvent("Checking against", "mvdXML 1-1 <P>"));
 
 		List<Object> allClassInstances = ifcModel.getAllWithSubTypes(cls);
 		if (allClassInstances.size() == 0) {
-		    issuereport.addIssue(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model");
+		    issuereport.addIssue("No " + cls.getCanonicalName() + " element in the model");
 		    communication.post(new CheckerErrorEvent(cls.getCanonicalName(), "No " + cls.getCanonicalName() + " element in the model"));
 		}
 
