@@ -32,8 +32,13 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import com.google.common.eventbus.Subscribe;
+
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
+import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.ifcvalidator.db.MvdXMLFileHandle;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.IssueReportBean;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MVDCheck_BOTServiceDescriotor;
@@ -42,6 +47,7 @@ import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.ResponseBean;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLv1dot2Check;
 import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import net.javaguides.hibernate.util.HibernateUtil;
 
 @Path("/")
@@ -235,7 +241,7 @@ public class IfcValidatorAPI {
      * Checks the validity the validity of the given IFC Step file content against
      * the referred mvdXML. Provides a JSON result.
      * 
-     * Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3. 
+     * Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3.
      * 
      * @param mvdXMLfile The mvdXML file
      * @param ifcFile    The IFC STEP file
@@ -277,24 +283,31 @@ public class IfcValidatorAPI {
 	    issueReportBean.setMessage("a valid mvdXML 1.1 file");
 	    IssueReport issueReport = MvdXMLv1dot1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
 	    if (issueReport != null)
+	    {
 		issueReportBean.getIssues().addAll(issueReport.getIssues());
-
-	} 
-	else 
-	    // mvdXML 1.2
-	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
-		issueReportBean.setMessage("a mvdXML 1.2 file");
-		IssueReport issueReport = MvdXMLv1dot2Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-		if (issueReport != null)
-		    issueReportBean.getIssues().addAll(issueReport.getIssues());
+		issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
 	    }
-	else {
+
+	} else
+	// mvdXML 1.2
+	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
+	    issueReportBean.setMessage("a mvdXML 1.2 file");
+	    IssueReport issueReport = MvdXMLv1dot2Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
+	    if (issueReport != null)
+	    {
+		issueReportBean.getIssues().addAll(issueReport.getIssues());
+		issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
+	    }
+	} else {
 	    // mvdXML 1_1
 	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 		issueReportBean.setMessage("a mvdXML 1_1 file");
 		IssueReport issueReport = MvdXMLv1undescore1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
 		if (issueReport != null)
-		    issueReportBean.getIssues().addAll(issueReport.getIssues());
+		    {
+			issueReportBean.getIssues().addAll(issueReport.getIssues());
+			issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
+		    }
 	    } else
 		issueReportBean.setMessage("Error: Unknown mvdXML version");
 	}
@@ -304,7 +317,7 @@ public class IfcValidatorAPI {
      * Checks the validity the validity of the given IFC Step file content against
      * the referred mvdXMLdefinition. Provides a BCF file as result.
      * 
-     * Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3. 
+     * Supported mvdXML versions are V1.1. V1-1 and v1.2 draft 3.
      *
      * @param mvdXMLfile The mvdXML file
      * @param ifcFile    The IFC STEP file
@@ -316,7 +329,7 @@ public class IfcValidatorAPI {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response check_withsSecifiedMvcxml_inputAsIFCFile_resultAsBCF(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile, @FormDataParam("ifcFile") InputStream ifcFile) {
 	IssueReportBean issueReportBean = new IssueReportBean();
-	File tempBCFZipFile =null;
+	File tempBCFZipFile = null;
 	try {
 	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
 	    tempIfcFile.deleteOnExit();
@@ -332,55 +345,52 @@ public class IfcValidatorAPI {
 
 	    try {
 
-		    // mvdXML 1.1
-		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
-			IssueReport issuereport = MvdXMLv1dot1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
+		// mvdXML 1.1
+		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
+		    IssueReport issuereport = MvdXMLv1dot1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
+
+		    tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+		    tempBCFZipFile.deleteOnExit();
+		    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+
+		} else
+		// mvdXML 1.2
+		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
+		    IssueReport issuereport = MvdXMLv1dot2Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
+
+		    tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+		    tempBCFZipFile.deleteOnExit();
+		    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+
+		} else {
+		    // mvdXML 1_1
+		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+			IssueReport issuereport = MvdXMLv1undescore1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
 
 			tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 			tempBCFZipFile.deleteOnExit();
 			issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
 
-			
-		    } 
-		    else 
-			// mvdXML 1.2
-			if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
-				IssueReport issuereport = MvdXMLv1dot2Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-
-				tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-				tempBCFZipFile.deleteOnExit();
-				issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-				
-			    } 	
-		    else {
-			// mvdXML 1_1
-			if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-			    IssueReport issuereport = MvdXMLv1undescore1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-
-			    tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-			    tempBCFZipFile.deleteOnExit();
-			    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-			
-			} 		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
+		    }
 		}
-
-        final File final_BCFZipFile =tempBCFZipFile;
-	StreamingOutput fileStream = new StreamingOutput() {
-	    @Override
-	    public void write(java.io.OutputStream output) throws IOException, WebApplicationException {
-		try {
-		    byte[] data = Files.readAllBytes(final_BCFZipFile.toPath());
-		    output.write(data);
-		    output.flush();
-		} catch (Exception e) {
-		    throw new WebApplicationException("File Not Found !!");
-		}
+	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
-	};
-	return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = result.bcfzip").build();
+
+	    final File final_BCFZipFile = tempBCFZipFile;
+	    StreamingOutput fileStream = new StreamingOutput() {
+		@Override
+		public void write(java.io.OutputStream output) throws IOException, WebApplicationException {
+		    try {
+			byte[] data = Files.readAllBytes(final_BCFZipFile.toPath());
+			output.write(data);
+			output.flush();
+		    } catch (Exception e) {
+			throw new WebApplicationException("File Not Found !!");
+		    }
+		}
+	    };
+	    return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = result.bcfzip").build();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    issueReportBean.setCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -389,6 +399,6 @@ public class IfcValidatorAPI {
 
 	return Response.noContent().build();
     }
-    
+
    
 }

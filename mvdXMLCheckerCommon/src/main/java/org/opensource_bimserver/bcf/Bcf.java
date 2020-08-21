@@ -17,17 +17,20 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.bimserver.utils.FakeClosingInputStream;
 
 import generated.buildingsmart.bcf.markup.Markup;
+import generated.buildingsmart.bcf.project.Project;
+import generated.buildingsmart.bcf.version.Version;
 import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
 
 public class Bcf {
 	private final Map<UUID, Issue> issues = new HashMap<UUID, Issue>();
-	
+	private String project_guid=null;
 	public Bcf() {
 	}
 	
@@ -96,6 +99,39 @@ public class Bcf {
 	
 	public void write(OutputStream outputStream) throws BcfException, IOException {
 		ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+		
+//		Project project =new Project();
+//		project.setName("mvdXML Check Results");
+//		if( this.project_guid!=null)
+//		  project.setProjectId(this.project_guid);
+//		
+//		ZipEntry project_zipentry = new ZipEntry("/Project.bcfp");
+//		zipOutputStream.putNextEntry(project_zipentry);
+//		try {
+//		    JAXBContext jaxbContext = JAXBContext.newInstance(Project.class);
+//		    Marshaller marshaller = jaxbContext.createMarshaller();
+//		    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//		    marshaller.marshal(project, zipOutputStream);
+//		} catch (JAXBException e) {
+//		    throw new BcfException(e);
+//		}
+		
+		Version bcf_cversion =new Version();
+		
+		ZipEntry version_zipentry = new ZipEntry("bcf.version");
+		zipOutputStream.putNextEntry(version_zipentry);
+		bcf_cversion.setVersionId("2.1");
+		bcf_cversion.setDetailedVersion("2.1");
+		
+		try {
+		    JAXBContext jaxbContext = JAXBContext.newInstance(Version.class);
+		    Marshaller marshaller = jaxbContext.createMarshaller();
+		    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		    marshaller.marshal(bcf_cversion, zipOutputStream);
+		} catch (JAXBException e) {
+		    throw new BcfException(e);
+		}
+		
 		for (Issue issue : issues.values()) {
 		      //if(issue.getVisualizationInfo()!=null)   // JO 2020, without visualization should be possible
 			issue.write(zipOutputStream);			
@@ -122,4 +158,9 @@ public class Bcf {
 		write(out);
 		return out.toByteArray();
 	}
+
+	public void setProject_guid(String project_guid) {
+	    this.project_guid = project_guid;
+	}
+	
 }

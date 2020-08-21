@@ -14,5 +14,9 @@
   	<module>../mvdXMLCheckerCommon</module>
   	<module>../mvdXMLCommandLineChecker</module>
   </modules>
-  <version>2.41</version>
+  <version>${mvdxml_check_project.version}</version>
+  
+  <properties>
+     <mvdxml_check_project.version>2.43</mvdxml_check_project.version>
+</properties>
 </project>

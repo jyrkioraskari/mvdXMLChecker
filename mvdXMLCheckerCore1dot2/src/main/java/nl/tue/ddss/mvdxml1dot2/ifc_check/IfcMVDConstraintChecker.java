@@ -252,9 +252,15 @@ public class IfcMVDConstraintChecker {
 			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
 		    } else {
 			if (this.ifcversion == ifcversion.IFC2x3)
+			{
 			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
+			    issuereport.addGeneralComment(((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine");
+			}
 			else if (this.ifcversion == ifcversion.IFC4)
+			{
 			    communication.post(new CheckerNotificationEvent("<P>RESULT:  <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
+			    issuereport.addGeneralComment(((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine");
+			}
 		    }
 
 		    if (comment.length() > 0) {

@@ -5,7 +5,13 @@
 	<artifactId>mvdXMLCheckerCore1dot2</artifactId>
 	<name>mvdXMLChecker Core 1.2</name>
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
+	<version>${mvdxml_check_project.version}</version>
 
+	<properties>
+		<mvdxml_check_project.version>2.43</mvdxml_check_project.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
 	<description>
 		This is based on the original work of
 		Chi Zhang
@@ -25,11 +31,7 @@
 		</license>
 	</licenses>
 
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
@@ -121,7 +123,7 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCommon</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -139,5 +141,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	<version>2.41</version>
+	
 </project>

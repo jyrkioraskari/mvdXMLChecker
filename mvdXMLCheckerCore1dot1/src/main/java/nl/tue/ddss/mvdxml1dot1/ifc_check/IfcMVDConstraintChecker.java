@@ -57,6 +57,7 @@ public class IfcMVDConstraintChecker {
     public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws RenderEngineException, DeserializeException, IOException {
 	IssueReport issuereport = new IssueReport(ifcModel, ifcfile);
 
+	System.out.println("constraints: "+constraints.size());
 	for (MVDConceptConstraint constraint : constraints) {
 	    if (constraint == null) {
 		communication.post(new CheckerNotificationEvent("Constraint was null <P>"));
@@ -252,9 +253,15 @@ public class IfcMVDConstraintChecker {
 			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
 		    } else {
 			if (this.ifcversion == ifcversion.IFC2x3)
+			{
 			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
+			    issuereport.addGeneralComment(((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine");
+			}
 			else if (this.ifcversion == ifcversion.IFC4)
+			{
 			    communication.post(new CheckerNotificationEvent("<P>RESULT:  <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
+			    issuereport.addGeneralComment(((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine");
+			}
 		    }
 
 		    if (comment.length() > 0) {
@@ -442,6 +449,7 @@ public class IfcMVDConstraintChecker {
     private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, ObjectToValue> hashMap) {
 	rule = filterCharacters(rule);
 	Boolean result = false;
+	System.out.println("RULE: "+rule);
 	CharStream charStream = new ANTLRStringStream(rule);
 	MvdXMLv1_1Lexer lexer = new MvdXMLv1_1Lexer(charStream);
 	TokenStream tokenStream = new CommonTokenStream(lexer);

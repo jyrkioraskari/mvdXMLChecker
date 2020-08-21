@@ -19,11 +19,7 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.emf.ModelMetaData;
 import org.bimserver.models.store.IfcHeader;
 import org.bimserver.plugins.deserializers.DeserializeException;
-import org.bimserver.plugins.renderengine.IndexFormat;
-import org.bimserver.plugins.renderengine.Precision;
 import org.bimserver.plugins.renderengine.RenderEngineException;
-import org.bimserver.plugins.renderengine.RenderEngineModel;
-import org.bimserver.plugins.renderengine.RenderEngineSettings;
 import org.ifcopenshell.IfcOpenShellEngine;
 import org.ifcopenshell.IfcOpenShellModel;
 import org.opensource_bimserver.bcf.Bcf;
@@ -41,11 +37,13 @@ import generated.buildingsmart.bcf.markup.Markup;
 import generated.buildingsmart.bcf.markup.Topic;
 import generated.buildingsmart.bcf.markup.ViewPoint;
 import generated.buildingsmart.bcf.visinfo.Component;
+import generated.buildingsmart.bcf.visinfo.ComponentSelection;
+import generated.buildingsmart.bcf.visinfo.ComponentVisibility;
+import generated.buildingsmart.bcf.visinfo.Components;
 import generated.buildingsmart.bcf.visinfo.Direction;
 import generated.buildingsmart.bcf.visinfo.PerspectiveCamera;
 import generated.buildingsmart.bcf.visinfo.Point;
 import generated.buildingsmart.bcf.visinfo.VisualizationInfo;
-import generated.buildingsmart.bcf.visinfo.VisualizationInfo.Components;
 
 public class IssueReport {
     private EventBusCommunication communication = EventBusCommunication.getInstance();
@@ -56,6 +54,7 @@ public class IssueReport {
     private final IfcOpenShellModel renderEngineModel;
 
     private final List<IssueBean> issues = new ArrayList<>();
+    private final List<String> general_comments = new ArrayList<>();
     private final Bcf bcf = new Bcf();
 
     public IssueReport(IfcModelInterface ifcModel, File ifcFile) throws DeserializeException, IOException, RenderEngineException {
@@ -75,6 +74,7 @@ public class IssueReport {
 		throw new RuntimeException("The IFC2x3 model should have one IfcProject");
 	    } else {
 		ifcProjectGuid = projects2x3.get(0).getGlobalId();
+		this.bcf.setProject_guid(ifcProjectGuid);
 		return;
 	    }
 	} else if (ifcHeader.getIfcSchemaVersion().equals("IFC4")) {
@@ -85,15 +85,19 @@ public class IssueReport {
 		throw new RuntimeException("The IFC4 model should have one IfcProject");
 	    } else {
 		ifcProjectGuid = projects4.get(0).getGlobalId();
+		this.bcf.setProject_guid(ifcProjectGuid);
 	    }
 
 	} else {
 	    ifcProjectGuid = null;
 	    throw new RuntimeException("Not a supported IFC version");
 	}
-
     }
-
+    public void addGeneralComment(String comment)
+    {
+	this.general_comments.add(comment);
+    }
+    
     public void addIssue(String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
         issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
     
@@ -108,7 +112,12 @@ public class IssueReport {
         if (visInfo != null) {
             vp.setViewpoint("viewpoint.bcfv");
             vp.setSnapshot("snapshot.png");
+            
+ 	    if(visInfo.getOrthogonalCamera()==null && visInfo.getPerspectiveCamera()==null)
+ 	 	comment+=" Element does not have a geometry.";
+
         }
+
         Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
         markup.getViewpoints().add(vp);
     
@@ -137,7 +146,12 @@ public class IssueReport {
         if (visInfo != null) {
             vp.setViewpoint("viewpoint.bcfv");
             vp.setSnapshot("snapshot.png");
+            
+ 	    if(visInfo.getOrthogonalCamera()==null && visInfo.getPerspectiveCamera()==null)
+ 	 	comment+=" Element does not have a geometry.";
+
         }
+
         Markup markup = addMarkup(null, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
         markup.getViewpoints().add(vp);
     
@@ -167,7 +181,11 @@ public class IssueReport {
 	if (visInfo != null) {
 	    vp.setViewpoint("viewpoint.bcfv");
 	    vp.setSnapshot("snapshot.png");
+	    
+ 	    if(visInfo.getOrthogonalCamera()==null && visInfo.getPerspectiveCamera()==null)
+ 	 	comment+=" Element does not have a geometry.";
 	}
+
 	Markup markup = addMarkup(ifcSpatialStructureElement, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
 	markup.getViewpoints().add(vp);
 
@@ -197,6 +215,9 @@ public class IssueReport {
  	if (visInfo != null) {
  	    vp.setViewpoint("viewpoint.bcfv");
  	    vp.setSnapshot("snapshot.png");
+ 	    
+ 	    if(visInfo.getOrthogonalCamera()==null && visInfo.getPerspectiveCamera()==null)
+ 	 	comment+=" Element does not have a geometry.";
  	}
  	Markup markup = addMarkup(null, ifcRoot.getGlobalId(), comment, markup_uuid.toString(),vp);
  	markup.getViewpoints().add(vp);
@@ -342,22 +363,21 @@ public class IssueReport {
 	VisualizationInfo visualizationInfo = new VisualizationInfo();
 
 	TempGeometry geometry = new TempGeometry(renderEngineModel, ifcProductExpressId);
-	if (geometry.getBoundingBox() == null)
-	    return null;
+	
 	Component component1 = new Component();
 	component1.setIfcGuid(ifc_guid);
 	Components components = new Components();
-	components.getComponent().add(component1);
 	visualizationInfo.setComponents(components);
 
-	/*
+	
 	ComponentSelection cs=new ComponentSelection();
 	cs.getComponent().add(component1);	    
 	components.setSelection(cs);
 	ComponentVisibility cv=new ComponentVisibility();
 	cv.setDefaultVisibility(true);
 	components.setVisibility(cv);
-        */
+	if (geometry.getBoundingBox() == null)
+	    return visualizationInfo;
 	
 	Direction cameraDirection = new Direction();
 	cameraDirection.setX(geometry.getCameraDirectionX());
@@ -426,5 +446,10 @@ public class IssueReport {
     public List<IssueBean> getIssues() {
 	return issues;
     }
+    public List<String> getGeneral_comments() {
+        return general_comments;
+    }
+    
+    
 
 }

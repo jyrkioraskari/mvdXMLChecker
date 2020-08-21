@@ -5,7 +5,13 @@
 	<artifactId>mvdXMLCommandLineChecker</artifactId>
 	<name>mvdXMLCommandLineChecker</name>
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
+	<version>${mvdxml_check_project.version}</version>
 
+	<properties>
+		<mvdxml_check_project.version>2.43</mvdxml_check_project.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
 
 	<developers>
 		<developer>
@@ -21,26 +27,22 @@
 		</license>
 	</licenses>
 
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot2</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
 		<dependency>
@@ -63,5 +65,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<version>2.41</version>
 </project>

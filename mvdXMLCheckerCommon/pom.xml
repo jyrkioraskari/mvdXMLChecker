@@ -6,7 +6,13 @@
 	<artifactId>mvdXMLCheckerCommon</artifactId>
 	<name>mvdXMLChecker Common</name>
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
+	<version>${mvdxml_check_project.version}</version>
 
+	<properties>
+		<mvdxml_check_project.version>2.43</mvdxml_check_project.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
 
 	<developers>
 		<developer>
@@ -21,11 +27,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/javax.vecmath/vecmath -->
@@ -72,17 +73,17 @@
 			<artifactId>lwjgl</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jogamp.gluegen</groupId>
 			<artifactId>gluegen-rt-main</artifactId>
-			<version>2.3.1</version>
+			<version>2.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jogamp.jogl</groupId>
 			<artifactId>jogl-all-main</artifactId>
-			<version>2.3.1</version>
+			<version>2.3.2</version>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>
@@ -98,5 +99,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<version>2.41</version>
 </project>

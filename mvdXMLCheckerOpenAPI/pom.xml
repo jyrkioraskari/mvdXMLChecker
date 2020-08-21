@@ -5,10 +5,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.rwth-aachen.dc.mvd</groupId>
 	<artifactId>mvdXMLCheckerOpenAPI</artifactId>
-	<version>2.41</version>
+	<version>${mvdxml_check_project.version}</version>
 	<packaging>war</packaging>
 	<name>mvdXMLChecker OpenAPI Interface</name>
 
+	<properties>
+		<mvdxml_check_project.version>2.43</mvdxml_check_project.version>
+		<jersey2.version>2.30</jersey2.version>
+		<jaxrs.version>2.1.1</jaxrs.version>
+		<tomcat.version>7.0.69</tomcat.version>
+		<enunciate.version>2.8.0</enunciate.version>
+		<log4j.version>1.2.17</log4j.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
 	<developers>
 		<developer>
 			<id>jyrkio</id>
@@ -54,14 +64,6 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
-	<properties>
-		<jersey2.version>2.30</jersey2.version>
-		<jaxrs.version>2.1.1</jaxrs.version>
-		<tomcat.version>7.0.69</tomcat.version>
-		<enunciate.version>2.8.0</enunciate.version>
-		<log4j.version>1.2.17</log4j.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<dependencies>
 		<!-- JAX-RS -->
 		<dependency>
@@ -127,18 +129,18 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot2</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>2.41</version>
+			<version>${mvdxml_check_project.version}</version>
 		</dependency>
 
 		<dependency>

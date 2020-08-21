@@ -8,6 +8,8 @@ public class CheckerInfoEvent {
 	this.topic = topic;
 	this.value = value;
     }
+    
+
     public String getTopic() {
         return topic;
     }

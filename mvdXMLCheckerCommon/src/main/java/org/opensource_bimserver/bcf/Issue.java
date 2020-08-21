@@ -144,7 +144,7 @@ public class Issue {
     public BufferedImage makeImage(int width, int height) {
 	try {
 	    GLU glu = new GLU();
-	    GLProfile gl_profile = GLProfile.get(GLProfile.GL2ES2); // GLProfile.getDefault();
+	    GLProfile gl_profile = GLProfile.getDefault(); // GLProfile.getDefault();
 	    GLCapabilities capabilities = new GLCapabilities(gl_profile);
 	    capabilities.setOnscreen(false);
 	    GLDrawableFactory factory = GLDrawableFactory.getFactory(gl_profile);
