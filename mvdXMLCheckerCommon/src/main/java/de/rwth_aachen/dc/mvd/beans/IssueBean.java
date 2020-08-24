@@ -2,6 +2,7 @@ package de.rwth_aachen.dc.mvd.beans;
 
 public class IssueBean {
     private String ifcSpatialStructureElement=null;
+    private String mvdXMLConcept;
     private String ifcClassName;
     private String guid;
     private String name;
@@ -12,8 +13,9 @@ public class IssueBean {
 	super();
     }
 
-    public IssueBean(String ifcSpatialStructureElement, String ifcClassName,String guid, String name, String comment) {
+    public IssueBean(String mvdXMLConcept, String ifcSpatialStructureElement, String ifcClassName,String guid, String name, String comment) {
 	super();
+	this.mvdXMLConcept=mvdXMLConcept;
 	this.ifcSpatialStructureElement = ifcSpatialStructureElement;
 	this.ifcClassName = ifcClassName;
 	this.guid = guid;
@@ -33,7 +35,16 @@ public class IssueBean {
 	return ifcSpatialStructureElement;
     }
 
-     public String getIfcClassName() {
+    
+     public String getMvdXMLConcept() {
+        return mvdXMLConcept;
+    }
+
+    public void setMvdXMLConcept(String mvdXMLConcept) {
+        this.mvdXMLConcept = mvdXMLConcept;
+    }
+
+    public String getIfcClassName() {
         return ifcClassName;
     }
 

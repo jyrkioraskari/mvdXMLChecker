@@ -98,8 +98,8 @@ public class IssueReport {
 	this.general_comments.add(comment);
     }
     
-    public void addIssue(String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
-        issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+    public void addIssue(String mvdXMLConcept,String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
+        issues.add(new IssueBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
     
         UUID markup_uuid = UUID.randomUUID();
         VisualizationInfo visInfo = null;
@@ -124,11 +124,11 @@ public class IssueReport {
         Issue issue = new Issue(markup_uuid, markup, visInfo);
     
         if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) 
-            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
         else if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) 
-            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
         else
-            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
         bcf.addIssue(issue);
     }
 
@@ -158,17 +158,17 @@ public class IssueReport {
         Issue issue = new Issue(markup_uuid, markup, visInfo);
     
         if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) 
-            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
         else if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) 
-            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
         else
-            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
         bcf.addIssue(issue);
     }
    
 
-    public void addIssue(String ifcSpatialStructureElement, org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
-	issues.add(new IssueBean(ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+    public void addIssue(String mvdXMLConcept,String ifcSpatialStructureElement, org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
+	issues.add(new IssueBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
 
 	UUID markup_uuid = UUID.randomUUID();
 	VisualizationInfo visInfo = null;
@@ -191,11 +191,11 @@ public class IssueReport {
 
 	Issue issue = new Issue(markup_uuid, markup, visInfo);
 	 if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) 
-	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
 	 else if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) 
-	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
 	 else
-	     issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+	     issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
 	 System.out.println("Add Issue into BCD!!");
 	bcf.addIssue(issue);
     }
@@ -224,18 +224,18 @@ public class IssueReport {
 
  	Issue issue = new Issue(markup_uuid, markup, visInfo);
  	 if (ifcRoot instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) 
- 	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+ 	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
  	 else if (ifcRoot instanceof org.bimserver.models.ifc4.IfcProduct) 
- 	            issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+ 	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
  	 else
- 	     issue.addRendering(this.renderEngineModel, ifcRoot.getExpressId());
+ 	     issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
  	 System.out.println("Add Issue into BCD!!");
  	bcf.addIssue(issue);
      }
 
     
     public void addIssue(String comment) {
- 	issues.add(new IssueBean(null, "General", "", "", comment));
+ 	issues.add(new IssueBean("",null, "General", "", "", comment));
 
  	UUID markup_uuid = UUID.randomUUID();
  	Markup markup = addMarkup(comment, markup_uuid.toString());

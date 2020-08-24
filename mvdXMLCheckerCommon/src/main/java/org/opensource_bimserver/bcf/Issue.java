@@ -41,7 +41,7 @@ public class Issue {
     private UUID uuid;
 
     private Optional<IfcOpenShellModel> renderEngineModel = Optional.empty();
-    private Optional<Long> ifcProductExpressId = Optional.empty();
+    private Optional<String> ifcProductGuId = Optional.empty();
 
     public Issue(UUID uuid) {
 	this.uuid = uuid;
@@ -53,9 +53,9 @@ public class Issue {
 	this.visualizationInfo = visualizationInfo;
     }
 
-    public void addRendering(IfcOpenShellModel rm, long ifcProductExpressId) {
+    public void addRendering(IfcOpenShellModel rm, String ifcProductGuId) {
 	this.renderEngineModel = Optional.of(rm);
-	this.ifcProductExpressId = Optional.of(ifcProductExpressId);
+	this.ifcProductGuId = Optional.of(ifcProductGuId);
 
     }
 
@@ -160,11 +160,12 @@ public class Issue {
 		gl.glLoadIdentity();
 		System.out.println("this.renderEngineModel.isPresent(): " + this.renderEngineModel.isPresent());
 		if (this.renderEngineModel.isPresent()) {
-
 		    IfcOpenShellEntityInstance renderEngineInstance;
 		    try {
-			renderEngineInstance = this.renderEngineModel.get().getInstanceFromExpressId(ifcProductExpressId.get().intValue());
-			if (renderEngineInstance != null) {
+			renderEngineInstance = this.renderEngineModel.get().getInstanceFromGUID(ifcProductGuId.get());
+			System.out.println("renderEngineInstance: "+renderEngineInstance+ " for "+ifcProductGuId.get());
+			if (renderEngineInstance != null)
+			 {
 			    IfcGeomServerClientEntity geometry = renderEngineInstance.generateGeometry();
 			    if (geometry != null && geometry.getIndices().length > 0) {
 

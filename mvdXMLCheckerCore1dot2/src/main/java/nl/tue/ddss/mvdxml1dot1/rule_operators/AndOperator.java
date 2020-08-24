@@ -1,7 +1,11 @@
 package nl.tue.ddss.mvdxml1dot1.rule_operators;
 
+import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 public class AndOperator {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
+
 	// fields
 	private Boolean leftOperand;
 	private Boolean rightOperand;

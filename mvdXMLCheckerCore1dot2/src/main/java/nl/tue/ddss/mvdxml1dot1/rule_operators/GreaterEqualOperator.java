@@ -4,10 +4,15 @@ import java.util.Collection;
 
 import org.bimserver.emf.IdEObject;
 
+import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
+
 
 // rewritten by JO 2020
 
 public class GreaterEqualOperator {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
+
     // fields
     private Object leftOperand;
     private Object rightOperand;
@@ -80,6 +85,13 @@ public class GreaterEqualOperator {
 		result = true;
 	    else
 		result = false;
+	
+	if(result==false)
+		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+left+ " NOT >= " + right+"</B> )"));
+	else
+		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> "+left+ " >= " + right+"</B> )"));
+
+
 	return result;
     }
 }

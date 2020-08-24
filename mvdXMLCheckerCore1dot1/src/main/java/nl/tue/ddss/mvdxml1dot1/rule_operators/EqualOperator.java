@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.bimserver.emf.IdEObject;
 
-import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 public class EqualOperator {
@@ -55,7 +55,6 @@ public class EqualOperator {
 			result = true;
 		    } else {
 			System.out.println("No match" + leftOperand + " <> " + rightOperand);
-			communication.post(new CheckerNotificationEvent("  <B style=\"color:red\"> --> "+leftOperand+ " <> " + rightOperand+"</B>"));
 			result = false;
 		    }
 		} else {
@@ -70,7 +69,6 @@ public class EqualOperator {
 			if (((String) leftOperand).toLowerCase().equals(rightOperand.toString().toLowerCase())) {
 			    result = true;
 			} else {
-			    communication.post(new CheckerNotificationEvent("   <B style=\"color:red\"> --> "+leftOperand+ " <> " + rightOperand+"</B>"));
 			    System.out.println("No matching type 2 " + leftOperand + " <> " + rightOperand);
 			    result = false;
 			}
@@ -159,6 +157,12 @@ public class EqualOperator {
 		result = false;
 	    }
 	}
+	if(result==false)
+		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
+	else
+		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \""+leftOperand+ "\" = \"" + rightOperand+"\"</B> )"));
+
+
 	return result;
     }
 }

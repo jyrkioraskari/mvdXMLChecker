@@ -66,7 +66,8 @@ public class IfcOpenShellModel  {
 	private InputStream ifcInputStream;
 
 	private HashMap<Integer,IfcOpenShellEntityInstance> instancesById;
-
+	private HashMap<String,IfcOpenShellEntityInstance> instancesByGUID;
+	
 	private IfcGeomServerClient client;
 	
 	public IfcOpenShellModel(IfcGeomServerClient client, InputStream ifcInputStream) throws RenderEngineException, IOException {
@@ -97,6 +98,7 @@ public class IfcOpenShellModel  {
 	public void generateGeneralGeometry() throws RenderEngineException {
 		// We keep track of instances ourselves
 		instancesById = new HashMap<Integer,IfcOpenShellEntityInstance>();
+		instancesByGUID = new HashMap<String,IfcOpenShellEntityInstance>();
 
 		final double t0 = (double) System.nanoTime();
 
@@ -104,8 +106,9 @@ public class IfcOpenShellModel  {
 			IfcGeomServerClientEntity next = client.getNext();
 			// Store the instance in our dictionary
 			IfcOpenShellEntityInstance instance = new IfcOpenShellEntityInstance(next);
-			System.out.println("GEN GEOM:  "+next.getId());
+			System.out.println("GEN GEOM:  "+next.getGuid());
 			instancesById.put(next.getId(), instance);
+			instancesByGUID.put(next.getGuid(), instance);
 		}
 		
 		final double t1 = (double) System.nanoTime();
@@ -124,5 +127,11 @@ public class IfcOpenShellModel  {
 		    return null;
 		}
 	}
-	
+	public IfcOpenShellEntityInstance getInstanceFromGUID(String guid) throws RenderEngineException {
+		if ( instancesByGUID.containsKey(guid) ) {
+			return instancesByGUID.get(guid);
+		} else {
+		    return null;
+		}
+	}
 }

@@ -57,12 +57,33 @@ public class IfcMVDConstraintChecker {
     @SuppressWarnings("unchecked")
     public IssueReport checkModel(IfcModelInterface ifcModel, File ifcfile) throws DeserializeException, IOException, RenderEngineException {
 	IssueReport issuereport = new IssueReport(ifcModel, ifcfile);
+	switch (this.ifcversion) {
+	case IFC2x3:
+	    communication.post(new CheckerInfoEvent("IFC Version", "IFC2x3"));
+	    break;
+	case IFC4:
+	    communication.post(new CheckerInfoEvent("IFC Version", "IFC4"));
+	    break;
+	default:
+	    communication.post(new CheckerInfoEvent("IFC Version", "Unsupported"));
+	    issuereport.addIssue("Unsupported IFC version");
+	    return issuereport;
+	}
+	communication.post(new CheckerInfoEvent("Checking against", "mvdXML 1-1 <P>"));
+	
 	for (MVDConstraint constraint : constraints) {
 	    if (constraint == null) {
 		communication.post(new CheckerNotificationEvent("Constraint was null <P>"));
 		issuereport.addIssue( "Constraint was null");
 		continue;
 	    }
+	    if(constraint.getConcept()!=null && constraint.getConcept().getUuid()!=null )
+	    {
+	       communication.post(new CheckerBreakEvent());
+	       communication.post(new CheckerNotificationEvent("<P>CONCEPT: "+constraint.getConcept().getUuid()));
+	    }
+	   
+
 	    List<AttributeRule> attributeRules = constraint.getAttributeRules();
 	    List<TemplateRule> templateRules = constraint.getTemplateRules();
 	    try {
@@ -71,19 +92,12 @@ public class IfcMVDConstraintChecker {
 		switch (this.ifcversion) {
 		case IFC2x3:
 		    cls = Class.forName("org.bimserver.models.ifc2x3tc1." + constraint.getConceptRoot().getApplicableRootEntity());
-		    communication.post(new CheckerInfoEvent("IFC Version", "IFC2x3"));
 		    break;
 		case IFC4:
 		    cls = Class.forName("org.bimserver.models.ifc4." + constraint.getConceptRoot().getApplicableRootEntity());
-		    communication.post(new CheckerInfoEvent("IFC Version", "IFC4"));
 		    break;
 		default:
-		    communication.post(new CheckerInfoEvent("IFC Version", "Unsupported"));
-		    issuereport.addIssue("Unsupported IFC version");
-		    return issuereport;
 		}
-
-		communication.post(new CheckerInfoEvent("Checking against", "mvdXML 1-1 <P>"));
 
 		List<Object> allClassInstances = ifcModel.getAllWithSubTypes(cls);
 		if (allClassInstances.size() == 0) {
@@ -110,7 +124,6 @@ public class IfcMVDConstraintChecker {
 			}
 		    }
 
-		    communication.post(new CheckerBreakEvent());
 		    if (comment.length() > 0) {
 			if (this.ifcversion == ifcversion.IFC2x3)
 			    communication.post(new CheckerNotificationEvent("<B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
@@ -140,6 +153,8 @@ public class IfcMVDConstraintChecker {
 			String type = ifcObject.getClass().getSimpleName();
 			type = type.substring(0, type.length() - 4);
 
+			comment+=" IFC class of the elemet: "+ifcObject.getClass().getSimpleName();
+
 			switch (this.ifcversion) {
 			case IFC2x3:
 			    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
@@ -148,10 +163,10 @@ public class IfcMVDConstraintChecker {
 				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
 				List<String> componantGuids = new LinkedList<String>();
 				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
-				issuereport.addIssue(spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject), ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(constraint.getConcept().getUuid(),spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject), ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
 				communication.post(new CheckerInfoEvent("<B>IfcProduct IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
 			    } else {
-				issuereport.addIssue(null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
 				communication.post(new CheckerInfoEvent("<B>Other than issue</B><BR> guid=" + ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
 			    }
 			    break;
@@ -162,10 +177,10 @@ public class IfcMVDConstraintChecker {
 				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
 				List<String> componantGuids = new LinkedList<String>();
 				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
-				issuereport.addIssue(spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject), ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(constraint.getConcept().getUuid(),spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject), ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
 				communication.post(new CheckerInfoEvent("<B>IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
 			    } else {
-				issuereport.addIssue(null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+				issuereport.addIssue(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
 				communication.post(new CheckerInfoEvent("<B>Other than IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId(), "<BR>" + comment));
 			    }
 			    break;
