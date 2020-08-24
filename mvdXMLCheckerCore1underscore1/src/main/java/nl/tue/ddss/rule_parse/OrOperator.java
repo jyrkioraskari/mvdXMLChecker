@@ -1,7 +1,11 @@
 package nl.tue.ddss.rule_parse;
 
+import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 public class OrOperator {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
+
 	// fields
 	private Boolean leftOperand;
 	private Boolean rightOperand;

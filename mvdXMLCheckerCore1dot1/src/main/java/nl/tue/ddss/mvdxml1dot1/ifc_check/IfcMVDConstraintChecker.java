@@ -149,8 +149,7 @@ public class IfcMVDConstraintChecker {
 					    communication.post(new CheckerNotificationEvent("   <BR>Test passed."));
 					    break;
 					}
-					else
-					communication.post(new CheckerNotificationEvent("   <BR>Tested set was not passed."));
+					
 
 				    }
 				}
@@ -169,9 +168,6 @@ public class IfcMVDConstraintChecker {
 					    communication.post(new CheckerNotificationEvent("   <BR>Test passed."));
 					    break;
 					}
-					else
-					    communication.post(new CheckerNotificationEvent("   <BR>Tested set was not passed."));
-					    
 				    }
 				    if (!template_validity) {
 					applicable = false;
@@ -222,12 +218,10 @@ public class IfcMVDConstraintChecker {
 					communication.post(new CheckerNotificationEvent("   <BR>Test value set accepted,"));
 					break;
 				    }
-				    else
-					communication.post(new CheckerNotificationEvent("   <BR>Test value set not accepted."));
-				    communication.post(new CheckerShortNotificationEvent("</p>"));
-
 				}
 			    }
+			    communication.post(new CheckerShortNotificationEvent("</p>"));
+			    
 			    if (!valid) {
 				comment = comment + "\n This Object has to fulfil one of the template requirements. ";
 				for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
@@ -265,8 +259,6 @@ public class IfcMVDConstraintChecker {
 				    comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
 				    valid = false;
 				}
-				else
-					communication.post(new CheckerNotificationEvent("   <BR>Test value set not accepted."));
 
 			    }
 			}
