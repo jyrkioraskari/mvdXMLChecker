@@ -13,7 +13,6 @@ import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.ObjectToValue;
 
 public class Parameter {
-    private EventBusCommunication communication = EventBusCommunication.getInstance();
     Object result;
     String name;
     HashMap<AbstractRule, ObjectToValue> hashMap;
@@ -71,10 +70,6 @@ public class Parameter {
 	    result = value;
 	else
 	    result=value;
-	
-	System.out.println("Parameter "+name+" value was: "+result);
-	communication.post(new CheckerNotificationEvent("   "+this.name+" = "+result));
-
 	return result;
     }
 

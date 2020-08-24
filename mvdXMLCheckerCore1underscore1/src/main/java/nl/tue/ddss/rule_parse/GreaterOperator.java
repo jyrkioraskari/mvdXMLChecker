@@ -44,8 +44,10 @@ public class GreaterOperator {
 
 	if (rightOperand instanceof String) {
 	    try {
+		
 		right = Double.parseDouble((String) rightOperand);
 	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
 	}
 	if (rightOperand instanceof Double)
@@ -63,6 +65,7 @@ public class GreaterOperator {
 	    try {
 		left = Double.parseDouble((String) leftOperand);
 	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
 	}
 	if (leftOperand instanceof Double)
@@ -82,4 +85,6 @@ public class GreaterOperator {
 		result = false;
 	return result;
     }
+    
+    
 }

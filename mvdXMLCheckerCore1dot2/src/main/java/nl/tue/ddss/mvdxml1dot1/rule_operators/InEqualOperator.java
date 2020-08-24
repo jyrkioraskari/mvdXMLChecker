@@ -7,7 +7,12 @@ import java.util.regex.Pattern;
 
 import org.bimserver.emf.IdEObject;
 
+import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
+import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
+
 public class InEqualOperator {
+    private EventBusCommunication communication = EventBusCommunication.getInstance();
+
 	// fields
 	private Object leftOperand;
 	private Object rightOperand;
@@ -130,6 +135,12 @@ public class InEqualOperator {
 			System.out.println("To be later supported");
 			result = false;
 		}
+		
+		if(result==false)
+			communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \""+leftOperand+ "\" NOT <> \"" + rightOperand+"\"</B> )"));
+		else
+			communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
+
 		return result;
 	}
 }

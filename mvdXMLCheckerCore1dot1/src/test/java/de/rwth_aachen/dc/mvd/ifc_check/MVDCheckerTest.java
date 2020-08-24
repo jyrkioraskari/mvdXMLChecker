@@ -44,8 +44,11 @@ public class MVDCheckerTest {
 
     public static void main(String[] args) throws Exception {
 
-	
-	new MVDCheckerTest("c:\\test\\noemi7\\BUW_HC-Gebäude-Aufzug - Aufzugsanlage.ifc", "c:\\test\\noemi7\\ILC_Wartungs-LV erstellen.mvdxml");
+
+	//new MVDCheckerTest("c:\\test\\noemi9\\BUW_HC-Gebäude-Reinigung - Fenster_optimized.ifc", "c:\\test\\noemi9\\ILC_Flächenverzeichnis für Reinigung erstellen.mvdxml");
+	new MVDCheckerTest("c:\\test\\noemi8\\BUW_HC-Gebäude-Wartung.ifc", "c:\\test\\noemi8\\ILC_Anlagenverzeichnis Wartung erstellen.mvdxml");
+
+	//new MVDCheckerTest("c:\\test\\noemi7\\BUW_HC-Gebäude-Aufzug - Aufzugsanlage.ifc", "c:\\test\\noemi7\\ILC_Wartungs-LV erstellen.mvdxml");
 
 	//new MVDCheckerTest("c:\\temp\\1\\BUW_HC-elevator.ifc", "c:\\temp\\1\\ILC_Anlagenverzeichnis Wartung erstellen.mvdxml");
 	

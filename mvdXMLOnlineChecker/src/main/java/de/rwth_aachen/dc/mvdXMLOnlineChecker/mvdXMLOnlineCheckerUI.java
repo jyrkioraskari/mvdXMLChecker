@@ -38,6 +38,7 @@ import de.rwth_aachen.dc.mvd.events.CheckerBreakEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLv1dot2Check;
 import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
@@ -109,6 +110,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	layout.addComponent(button_layout);
 
 	issues_grid.setItems(issues);
+	issues_grid.addColumn(IssueBean::getMvdXMLConcept).setCaption("Concept");
 	issues_grid.addColumn(IssueBean::getIfcClassName).setCaption("Element type");
 	issues_grid.addColumn(IssueBean::getName).setCaption("Name");
 	issues_grid.addColumn(IssueBean::getGuid).setCaption("Guid");
@@ -281,7 +283,13 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     @Subscribe
     public void notificationEvent(CheckerNotificationEvent event) {
-	reasoning.append(""+event.getValue()+"<BR>");
+	reasoning.append(" "+event.getValue()+"<BR>");
+	reasoning_area.setValue(reasoning.toString());
+    }
+    
+    @Subscribe
+    public void notificationEvent(CheckerShortNotificationEvent event) {
+	reasoning.append(" "+event.getValue()+" ");
 	reasoning_area.setValue(reasoning.toString());
     }
     
