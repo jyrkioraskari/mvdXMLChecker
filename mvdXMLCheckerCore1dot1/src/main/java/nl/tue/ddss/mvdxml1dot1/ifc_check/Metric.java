@@ -21,7 +21,7 @@ public class Metric {
 	} else if (value instanceof Collection) {
 	    metricSize = ((Collection) value).size();
 	} else {
-	    metricSize = 1;
+	    metricSize = 1;  //TODO is this true?
 	}
 	return metricSize;
     }
@@ -36,7 +36,7 @@ public class Metric {
 	if (value instanceof String || value instanceof Float || value instanceof Double || value instanceof Long|| value instanceof Integer || value instanceof Boolean) {
 	    metricValue = value;
 	} else {
-	    metricValue = null;  // Why this!!!
+	    metricValue = value;  // no reason to set to null
 	}
 	return metricValue;
     }

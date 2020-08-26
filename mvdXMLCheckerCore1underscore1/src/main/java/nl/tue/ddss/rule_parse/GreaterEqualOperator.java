@@ -9,8 +9,7 @@ import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 // rewritten by JO 2020
 
-public class GreaterEqualOperator {
-    private EventBusCommunication communication = EventBusCommunication.getInstance();
+public class GreaterEqualOperator extends AbstractComparatorOperator{
 
     // fields
     private Object leftOperand;
@@ -44,90 +43,16 @@ public class GreaterEqualOperator {
 
     public Boolean getResult() {
 	Boolean result = false;
-	double right = Double.NaN;
-	double left = Double.NaN;
+	Double right = Double.NaN;
+	Double left = Double.NaN;
 
-	if(rightOperand==null)
-	{
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
-	    System.out.println("was not greater 04 "+leftOperand+" "+rightOperand);
+	right=getValue(rightOperand);
+	left=getValue(leftOperand);
+	if(right==null)
 	    return false;
-        }
-	if(leftOperand==null)
-	{	    
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
-	    System.out.println("was not greater 03 "+leftOperand+" "+rightOperand);
-
+	if(left==null)
 	    return false;
-        }	
-	if (rightOperand instanceof String) {
-	    try {
-		if(((String) rightOperand).trim().length()>00)
-		   right = Double.parseDouble((String) rightOperand);
-		else {
-		    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
-		    System.out.println("was not greater 02 "+leftOperand+" "+rightOperand);
-		    return false;
-	        }
-	    } catch (Exception e) {
-		e.printStackTrace();
-		{
-		    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
-		    System.out.println("was not greater 01 "+leftOperand+" "+rightOperand);
-		    return false;
-	        }
-	    }
-	}
-	if (rightOperand instanceof Double)
-	    right = (Double) rightOperand;
-	if (rightOperand instanceof Float)
-	    right = ((Float) rightOperand).doubleValue();
-
-	if (rightOperand instanceof Integer)
-	    right = ((Integer) rightOperand).doubleValue();
-	if (rightOperand instanceof Long)
-	    right = ((Long) rightOperand).doubleValue();
-
-	if (rightOperand instanceof Collection)
-	    System.out.println("To be later supported");
-	if (rightOperand instanceof IdEObject)
-	    System.out.println("To be later supported");
-
 	
-	if (leftOperand instanceof String) {
-	    try {
-		if (((String) leftOperand).trim().length() > 0)
-		    left = Double.parseDouble((String) leftOperand);
-		else
-		{
-		    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
-		    System.out.println("was not greater 1 "+leftOperand+" "+rightOperand);
-		    return false;
-	        }
-	    } catch (Exception e) {
-		e.printStackTrace();
-		{
-		    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
-		    System.out.println("was not greater 2 "+leftOperand+" "+rightOperand);
-		    return false;
-	        }
-
-	    }
-	}
-	if (leftOperand instanceof Double)
-	    left = (Double) leftOperand;
-	if (leftOperand instanceof Float)
-	    left = ((Float) leftOperand).doubleValue();
-	if (leftOperand instanceof Integer)
-	    left = ((Integer) leftOperand).doubleValue();
-	if (leftOperand instanceof Long)
-	    left = ((Long) leftOperand).doubleValue();
-	
-	if (leftOperand instanceof Collection)
-	    System.out.println("To be later supported");
-	if (leftOperand instanceof IdEObject)
-	    System.out.println("To be later supported");
-
 	if (right != Double.NaN && left != Double.NaN) {
 	    if (left >= right)
 		result = true;
@@ -143,4 +68,7 @@ public class GreaterEqualOperator {
 
 	return result;
     }
+    
+   
+    
 }

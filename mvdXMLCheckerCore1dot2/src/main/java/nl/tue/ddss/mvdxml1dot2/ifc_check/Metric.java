@@ -36,7 +36,7 @@ public class Metric {
 	if (value instanceof String || value instanceof Float || value instanceof Double || value instanceof Long|| value instanceof Integer || value instanceof Boolean) {
 	    metricValue = value;
 	} else {
-	    metricValue = null;  // Why this!!!
+	    metricValue = value;  // no reason to set to null
 	}
 	return metricValue;
     }
