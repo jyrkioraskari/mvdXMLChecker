@@ -251,7 +251,7 @@ public class IfcValidatorAPI {
     @Path("/check_plain")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public IssueReportBean check_withsSecifiedMvcxml_inputAsIFCFile_resultAsJSON(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile, @FormDataParam("ifcFile") InputStream ifcFile) {
+    public IssueReportBean check_plain(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile, @FormDataParam("ifcFile") InputStream ifcFile) {
 	IssueReportBean issueReportBean = new IssueReportBean();
 	try {
 	    File tempIfcFile = File.createTempFile("ifcChecker-", ".ifc");
@@ -327,7 +327,7 @@ public class IfcValidatorAPI {
     @Path("/check")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response check_withsSecifiedMvcxml_inputAsIFCFile_resultAsBCF(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile, @FormDataParam("ifcFile") InputStream ifcFile) {
+    public Response check(@FormDataParam("mvdXMLfile") InputStream mvdXMLfile, @FormDataParam("ifcFile") InputStream ifcFile) {
 	IssueReportBean issueReportBean = new IssueReportBean();
 	File tempBCFZipFile = null;
 	try {
