@@ -32,10 +32,11 @@ public class Metric {
     }
 
     public Object getMetricValue() {
-	if (value instanceof String || value instanceof Double || value instanceof Integer || value instanceof Boolean) {
+	// Fixed by JO 2020
+	if (value instanceof String || value instanceof Float || value instanceof Double || value instanceof Long|| value instanceof Integer || value instanceof Boolean) {
 	    metricValue = value;
 	} else {
-	    metricValue = null;
+	    metricValue = null;  // Why this!!!
 	}
 	return metricValue;
     }

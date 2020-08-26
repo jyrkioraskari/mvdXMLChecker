@@ -54,6 +54,10 @@ public class Parameter {
 	else if (value instanceof org.bimserver.models.ifc4.impl.IfcRealImpl)
 	    result = ((org.bimserver.models.ifc4.impl.IfcRealImpl) value).getWrappedValue();
 
+	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcIntegerImpl)
+	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcIntegerImpl) value).getWrappedValue();
+	else if (value instanceof org.bimserver.models.ifc4.impl.IfcIntegerImpl)
+	    result = ((org.bimserver.models.ifc4.impl.IfcIntegerImpl) value).getWrappedValue();
 	
 	else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcBooleanImpl)
 	    result = ((org.bimserver.models.ifc2x3tc1.impl.IfcBooleanImpl) value).getWrappedValue().toString();
@@ -71,7 +75,7 @@ public class Parameter {
 	else
 	    result=value;
 	
-
+	System.out.println("Param WAS: "+result);
 	return result;
     }
 
