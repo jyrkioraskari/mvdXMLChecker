@@ -147,16 +147,15 @@ http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/ui/swagger.json
 ## Cite this
 
 ```
-@software{jyrki_oraskari_2020_3992242,
+@software{jyrki_oraskari_2020_4001779,
   author       = {Jyrki Oraskari},
-  title        = {{jyrkioraskari/OnlineMvdXMLChecker: mvdXML Checker 
-                   2.41}},
+  title        = {jyrkioraskari/OnlineMvdXMLChecker: mvdChecker 2.45},
   month        = aug,
   year         = 2020,
   publisher    = {Zenodo},
-  version      = {2.41},
-  doi          = {10.5281/zenodo.3992242},
-  url          = {https://doi.org/10.5281/zenodo.3992242}
+  version      = {2.45},
+  doi          = {10.5281/zenodo.4001779},
+  url          = {https://doi.org/10.5281/zenodo.4001779}
 }
 ```
 
