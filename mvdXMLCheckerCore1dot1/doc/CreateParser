@@ -3,4 +3,4 @@ https://github.com/antlr/website-antlr3/tree/gh-pages/download
 Version: 3.5.3
 antlr-3.5.2-complete.jar
 
-java -jar antlr-3.5.2-complete.jar mvdXMLv1_1.g
+java -jar antlr-3.5.2-complete.jar MvdXMLv1_1.g

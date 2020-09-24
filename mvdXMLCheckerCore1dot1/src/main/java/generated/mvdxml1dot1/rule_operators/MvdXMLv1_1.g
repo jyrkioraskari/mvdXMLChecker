@@ -3,7 +3,6 @@ grammar MvdXMLv1_1;
 @header {
 package generated.mvdxml1dot1.rule_operators;
 import java.util.HashMap;
-
 import org.antlr.runtime.BitSet;
 import org.antlr.runtime.MismatchedSetException;
 import org.antlr.runtime.NoViableAltException;
@@ -18,6 +17,19 @@ import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.Metric;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.Parameter;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.AndOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.EqualOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.GreaterEqualOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.GreaterOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.InEqualOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.LessEqualOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.LessOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.OrOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.XorOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.NandOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.NorOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.NxorOperator;
+
 }
 
 @lexer::header {
@@ -42,19 +54,38 @@ expression returns [Boolean expressionReturns]
 	}
 	
 boolean_expression returns [Boolean result]
-    	:	left=boolean_term {$result=left;}(logical=logical_interconnection right=boolean_expression
-    	{if (logical.equals("AND")) {
+    	:	left=boolean_term {$result=left;}(AND right=boolean_expression
+    	{
     	AndOperator andOperator=new AndOperator(left,right);
     	$result=andOperator.getResult();
-    	}else if (logical.equals("OR")) {
-      OrOperator orOperator=new OrOperator(left,right);
+    	} )? 
+    	(OR right=boolean_expression
+    	{
+    	OrOperator orOperator=new OrOperator(left,right);
       $result=orOperator.getResult();
-      }else if (logical.equals("XOR")) {
-      XorOperator xorOperator=new XorOperator(left,right);
-      $result=xorOperator.getResult();
-      }} )  ;
-      
-
+    	} )? 
+    	(XOR right=boolean_expression
+    	{
+    	XorOperator xorOperator=new XorOperator(left,right);
+    	$result=xorOperator.getResult();
+    	} )? 
+    	(NAND right=boolean_expression
+    	{
+    	NandOperator nandOperator=new NandOperator(left,right);
+    	$result=nandOperator.getResult();
+    	} )? 
+    	(NOR right=boolean_expression
+    	{
+    	NorOperator norOperator=new NorOperator(left,right);
+      $result=norOperator.getResult();
+    	} )? 
+    	(NXOR right=boolean_expression
+    	{
+    	NxorOperator nxorOperator=new NxorOperator(left,right);
+    	$result=nxorOperator.getResult();
+    	} )? 
+    	
+    	 ;
       
 boolean_term returns [Boolean boolTermReturns]
 	:	(( leftOperand=parameter ( leftOperand=metric[leftOperand] )?) op=operator ( rightOperand=value | rightOperand=parameter ( rightOperand=metric[rightOperand] )? ) )
@@ -88,12 +119,9 @@ parameter returns [Object paraReturns]
 metric [Object value]returns [Object metricReturns] 	
 	:	VALUE {Metric metric=new Metric($value);$metricReturns=metric.getMetricValue();}
 	| SIZE {Metric metric=new Metric($value);$metricReturns=metric.getMetricSize();}
-	| TYPE {Metric metric=new Metric($value);$metricReturns=metric.getMetricType();}| UNIQUE;
+	| TYPE {Metric metric=new Metric($value);$metricReturns=metric.getMetricType();}| UNIQUE | EXISTS;
 	
-logical_interconnection returns [String logical]
-	:	AND {$logical="AND";}| OR{$logical="OR";} | XOR {$logical="XOR";};
-	
-	
+
 operator returns[String op]
 	:	EQUAL {$op="=";}| NOT_EQUAL{$op="!=";} | GREATER_THAN {$op=">";} | GREATER_THAN_OR_EQUAL {$op=">=";}| LESS_THAN {$op="<";}| LESS_THAN_OR_EQUAL{$op="<=";};
 	
@@ -134,12 +162,20 @@ TYPE
   : '[Type]' | '[type]' | '[TYPE]' ;
 UNIQUE
   : '[Unique]' | '[unique]' | '[UNIQUE]' ;
+EXISTS
+  : '[Exist]' | '[exists]' | '[EXISTS]' ;
 AND 	
-	:	'AND' | 'and' | 'And' | '&' | ';' ;
+	:	'AND' | 'and' | 'And' | '&'  ;
 OR 	
 	:	'OR' | 'or' | 'Or' | '|' ;
 XOR 	
 	:	'XOR' | 'xor' ;
+NAND   
+	:	'NAND' | 'nand' ; 
+NOR   
+	:	'NOR' | 'nor' ; 
+NXOR   
+	:	'NXOR' | 'nxor' ; 
 EQUAL 	
 	:	'=' ;
 NOT_EQUAL 

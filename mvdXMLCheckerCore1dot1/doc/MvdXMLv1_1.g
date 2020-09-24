@@ -26,6 +26,9 @@ import nl.tue.ddss.mvdxml1dot1.rule_operators.LessEqualOperator;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.LessOperator;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.OrOperator;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.XorOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.NandOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.NorOperator;
+import nl.tue.ddss.mvdxml1dot1.rule_operators.NxorOperator;
 
 }
 
@@ -64,6 +67,22 @@ boolean_expression returns [Boolean result]
     	(XOR right=boolean_expression
     	{
     	XorOperator xorOperator=new XorOperator(left,right);
+    	$result=xorOperator.getResult();
+    	} )? 
+    	(NAND right=boolean_expression
+    	{
+    	NandOperator nandOperator=new NandOperator(left,right);
+    	$result=nandOperator.getResult();
+    	} )? 
+    	(NOR right=boolean_expression
+    	{
+    	NorOperator norOperator=new NorOperator(left,right);
+      $result=norOperator.getResult();
+    	} )? 
+    	(NXOR right=boolean_expression
+    	{
+    	NxorOperator nxorOperator=new NxorOperator(left,right);
+    	$result=nxorOperator.getResult();
     	} )? 
     	
     	 ;
@@ -100,7 +119,7 @@ parameter returns [Object paraReturns]
 metric [Object value]returns [Object metricReturns] 	
 	:	VALUE {Metric metric=new Metric($value);$metricReturns=metric.getMetricValue();}
 	| SIZE {Metric metric=new Metric($value);$metricReturns=metric.getMetricSize();}
-	| TYPE {Metric metric=new Metric($value);$metricReturns=metric.getMetricType();}| UNIQUE;
+	| TYPE {Metric metric=new Metric($value);$metricReturns=metric.getMetricType();}| UNIQUE | EXISTS;
 	
 
 operator returns[String op]
@@ -143,12 +162,20 @@ TYPE
   : '[Type]' | '[type]' | '[TYPE]' ;
 UNIQUE
   : '[Unique]' | '[unique]' | '[UNIQUE]' ;
+EXISTS
+  : '[Exist]' | '[exists]' | '[EXISTS]' ;
 AND 	
 	:	'AND' | 'and' | 'And' | '&'  ;
 OR 	
 	:	'OR' | 'or' | 'Or' | '|' ;
 XOR 	
 	:	'XOR' | 'xor' ;
+NAND   
+	:	'NAND' | 'nand' ; 
+NOR   
+	:	'NOR' | 'nor' ; 
+NXOR   
+	:	'NXOR' | 'nxor' ; 
 EQUAL 	
 	:	'=' ;
 NOT_EQUAL 

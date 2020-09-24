@@ -1,6 +1,10 @@
 package nl.tue.ddss.mvdxml1dot1.rule_operators;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Date;
 
 import org.bimserver.emf.IdEObject;
 
@@ -27,12 +31,14 @@ abstract public class AbstractComparatorOperator {
 		    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> Value is an empty String. </B> )"));
 		    return null;
 	        }
-	    } catch (Exception e) {
-		e.printStackTrace();
-		{
+	    } 
+	    catch (NumberFormatException e) {
+		return null;
+	    }
+	    catch (Exception e) {
+		    e.printStackTrace();
 		    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> Value of a  string, "+operand+", not a number</B> )"));
 		    return null;
-	        }
 	    }
 	}
 	if (operand instanceof Double)

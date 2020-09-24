@@ -42,17 +42,18 @@ public class EqualOperator {
     }
 
     public Boolean getResult() {
-	Boolean result = new Boolean(true);
+	Boolean result = new Boolean(false);
 	if (leftOperand == null) {
 	    // System.out.println("Left null right was: "+ rightOperand);
 	    return false;
 	}
+
 	if (rightOperand instanceof String) {
 	    if (((String) rightOperand).startsWith("reg")) {
 		String reg = ((String) rightOperand);
 		if (leftOperand instanceof String) {
 		    if (((String) leftOperand).matches(reg.substring(4).replace("\\\\", "\\"))) {
-			result = true;
+			result = true; // !!!
 		    } else {
 			System.out.println("No match" + leftOperand + " <> " + rightOperand);
 			result = false;
@@ -134,11 +135,24 @@ public class EqualOperator {
 		    result = false;
 		}
 	    }
+	    else
+	    {
+		try
+		{
+		if(rightOperand.equals(Double.parseDouble(leftOperand+"")))
+		    return true;
+		else
+		    return false;
+		}
+		catch (NumberFormatException e) {
+		    return false;
+		}
+	    }
 	} else if (rightOperand instanceof IdEObject) {
 	    if (leftOperand instanceof IdEObject) {
 		String typeName = leftOperand.getClass().getSimpleName();
 		typeName = typeName.substring(0, typeName.length() - 4);
-		result = leftOperand.getClass().equals(rightOperand.getClass());
+		result = leftOperand.getClass().equals(rightOperand.getClass()); // !!!
 	    } else {
 		System.out.println("To be later supported");
 		result = false;
@@ -157,11 +171,10 @@ public class EqualOperator {
 		result = false;
 	    }
 	}
-	if(result==false)
-		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
+	if (result == false)
+	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \"" + leftOperand + "\" <> \"" + rightOperand + "\"</B> )"));
 	else
-		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \""+leftOperand+ "\" = \"" + rightOperand+"\"</B> )"));
-
+	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \"" + leftOperand + "\" = \"" + rightOperand + "\"</B> )"));
 
 	return result;
     }

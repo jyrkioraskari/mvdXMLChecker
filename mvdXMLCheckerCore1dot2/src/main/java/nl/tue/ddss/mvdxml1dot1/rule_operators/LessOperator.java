@@ -1,6 +1,9 @@
 package nl.tue.ddss.mvdxml1dot1.rule_operators;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import org.bimserver.emf.IdEObject;
 
@@ -48,8 +51,65 @@ public class LessOperator extends AbstractComparatorOperator{
 	Double right = Double.NaN;
 	Double left = Double.NaN;
 
-	right=getValue(rightOperand);
-	left=getValue(leftOperand);
+	if (rightOperand instanceof String  && leftOperand instanceof String && (((String)rightOperand).contains(":") || ((String)leftOperand).contains(":"))) {
+	    
+	    try
+	    {
+	       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	       Date lefttime = sdf.parse((String) leftOperand);
+	       left=(double)lefttime.getTime();
+	    }
+	    catch (ParseException e0) {
+		try
+		    {
+		       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		       Date lefttime = sdf.parse((String) leftOperand);
+		       left=(double)lefttime.getTime();
+		    }
+		    catch (ParseException e1) {
+			try
+			    {
+			       SimpleDateFormat sdf = new SimpleDateFormat("HH");
+			       Date lefttime = sdf.parse((String) leftOperand);
+			       left=(double)lefttime.getTime();
+			    }
+			    catch (ParseException e2) {
+				    
+			    }
+		    }
+	    }
+	    try
+	    {
+	       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	       Date righttime = sdf.parse((String) rightOperand);
+	       right=(double)righttime.getTime();
+	    }
+	    catch (ParseException e0) {
+		try
+		    {
+		       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		       Date righttime = sdf.parse((String) rightOperand);
+		       right=(double)righttime.getTime();
+		    }
+		    catch (ParseException e1) {
+			try
+			    {
+			       SimpleDateFormat sdf = new SimpleDateFormat("HH");
+			       Date righttime = sdf.parse((String) rightOperand);
+			       right=(double)righttime.getTime();
+			    }
+			    catch (ParseException e2) {
+				    
+			    }
+		    }
+	    }
+	    
+	}
+	if(left==Double.NaN||right==Double.NaN)
+	{
+	  left=getValue(leftOperand);
+	  right=getValue(rightOperand);
+	}
 	if(right==null)
 	    return false;
 	if(left==null)
@@ -64,9 +124,9 @@ public class LessOperator extends AbstractComparatorOperator{
 	    return null;
 
 	if (result == false)
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> " + left + " NOT < " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> " + leftOperand + " NOT < " + rightOperand + "</B> )"));
 	else
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> " + left + " < " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> " + leftOperand + " < " + rightOperand + "</B> )"));
 
 	return result;
     }
