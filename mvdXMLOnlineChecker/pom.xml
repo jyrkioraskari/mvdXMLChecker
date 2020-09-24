@@ -11,7 +11,7 @@
 	<name>mvdXMLChecker User Interface</name>
 
 	<properties>
-		<mvdxml_check_project.version>2.45</mvdxml_check_project.version>
+		<mvdxml_check_project.version>2.46</mvdxml_check_project.version>
 		<vaadin.version>8.10.0</vaadin.version>
 		<vaadin.plugin.version>8.10.0</vaadin.plugin.version>
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
