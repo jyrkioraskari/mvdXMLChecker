@@ -25,9 +25,9 @@ public class Parameter {
 	Object value = null;
 	for (AbstractRule rule : rules) {
 	    if (name.equals(rule.getRuleID())) {
-		System.out.println(name+" equals");
+		//System.out.println(name+" equals");
 		value = this.hashMap.get(rule).getValue();
-		System.out.println("value is: "+value);
+		//System.out.println("value is: "+value);
 		break;
 	    }
 
@@ -73,7 +73,7 @@ public class Parameter {
 	else
 	    result=value;
 	
-	System.out.println("Param WAS: "+result);
+	//System.out.println("Param WAS: "+result);
 	return result;
     }
 

@@ -37,7 +37,7 @@ public class IfcHashMapBuilder {
 	    ifc_class_base = "org.bimserver.models.ifc4.";
 	    break;
 	}
-	System.out.println("ifcObject: " + ifcObject);
+	//System.out.println("ifcObject: " + ifcObject);
 	List<HashMap<AttributeRule, ObjectToValue>> initialHMs = new ArrayList<HashMap<AttributeRule, ObjectToValue>>();
 	initialHMs.add(new HashMap<AttributeRule, ObjectToValue>());
 

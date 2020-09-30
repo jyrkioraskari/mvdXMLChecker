@@ -54,15 +54,15 @@ public class ClientRunner {
 						System.out.println("Internal error");
 						return;
 					}
-					System.out.println(String.format("%s %s", instance.getType(), instance.getGuid()));
-					System.out.println(instance.getAllExtendedData().toString());
+					//System.out.println(String.format("%s %s", instance.getType(), instance.getGuid()));
+					//System.out.println(instance.getAllExtendedData().toString());
 				} catch (RenderEngineException e) {
 					e.printStackTrace();
 					return;
 				}
 			}
 			
-			System.out.println(String.format("Conversion took %.2f seconds", (java.lang.System.nanoTime() - t0) / 1.e9));
+			//System.out.println(String.format("Conversion took %.2f seconds", (java.lang.System.nanoTime() - t0) / 1.e9));
 			
 		} catch (RenderEngineException e) {
 			e.printStackTrace();

@@ -61,13 +61,13 @@ public class IssueReport {
 	this.renderEngineModel = getRenderEngineModel(ifcFile);
 	ModelMetaData mmd = ifcModel.getModelMetaData();
 	IfcHeader ifcHeader = mmd.getIfcHeader();
-	System.out.println("ifcHeader schema: " + ifcHeader.getIfcSchemaVersion());
+	//System.out.println("ifcHeader schema: " + ifcHeader.getIfcSchemaVersion());
 	// ifcHeaderFilename = ifcHeader.getFilename();
 	ifcHeaderFilename = ifcFile.getName();
 	ifcHeaderTimeStamp = ifcHeader.getTimeStamp();
 
 	if (ifcHeader.getIfcSchemaVersion().equals("IFC2X3")) {
-	    System.out.println("IFC2X3");
+	    //System.out.println("IFC2X3");
 	    List<org.bimserver.models.ifc2x3tc1.IfcProject> projects2x3 = ifcModel.getAll(org.bimserver.models.ifc2x3tc1.IfcProject.class);
 	    if (projects2x3.size() != 1) {
 		ifcProjectGuid = null;
@@ -78,7 +78,7 @@ public class IssueReport {
 		return;
 	    }
 	} else if (ifcHeader.getIfcSchemaVersion().equals("IFC4")) {
-	    System.out.println("IFC4");
+	    //System.out.println("IFC4");
 	    List<org.bimserver.models.ifc4.IfcProject> projects4 = ifcModel.getAll(org.bimserver.models.ifc4.IfcProject.class);
 	    if (projects4.size() != 1) {
 		ifcProjectGuid = null;
@@ -196,7 +196,7 @@ public class IssueReport {
 	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
 	 else
 	     issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
-	 System.out.println("Add Issue into BCD!!");
+	//System.out.println("Add Issue into BCD!!");
 	bcf.addIssue(issue);
     }
 
@@ -229,7 +229,7 @@ public class IssueReport {
  	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
  	 else
  	     issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
- 	 System.out.println("Add Issue into BCD!!");
+ 	 //System.out.println("Add Issue into BCD!!");
  	bcf.addIssue(issue);
      }
 
@@ -416,7 +416,7 @@ public class IssueReport {
 	FileInputStream ifcFileInputStream = new FileInputStream(ifcFile);
 
 	IfcOpenShellModel model = ifcOpenShellEngine.openModel(ifcFileInputStream);
-	System.out.println("IfcOpenShell opens ifc: " + ifcFile.getAbsolutePath());
+	//System.out.println("IfcOpenShell opens ifc: " + ifcFile.getAbsolutePath());
 // newer IFCOpenshell
 //	RenderEngineSettings settings = new RenderEngineSettings();
 //	settings.setPrecision(Precision.SINGLE);
@@ -426,7 +426,7 @@ public class IssueReport {
 //	settings.setGenerateWireFrame(false);
 //	model.setSettings(settings);
 	model.generateGeneralGeometry();
-	System.out.println("RenderEngineModel " + model);
+	//System.out.println("RenderEngineModel " + model);
 	return model;
     }
 

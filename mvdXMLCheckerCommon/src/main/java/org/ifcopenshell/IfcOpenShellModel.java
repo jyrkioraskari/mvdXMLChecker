@@ -106,7 +106,7 @@ public class IfcOpenShellModel  {
 			IfcGeomServerClientEntity next = client.getNext();
 			// Store the instance in our dictionary
 			IfcOpenShellEntityInstance instance = new IfcOpenShellEntityInstance(next);
-			System.out.println("GEN GEOM:  "+next.getGuid());
+			//System.out.println("GEN GEOM:  "+next.getGuid());
 			instancesById.put(next.getId(), instance);
 			instancesByGUID.put(next.getGuid(), instance);
 		}

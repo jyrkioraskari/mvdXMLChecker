@@ -22,7 +22,7 @@ public class LessOperator extends AbstractComparatorOperator{
     public LessOperator(Object leftOperand, Object rightOperand) {
 	this.leftOperand = leftOperand;
 	this.rightOperand = rightOperand;
-	System.out.println("LESS operator");
+	//System.out.println("LESS operator");
 
     }
 

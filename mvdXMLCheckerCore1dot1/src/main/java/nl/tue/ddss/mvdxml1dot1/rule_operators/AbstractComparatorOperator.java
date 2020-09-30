@@ -51,10 +51,11 @@ abstract public class AbstractComparatorOperator {
 	if (operand instanceof Long)
 	    value = ((Long) operand).doubleValue();
 
-	if (operand instanceof Collection)
+	/*if (operand instanceof Collection)
 	    System.out.println("To be later supported");
 	if (operand instanceof IdEObject)
 	    System.out.println("To be later supported");
+	    */
 
 	return value;
     }

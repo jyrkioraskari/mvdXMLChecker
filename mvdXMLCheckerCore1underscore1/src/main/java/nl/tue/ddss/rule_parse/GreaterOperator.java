@@ -72,7 +72,7 @@ public class GreaterOperator extends AbstractComparatorOperator{
 	else
 		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> "+left+ " > " + right+"</B> )"));
 
-	System.out.println("was greater");
+	//System.out.println("was greater");
 	return result;
     }
 }

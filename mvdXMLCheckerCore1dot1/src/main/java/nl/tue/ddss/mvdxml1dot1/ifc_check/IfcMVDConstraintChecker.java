@@ -468,7 +468,7 @@ public class IfcMVDConstraintChecker {
     private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, ObjectToValue> hashMap) {
 	rule = filterCharacters(rule);
 	Boolean result = false;
-	System.out.println("RULE: "+rule);
+	//System.out.println("RULE: "+rule);
 	CharStream charStream = new ANTLRStringStream(rule);
 	MvdXMLv1_1Lexer lexer = new MvdXMLv1_1Lexer(charStream);
 	TokenStream tokenStream = new CommonTokenStream(lexer);

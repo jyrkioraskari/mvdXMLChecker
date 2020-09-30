@@ -158,12 +158,12 @@ public class Issue {
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
-		System.out.println("this.renderEngineModel.isPresent(): " + this.renderEngineModel.isPresent());
+		//System.out.println("this.renderEngineModel.isPresent(): " + this.renderEngineModel.isPresent());
 		if (this.renderEngineModel.isPresent()) {
 		    IfcOpenShellEntityInstance renderEngineInstance;
 		    try {
 			renderEngineInstance = this.renderEngineModel.get().getInstanceFromGUID(ifcProductGuId.get());
-			System.out.println("renderEngineInstance: "+renderEngineInstance+ " for "+ifcProductGuId.get());
+			//System.out.println("renderEngineInstance: "+renderEngineInstance+ " for "+ifcProductGuId.get());
 			if (renderEngineInstance != null)
 			 {
 			    IfcGeomServerClientEntity geometry = renderEngineInstance.generateGeometry();
@@ -282,7 +282,7 @@ public class Issue {
 				    gl.glVertex3d(x3, y3, z3);
 				    gl.glVertex3d(x1, y1, z1);
 				    gl.glEnd();
-				    System.out.println("i: " + x1 + " " + y1 + " " + z1 + " - " + x2 + " " + y2 + " " + z2 + " - " + x3 + " " + y3 + " " + z3);
+				    //System.out.println("i: " + x1 + " " + y1 + " " + z1 + " - " + x2 + " " + y2 + " " + z2 + " - " + x3 + " " + y3 + " " + z3);
 				}
 			    }
 			}

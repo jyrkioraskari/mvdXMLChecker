@@ -36,11 +36,11 @@ public class MvdXMLValidationRules {
 
     public MvdXMLValidationRules(String filename) throws JAXBException {
 	if (!MvdXMLVersionCheck.checkMvdXMLSchemaVersion(filename)) {
-	    System.out.println("Not valid");
+	    //System.out.println("Not valid");
 	    this.valid = false;
 	    return;
 	}
-	System.out.println("Valid mvdXML 1.2");
+	//System.out.println("Valid mvdXML 1.2");
 	try {
 	    JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_2dot1");
 	    Unmarshaller unmarshaller = mvdXMLSchema.createUnmarshaller();
