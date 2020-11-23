@@ -272,12 +272,10 @@ public class IfcMVDConstraintChecker {
 			if (this.ifcversion == ifcversion.IFC2x3)
 			{
 			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
-			    issuereport.addGeneralComment(((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine");
 			}
 			else if (this.ifcversion == ifcversion.IFC4)
 			{
 			    communication.post(new CheckerNotificationEvent("<P>RESULT:  <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
-			    issuereport.addGeneralComment(((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine");
 			}
 		    }
 
@@ -321,6 +319,39 @@ public class IfcMVDConstraintChecker {
 			    } else {
 				issuereport.addIssue(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
 				communication.post(new CheckerInfoEvent("<B>Other than IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId(), "<BR>" + comment));
+			    }
+			    break;
+			default:
+			    communication.post(new CheckerNotificationEvent("Unsupported IFC version"));
+			    throw new RuntimeException("Unsupported IFC version");
+			}
+		    }
+		    else
+		    {
+			switch (this.ifcversion) {
+			case IFC2x3:
+			    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
+				String spatialStructureElement = new String();
+				if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcElement)
+				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
+				List<String> componantGuids = new LinkedList<String>();
+				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject));
+			    } else {
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject);
+			    }
+			    break;
+			case IFC4:
+
+			    if (ifcObject instanceof org.bimserver.models.ifc4.IfcProduct) {
+				String spatialStructureElement = new String();
+				if (ifcObject instanceof org.bimserver.models.ifc4.IfcElement)
+				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
+				List<String> componantGuids = new LinkedList<String>();
+				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject));
+			    } else {
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc4.IfcRoot) ifcObject);
 			    }
 			    break;
 			default:

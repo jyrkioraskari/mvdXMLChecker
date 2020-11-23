@@ -48,6 +48,10 @@ public class GreaterOperator extends AbstractComparatorOperator{
 	Boolean result = false;
 	Double right = Double.NaN;
 	Double left = Double.NaN;
+	if(rightOperand==null)
+	    return false;
+	if(leftOperand==null)
+	    return false;
 
 	if (rightOperand instanceof String  && leftOperand instanceof String && (((String)rightOperand).contains(":") || ((String)leftOperand).contains(":"))) {
 	    
@@ -103,7 +107,7 @@ public class GreaterOperator extends AbstractComparatorOperator{
 	    }
 	    
 	}
-	if(left==Double.NaN||right==Double.NaN)
+	if(Double.isNaN(left)||Double.isNaN(right))
 	{
 	  left=getValue(leftOperand);
 	  right=getValue(rightOperand);
@@ -128,9 +132,15 @@ public class GreaterOperator extends AbstractComparatorOperator{
 	
 	
 	if(result==false)
+	{
+	        System.out.println("Greater "+leftOperand+ " NOT > " + rightOperand+ " left: "+left+" right: "+right+" left type: "+leftOperand.getClass().getName()+" right type: "+rightOperand.getClass().getName());
 		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
+	}
 	else
+	{
+	        System.out.println("Greater "+leftOperand+ "  > " + rightOperand);
 		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> "+leftOperand+ " > " + rightOperand+"</B> )"));
+	}
 
 	//System.out.println("was greater");
 	return result;

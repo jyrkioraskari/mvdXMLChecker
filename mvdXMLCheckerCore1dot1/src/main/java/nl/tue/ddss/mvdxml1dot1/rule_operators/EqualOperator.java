@@ -172,10 +172,13 @@ public class EqualOperator {
 	    }
 	}
 	if (result == false)
+	{
 	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \"" + leftOperand + "\" <> \"" + rightOperand + "\"</B> )"));
+	}
 	else
+	{
 	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \"" + leftOperand + "\" = \"" + rightOperand + "\"</B> )"));
-
+	}
 	return result;
     }
 }

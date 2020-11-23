@@ -9,7 +9,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -28,6 +30,7 @@ import org.opensource_bimserver.bcf.Issue;
 
 import de.rwth_aachen.dc.OperatingSystemCopyOf_IfcGeomServer;
 import de.rwth_aachen.dc.mvd.bcf.TempGeometry;
+import de.rwth_aachen.dc.mvd.beans.ElementCheckResultBean;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
@@ -53,6 +56,7 @@ public class IssueReport {
 
     private final IfcOpenShellModel renderEngineModel;
 
+    private final List<ElementCheckResultBean> element_check_results = new ArrayList<>();
     private final List<IssueBean> issues = new ArrayList<>();
     private final List<String> general_comments = new ArrayList<>();
     private final Bcf bcf = new Bcf();
@@ -61,13 +65,10 @@ public class IssueReport {
 	this.renderEngineModel = getRenderEngineModel(ifcFile);
 	ModelMetaData mmd = ifcModel.getModelMetaData();
 	IfcHeader ifcHeader = mmd.getIfcHeader();
-	//System.out.println("ifcHeader schema: " + ifcHeader.getIfcSchemaVersion());
-	// ifcHeaderFilename = ifcHeader.getFilename();
 	ifcHeaderFilename = ifcFile.getName();
 	ifcHeaderTimeStamp = ifcHeader.getTimeStamp();
 
 	if (ifcHeader.getIfcSchemaVersion().equals("IFC2X3")) {
-	    //System.out.println("IFC2X3");
 	    List<org.bimserver.models.ifc2x3tc1.IfcProject> projects2x3 = ifcModel.getAll(org.bimserver.models.ifc2x3tc1.IfcProject.class);
 	    if (projects2x3.size() != 1) {
 		ifcProjectGuid = null;
@@ -78,7 +79,6 @@ public class IssueReport {
 		return;
 	    }
 	} else if (ifcHeader.getIfcSchemaVersion().equals("IFC4")) {
-	    //System.out.println("IFC4");
 	    List<org.bimserver.models.ifc4.IfcProject> projects4 = ifcModel.getAll(org.bimserver.models.ifc4.IfcProject.class);
 	    if (projects4.size() != 1) {
 		ifcProjectGuid = null;
@@ -93,13 +93,28 @@ public class IssueReport {
 	    throw new RuntimeException("Not a supported IFC version");
 	}
     }
+    
+    Set<String> general_comments_set =new HashSet<>();
+
     public void addGeneralComment(String comment)
     {
-	this.general_comments.add(comment);
+	if(general_comments_set.add(comment))
+	   this.general_comments.add(comment);
+    }
+    public void addPassedElementResult(String mvdXMLConcept,String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot) {
+	if(general_comments_set.add(ifcRoot.getGlobalId()))
+	  element_check_results.add(new ElementCheckResultBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), true));
+    }
+    
+    public void addPassedElementResult(String mvdXMLConcept,String ifcSpatialStructureElement, org.bimserver.models.ifc4.IfcRoot ifcRoot) {
+	if(general_comments_set.add(ifcRoot.getGlobalId()))
+	  element_check_results.add(new ElementCheckResultBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), true));
     }
     
     public void addIssue(String mvdXMLConcept,String ifcSpatialStructureElement, org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
-        issues.add(new IssueBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	issues.add(new IssueBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	if(general_comments_set.add(ifcRoot.getGlobalId()))
+		  element_check_results.add(new ElementCheckResultBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), false));
     
         UUID markup_uuid = UUID.randomUUID();
         VisualizationInfo visInfo = null;
@@ -133,7 +148,10 @@ public class IssueReport {
     }
 
     public void addIssue(org.bimserver.models.ifc2x3tc1.IfcRoot ifcRoot, String comment) {
-        issues.add(new IssueBean(ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	issues.add(new IssueBean(ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	if(general_comments_set.add(ifcRoot.getGlobalId()))
+		  element_check_results.add(new ElementCheckResultBean(null, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), false));
+
     
         UUID markup_uuid = UUID.randomUUID();
         VisualizationInfo visInfo = null;
@@ -169,6 +187,8 @@ public class IssueReport {
 
     public void addIssue(String mvdXMLConcept,String ifcSpatialStructureElement, org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
 	issues.add(new IssueBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	if(general_comments_set.add(ifcRoot.getGlobalId()))
+		  element_check_results.add(new ElementCheckResultBean(mvdXMLConcept,ifcSpatialStructureElement, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), false));
 
 	UUID markup_uuid = UUID.randomUUID();
 	VisualizationInfo visInfo = null;
@@ -202,7 +222,9 @@ public class IssueReport {
 
     
     public void addIssue(org.bimserver.models.ifc4.IfcRoot ifcRoot, String comment) {
- 	issues.add(new IssueBean(ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	issues.add(new IssueBean(ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), comment));
+	if(general_comments_set.add(ifcRoot.getGlobalId()))
+		  element_check_results.add(new ElementCheckResultBean(null, ifcRoot.getClass().getSimpleName(), ifcRoot.getGlobalId(), ifcRoot.getName(), false));
 
  	UUID markup_uuid = UUID.randomUUID();
  	VisualizationInfo visInfo = null;
@@ -229,13 +251,12 @@ public class IssueReport {
  	            issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
  	 else
  	     issue.addRendering(this.renderEngineModel, ifcRoot.getGlobalId());
- 	 //System.out.println("Add Issue into BCD!!");
  	bcf.addIssue(issue);
      }
 
     
     public void addIssue(String comment) {
- 	issues.add(new IssueBean("",null, "General", "", "", comment));
+	issues.add(new IssueBean("",null, "General", "", "", comment));
 
  	UUID markup_uuid = UUID.randomUUID();
  	Markup markup = addMarkup(comment, markup_uuid.toString());
@@ -443,9 +464,14 @@ public class IssueReport {
 	return ifcHeaderTimeStamp;
     }
 
+    public List<ElementCheckResultBean> getElementCheckResults() {
+	return element_check_results;
+    }
+    
     public List<IssueBean> getIssues() {
 	return issues;
     }
+    
     public List<String> getGeneral_comments() {
         return general_comments;
     }

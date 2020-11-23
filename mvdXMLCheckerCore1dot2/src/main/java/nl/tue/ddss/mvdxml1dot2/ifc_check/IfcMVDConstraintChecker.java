@@ -329,7 +329,39 @@ public class IfcMVDConstraintChecker {
 			    throw new RuntimeException("Unsupported IFC version");
 			}
 		    }
-		    
+		    else
+		    {
+			switch (this.ifcversion) {
+			case IFC2x3:
+			    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
+				String spatialStructureElement = new String();
+				if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcElement)
+				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
+				List<String> componantGuids = new LinkedList<String>();
+				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject));
+			    } else {
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject);
+			    }
+			    break;
+			case IFC4:
+
+			    if (ifcObject instanceof org.bimserver.models.ifc4.IfcProduct) {
+				String spatialStructureElement = new String();
+				if (ifcObject instanceof org.bimserver.models.ifc4.IfcElement)
+				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
+				List<String> componantGuids = new LinkedList<String>();
+				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject));
+			    } else {
+				issuereport.addPassedElementResult(constraint.getConcept().getUuid(),null, (org.bimserver.models.ifc4.IfcRoot) ifcObject);
+			    }
+			    break;
+			default:
+			    communication.post(new CheckerNotificationEvent("Unsupported IFC version"));
+			    throw new RuntimeException("Unsupported IFC version");
+			}
+		    }
 		    /*
 		    if (concept_hashMaps.size() > 0) {
 			communication.post(new CheckerNotificationEvent("<B>Values were:</B>"));

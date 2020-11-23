@@ -3,16 +3,16 @@
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot1-2.47.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
+        <dependent-module archiveName="mvdXMLCheckerCore1dot1-2.49.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCommon-2.47.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
+        <dependent-module archiveName="mvdXMLCheckerCommon-2.49.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot2-2.47.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot2/mvdXMLCheckerCore1dot2">
+        <dependent-module archiveName="mvdXMLCheckerCore1dot2-2.49.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot2/mvdXMLCheckerCore1dot2">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-2.47.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
+        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-2.49.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/mvdXMLCheckerOpenAPI/build/classes"/>

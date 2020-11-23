@@ -52,7 +52,7 @@ public class LessEqualOperator extends AbstractComparatorOperator{
 	if(left==null)
 	    return false;
 
-	if (right != Double.NaN && left != Double.NaN) {
+	if (!Double.isNaN(right) && !Double.isNaN(left))  {
 	    if (left <= right)
 		result = true;
 	    else

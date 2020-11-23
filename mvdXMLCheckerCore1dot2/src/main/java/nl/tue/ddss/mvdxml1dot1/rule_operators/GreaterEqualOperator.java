@@ -99,7 +99,7 @@ public class GreaterEqualOperator extends AbstractComparatorOperator{
 	    }
 	    
 	}
-	if(left==Double.NaN||right==Double.NaN)
+	if(Double.isNaN(left)||Double.isNaN(right))
 	{
 	  left=getValue(leftOperand);
 	  right=getValue(rightOperand);

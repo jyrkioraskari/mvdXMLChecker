@@ -149,10 +149,13 @@ public class InEqualOperator {
 		}
 		
 		if(result==false)
+		{
 			communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \""+leftOperand+ "\" NOT <> \"" + rightOperand+"\"</B> )"));
+		}
 		else
+		{
 			communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
-
+		}
 		return result;
 	}
 }

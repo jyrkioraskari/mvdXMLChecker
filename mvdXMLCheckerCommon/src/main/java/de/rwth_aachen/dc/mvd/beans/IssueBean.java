@@ -7,7 +7,6 @@ public class IssueBean {
     private String guid;
     private String name;
     private String comment;
-
     
     public IssueBean() {
 	super();
@@ -23,6 +22,7 @@ public class IssueBean {
 	this.comment = comment;
     }
 
+    
     public IssueBean(String ifcClassName,String guid, String name, String comment) {
  	super();
  	this.ifcClassName = ifcClassName;
@@ -80,5 +80,4 @@ public class IssueBean {
         this.comment = comment;
     }
 
-    
 }

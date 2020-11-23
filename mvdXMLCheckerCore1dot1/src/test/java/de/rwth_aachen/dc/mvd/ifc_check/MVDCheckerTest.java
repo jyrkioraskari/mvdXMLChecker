@@ -44,7 +44,7 @@ public class MVDCheckerTest {
 
     public static void main(String[] args) throws Exception {
 
-	new MVDCheckerTest("c:\\test\\noemi13\\20200923_Wartungsmanagement_neu.ifc", "c:\\test\\noemi13\\ILC_Anlagenverzeichnis Wartung erstellen (6).mvdxml");
+	new MVDCheckerTest("c:\\test\\noemi14\\20201110_Reinigung.ifc", "c:\\test\\noemi14\\ILC_0-Bauherr-Eigentümer.mvdxml");
 
 	//new MVDCheckerTest("c:\\test\\noemi10\\BUW_HC-Gebäude-Wartung (1).ifc", "c:\\test\\noemi12\\ILC_Wartungs-LV erstellen (6).mvdxml");
 
