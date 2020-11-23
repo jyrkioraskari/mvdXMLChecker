@@ -7,7 +7,7 @@ public class ElementCheckResultBean {
     private String guid;
     private String name;
     private String comment;
-    private boolean isFine=false;
+    private boolean check_result=false;
 
     
     public ElementCheckResultBean() {
@@ -32,7 +32,7 @@ public class ElementCheckResultBean {
 	this.guid = guid;
 	this.name = name;
 	this.comment = comment;
-	this.isFine=isFine;
+	this.check_result=isFine;
     }
 
     public ElementCheckResultBean(String mvdXMLConcept, String ifcSpatialStructureElement, String ifcClassName,String guid, String name, boolean isFine) {
@@ -42,9 +42,9 @@ public class ElementCheckResultBean {
    	this.ifcClassName = ifcClassName;
    	this.guid = guid;
    	this.name = name;
-   	this.isFine=isFine;
+   	this.check_result=isFine;
    	
-   	if(this.isFine)
+   	if(this.check_result)
    	   	this.comment = guid+" element is fine.";
    	else
    	   	this.comment = guid+ " element is not fine.";
@@ -57,9 +57,9 @@ public class ElementCheckResultBean {
    	this.ifcClassName = ifcClassName;
    	this.guid = guid;
    	this.name = name;
-   	this.isFine=isFine;
+   	this.check_result=isFine;
    	
-   	if(this.isFine)
+   	if(this.check_result)
    	   	this.comment = guid+" element is fine.";
    	else
    	   	this.comment = guid+ " element is not fine.";
@@ -124,13 +124,15 @@ public class ElementCheckResultBean {
         this.comment = comment;
     }
 
-    public boolean isFine() {
-        return isFine;
+    public boolean isCheck_result() {
+        return check_result;
     }
 
-    public void setFine(boolean isFine) {
-        this.isFine = isFine;
+    public void setCheck_result(boolean check_result) {
+        this.check_result = check_result;
     }
+
+    
 
     
 }
