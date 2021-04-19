@@ -12,7 +12,7 @@
 
 	<properties>
 		<mvdxml_check_project.version>2.49</mvdxml_check_project.version>
-		<vaadin.version>8.10.0</vaadin.version>
+		<vaadin.version>8.12.3</vaadin.version>
 		<vaadin.plugin.version>8.10.0</vaadin.plugin.version>
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
