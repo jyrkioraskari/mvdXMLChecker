@@ -7,6 +7,7 @@ import generated.buildingsmart_tech.mvd_xml_1dot1.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot1.Concept;
 import generated.buildingsmart_tech.mvd_xml_1dot1.ConceptRoot;
 import generated.buildingsmart_tech.mvd_xml_1dot1.ConceptTemplate;
+import generated.buildingsmart_tech.mvd_xml_1dot1.TemplateRules;
 import generated.buildingsmart_tech.mvd_xml_1dot1.TemplateRules.TemplateRule;
 
 public class MVDConceptConstraint {
@@ -52,14 +53,37 @@ public class MVDConceptConstraint {
 	this.requirement = requirement;
 
 	this.concept_templateRules = new ArrayList<TemplateRule>();
+	try {
 	for (Object t : concept.getTemplateRules().getTemplateRulesOrTemplateRule())
-	    this.concept_templateRules.add((TemplateRule) t);
+	{
+	    if(TemplateRules.class.isInstance(t))
+	    {
+		for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+		    if(TemplateRules.class.isInstance(t2))
+			       this.concept_templateRules.add((TemplateRule) t2);
+	    }
+	    else
+	       this.concept_templateRules.add((TemplateRule) t);
+	}
+	}
+	catch (Exception e) {
+	    e.printStackTrace();
+	    
+	}
 
 	this.applicability_templateRules = new ArrayList<TemplateRule>();
 	try {
 	    for (Object t : conceptRoot.getApplicability().getTemplateRules().getTemplateRulesOrTemplateRule())
-		this.applicability_templateRules.add((TemplateRule) t);
+	    if(TemplateRules.class.isInstance(t))
+	    {
+		for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+		    if(TemplateRules.class.isInstance(t2))
+			this.applicability_templateRules.add((TemplateRule) t2);
+	    }
+	    else
+	       this.concept_templateRules.add((TemplateRule) t);
 	} catch (Exception e) {
+	    e.printStackTrace();
 	    // just in case there aren't any
 	}
 

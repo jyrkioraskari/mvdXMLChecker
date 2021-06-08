@@ -8,6 +8,7 @@ import generated.buildingsmart_tech.mvd_xml_1dot2.Concept;
 import generated.buildingsmart_tech.mvd_xml_1dot2.ConceptRoot;
 import generated.buildingsmart_tech.mvd_xml_1dot2.ConceptTemplate;
 import generated.buildingsmart_tech.mvd_xml_1dot2.TemplateRule;
+import generated.buildingsmart_tech.mvd_xml_1dot2.TemplateRules;
 
 public class MVDConceptConstraint {
 
@@ -52,14 +53,73 @@ public class MVDConceptConstraint {
 	this.requirement = requirement;
 
 	this.concept_templateRules = new ArrayList<TemplateRule>();
+	try {
 	for (Object t : concept.getTemplateRules().getTemplateRulesOrTemplateRule())
-	    this.concept_templateRules.add((TemplateRule) t);
+	{
+	    if(TemplateRules.class.isInstance(t))
+	    {
+		for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+		    if(TemplateRules.class.isInstance(t2))
+			       this.concept_templateRules.add((TemplateRule) t2);
+	    }
+	    else
+	       this.concept_templateRules.add((TemplateRule) t);
+	}
+	}
+	catch (Exception e) {
+	    e.printStackTrace();
+	    
+	}
+
+	this.applicability_templateRules = new ArrayList<TemplateRule>();
+	try {
+	    for (Object t : conceptRoot.getApplicability().getTemplateRules().getTemplateRulesOrTemplateRule())
+	    if(TemplateRules.class.isInstance(t))
+	    {
+		for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+		    if(TemplateRules.class.isInstance(t2))
+			this.applicability_templateRules.add((TemplateRule) t2);
+	    }
+	    else
+	       this.concept_templateRules.add((TemplateRule) t);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    // just in case there aren't any
+	}
 
 	this.applicability_templateRules = new ArrayList<TemplateRule>();
 	try {
 	    for (Object t : conceptRoot.getApplicability().getTemplateRules().getTemplateRulesOrTemplateRule())
 		this.applicability_templateRules.add((TemplateRule) t);
 	} catch (Exception e) {
+	    // just in case there aren't any
+	}
+
+	try {
+	    for (Object t : concept.getTemplateRules().getTemplateRulesOrTemplateRule()) {
+		if (TemplateRules.class.isInstance(t)) {
+		    for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+			if (TemplateRules.class.isInstance(t2))
+			    this.concept_templateRules.add((TemplateRule) t2);
+		} else
+		    this.concept_templateRules.add((TemplateRule) t);
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+
+	}
+
+	this.applicability_templateRules = new ArrayList<TemplateRule>();
+	try {
+	    for (Object t : conceptRoot.getApplicability().getTemplateRules().getTemplateRulesOrTemplateRule())
+		if (TemplateRules.class.isInstance(t)) {
+		    for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+			if (TemplateRules.class.isInstance(t2))
+			    this.applicability_templateRules.add((TemplateRule) t2);
+		} else
+		    this.concept_templateRules.add((TemplateRule) t);
+	} catch (Exception e) {
+	    e.printStackTrace();
 	    // just in case there aren't any
 	}
 
