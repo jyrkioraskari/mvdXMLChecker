@@ -1077,7 +1077,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.10.0";
+	content: "8.12.3";
 }
 
 .v-widget {
@@ -11496,6 +11496,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .rwth .v-table-body {
 	border: 1px solid #d4d4d4;
+	overflow-anchor: none;
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;
@@ -12580,6 +12581,10 @@ div.v-layout.v-horizontal.v-widget {
 	margin-left: 0;
 }
 
+.rwth .v-tabsheet-tabitemcell:not([aria-hidden="true"]) ~ td .v-caption {
+	margin-left: 19px;
+}
+
 .rwth .v-tabsheet-tabitemcell:focus {
 	outline: none;
 }
@@ -12794,6 +12799,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .rwth .v-tabsheet-framed  > .v-tabsheet-tabcontainer td:first-child .v-caption, .rwth .v-tabsheet-framed  > .v-tabsheet-tabcontainer [aria-hidden="true"] + td .v-caption {
 	margin-left: 0;
+}
+
+.rwth .v-tabsheet-framed  > .v-tabsheet-tabcontainer :not([aria-hidden="true"]) ~ td .v-caption {
+	margin-left: 4px;
 }
 
 .rwth .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-tabsheet-tabitem .v-caption {
