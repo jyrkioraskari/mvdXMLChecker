@@ -39,7 +39,7 @@ public class MvdXMLv1dot2Check {
   	return null;
       }
 
-      public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
+      /*public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
   	List<IssueBean> issues = new ArrayList<>();
   	MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
 
@@ -55,5 +55,5 @@ public class MvdXMLv1dot2Check {
   	}
 
   	return issues;
-      }
+      }*/
 }

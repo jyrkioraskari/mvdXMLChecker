@@ -47,6 +47,7 @@ public class IfcMVDConstraintChecker {
     private final EventBusCommunication communication = EventBusCommunication.getInstance();
     private final List<MVDConstraint> constraints;
 
+
     private IfcVersion ifcversion;
 
     public IfcMVDConstraintChecker(List<MVDConstraint> constraints, IfcVersion ifcversion) throws DeserializeException, IOException, URISyntaxException {
@@ -80,7 +81,7 @@ public class IfcMVDConstraintChecker {
 	    if(constraint.getConcept()!=null && constraint.getConcept().getUuid()!=null )
 	    {
 	       communication.post(new CheckerBreakEvent());
-	       communication.post(new CheckerNotificationEvent("<P>CONCEPT: "+constraint.getConcept().getUuid()));
+	       communication.post(new CheckerInfoEvent("<P>CONCEPT: ",constraint.getConcept().getUuid()));
 	    }
 	   
 

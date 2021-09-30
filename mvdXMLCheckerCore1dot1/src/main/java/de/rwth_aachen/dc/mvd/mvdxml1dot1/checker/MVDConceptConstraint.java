@@ -84,6 +84,8 @@ public class MVDConceptConstraint {
 	       this.concept_templateRules.add((TemplateRule) t);
 	} catch (Exception e) {
 	    e.printStackTrace();
+	    System.out.println("conceptRoot.getApplicability():"+conceptRoot.getApplicability());
+	    System.out.println("conceptRoot.getApplicability().getTemplateRules():"+conceptRoot.getApplicability().getTemplateRules());
 	    // just in case there aren't any
 	}
 

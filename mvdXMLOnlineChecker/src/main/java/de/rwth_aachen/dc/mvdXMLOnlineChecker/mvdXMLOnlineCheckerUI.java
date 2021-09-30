@@ -20,6 +20,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -35,8 +36,11 @@ import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.events.CheckerBreakEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerElementApplicabilityNotificationEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerElementValidityNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerIssueEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
@@ -62,13 +66,16 @@ public class mvdXMLOnlineCheckerUI extends UI {
     private Button save_as_bcfzip_button;
     private FileDownloader fileDownloader;
 
+    private CheckBox showApplicability;
+    private CheckBox showValidation;
+    private CheckBox showIssues;
+    private CheckBox showExtraInfo;
     private Button check_button;
 
- // Create a rich text area
+    // Create a rich text area
     final RichTextArea reasoning_area = new RichTextArea();
     final StringBuilder reasoning = new StringBuilder();
-    
-    
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 	final VerticalLayout layout = new VerticalLayout();
@@ -119,14 +126,47 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	issues_grid.setWidth("100%");
 	layout.addComponent(issues_grid);
 
+	HorizontalLayout button_layout2 = new HorizontalLayout();
 	this.save_as_bcfzip_button = new Button("Save the result as BCF Zip");
 	this.save_as_bcfzip_button.setEnabled(false);
 
-	layout.addComponent(save_as_bcfzip_button);
+	button_layout2.addComponent(save_as_bcfzip_button);
+	showApplicability = new CheckBox();
+	showApplicability.setCaption("Show reasoning for element applicability.");
+	showApplicability.setValue(true);
+	showApplicability.addValueChangeListener(x->{
+	    checkIFCFile();
+	});
+	button_layout2.addComponent(showApplicability);
+
+	showValidation = new CheckBox();
+	showValidation.setCaption("Show reasoning for element validation.");
+	showValidation.setValue(false);
+	showValidation.addValueChangeListener(x->{
+	    checkIFCFile();
+	});
+	button_layout2.addComponent(showValidation);
+
+	showIssues = new CheckBox();
+	showIssues.setCaption("Show issues.");
+	showIssues.setValue(true);
+	showIssues.addValueChangeListener(x->{
+	    checkIFCFile();
+	});
+	button_layout2.addComponent(showIssues);
+
+	showExtraInfo = new CheckBox();
+	showExtraInfo.setCaption("Show extra info.");
+	showExtraInfo.setValue(false);
+	showIssues.addValueChangeListener(x->{
+	    checkIFCFile();
+	});
+	button_layout2.addComponent(showExtraInfo);
+	layout.addComponent(button_layout2);
 
 	reasoning_area.setCaption("Reasoning for the results");
 	reasoning_area.setWidth("100%");
-	//reasoning_area.setHeight("70px");;
+	// reasoning_area.setHeight("70px");;
 	reasoning_area.setReadOnly(true);
 	layout.addComponent(reasoning_area);
 
@@ -156,6 +196,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
     public void checkIFCFile() {
 	issues.clear();
 	reasoning.setLength(0); // clean the content
+	reasoning_area.clear();
 	try {
 
 	    // mvdXML 1.1
@@ -179,31 +220,29 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		}
 		this.save_as_bcfzip_button.setEnabled(true);
 
-	    } 
-	    else 
-		// mvdXML 1.2
-		    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
-			Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
-			n.setDelayMsec(5000);
-			n.show(Page.getCurrent());
-			IssueReport issuereport = MvdXMLv1dot2Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-			issues.addAll(issuereport.getIssues());
+	    } else
+	    // mvdXML 1.2
+	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
+		Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+		n.setDelayMsec(5000);
+		n.show(Page.getCurrent());
+		IssueReport issuereport = MvdXMLv1dot2Check.check(this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+		issues.addAll(issuereport.getIssues());
 
-			File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-			tempBCFZipFile.deleteOnExit();
-			issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+		File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+		tempBCFZipFile.deleteOnExit();
+		issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
 
-			Resource res = new FileResource(tempBCFZipFile);
-			if (this.fileDownloader == null) {
-			    this.fileDownloader = new FileDownloader(res);
-			    this.fileDownloader.extend(this.save_as_bcfzip_button);
-			} else {
-			    this.fileDownloader.setFileDownloadResource(res);
-			}
-			this.save_as_bcfzip_button.setEnabled(true);
+		Resource res = new FileResource(tempBCFZipFile);
+		if (this.fileDownloader == null) {
+		    this.fileDownloader = new FileDownloader(res);
+		    this.fileDownloader.extend(this.save_as_bcfzip_button);
+		} else {
+		    this.fileDownloader.setFileDownloadResource(res);
+		}
+		this.save_as_bcfzip_button.setEnabled(true);
 
-		    } 
-	    else {
+	    } else {
 		// mvdXML 1_1
 		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 		    Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
@@ -271,34 +310,60 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
     @Subscribe
     public void infoEvent(CheckerInfoEvent event) {
-	reasoning.append(event.getTopic()+": "+event.getValue()+"<BR>");
-	reasoning_area.setValue(reasoning.toString());
+	if (this.showExtraInfo.getValue()) {
+	    reasoning.append(event.getTopic() + ": " + event.getValue() + "<BR>");
+	    reasoning_area.setValue(reasoning.toString());
+	}
     }
-    
+
     @Subscribe
     public void errorEvent(CheckerErrorEvent event) {
-	reasoning.append("Issue: "+event.getClass_name()+": "+event.getMessage()+"<BR>");
+	reasoning.append("Issue: " + event.getClass_name() + ": " + event.getMessage() + "<BR>");
 	reasoning_area.setValue(reasoning.toString());
     }
 
     @Subscribe
+    public void notificationEvent(CheckerElementApplicabilityNotificationEvent event) {
+	if (this.showApplicability.getValue()) {
+	    reasoning.append(" " + event.getValue() + "<BR>");
+	    reasoning_area.setValue(reasoning.toString());
+	}
+    }
+
+    @Subscribe
+    public void notificationEvent(CheckerElementValidityNotificationEvent event) {
+	if (this.showValidation.getValue()) {
+	    reasoning.append(" " + event.getValue() + "<BR>");
+	    reasoning_area.setValue(reasoning.toString());
+	}
+    }
+
+    @Subscribe
+    public void notificationEvent(CheckerIssueEvent event) {
+	if (this.showIssues.getValue()) {
+	    reasoning.append(" " + event.getValue() + "<BR>");
+	    reasoning_area.setValue(reasoning.toString());
+	}
+    }
+
+    @Subscribe
     public void notificationEvent(CheckerNotificationEvent event) {
-	reasoning.append(" "+event.getValue()+"<BR>");
+	reasoning.append(" " + event.getValue() + "<BR>");
 	reasoning_area.setValue(reasoning.toString());
     }
-    
+
     @Subscribe
     public void notificationEvent(CheckerShortNotificationEvent event) {
-	reasoning.append(" "+event.getValue()+" ");
+	reasoning.append(" " + event.getValue() + " ");
 	reasoning_area.setValue(reasoning.toString());
     }
-    
+
     @Subscribe
     public void breakEvent(CheckerBreakEvent event) {
 	reasoning.append("<HR>");
 	reasoning_area.setValue(reasoning.toString());
     }
-    
+
     @WebServlet(urlPatterns = "/*", name = "mvdXMLOnlineCheckerUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = mvdXMLOnlineCheckerUI.class, productionMode = false)
     public static class mvdXMLOnlineCheckerUIServlet extends VaadinServlet {

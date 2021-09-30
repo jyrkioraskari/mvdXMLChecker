@@ -43,6 +43,7 @@ public class MvdXMLCommandLineChecker {
 		} else
 		    System.out.println("\nNo issues found.");
 	    } else {
+		//TODO 1.2
 		// mvdXML 1_1
 		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXML, "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
 		    System.out.println("mvdXML 1_1.");
