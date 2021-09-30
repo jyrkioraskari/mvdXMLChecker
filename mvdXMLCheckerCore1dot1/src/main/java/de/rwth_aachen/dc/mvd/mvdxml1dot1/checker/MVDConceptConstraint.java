@@ -54,38 +54,32 @@ public class MVDConceptConstraint {
 
 	this.concept_templateRules = new ArrayList<TemplateRule>();
 	try {
-	for (Object t : concept.getTemplateRules().getTemplateRulesOrTemplateRule())
-	{
-	    if(TemplateRules.class.isInstance(t))
-	    {
-		for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
-		    if(TemplateRules.class.isInstance(t2))
-			       this.concept_templateRules.add((TemplateRule) t2);
+	    for (Object t : concept.getTemplateRules().getTemplateRulesOrTemplateRule()) {
+		if (TemplateRules.class.isInstance(t)) {
+		    for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+			if (TemplateRules.class.isInstance(t2))
+			    this.concept_templateRules.add((TemplateRule) t2);
+		} else
+		    this.concept_templateRules.add((TemplateRule) t);
 	    }
-	    else
-	       this.concept_templateRules.add((TemplateRule) t);
-	}
-	}
-	catch (Exception e) {
+	} catch (Exception e) {
 	    e.printStackTrace();
-	    
+
 	}
 
 	this.applicability_templateRules = new ArrayList<TemplateRule>();
 	try {
 	    for (Object t : conceptRoot.getApplicability().getTemplateRules().getTemplateRulesOrTemplateRule())
-	    if(TemplateRules.class.isInstance(t))
-	    {
-		for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
-		    if(TemplateRules.class.isInstance(t2))
-			this.applicability_templateRules.add((TemplateRule) t2);
-	    }
-	    else
-	       this.concept_templateRules.add((TemplateRule) t);
+		if (TemplateRules.class.isInstance(t)) {
+		    for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
+			if (TemplateRules.class.isInstance(t2))
+			    this.applicability_templateRules.add((TemplateRule) t2);
+		} else
+		    this.applicability_templateRules.add((TemplateRule) t);
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    System.out.println("conceptRoot.getApplicability():"+conceptRoot.getApplicability());
-	    System.out.println("conceptRoot.getApplicability().getTemplateRules():"+conceptRoot.getApplicability().getTemplateRules());
+	    System.out.println("conceptRoot.getApplicability():" + conceptRoot.getApplicability());
+	    System.out.println("conceptRoot.getApplicability().getTemplateRules():" + conceptRoot.getApplicability().getTemplateRules());
 	    // just in case there aren't any
 	}
 

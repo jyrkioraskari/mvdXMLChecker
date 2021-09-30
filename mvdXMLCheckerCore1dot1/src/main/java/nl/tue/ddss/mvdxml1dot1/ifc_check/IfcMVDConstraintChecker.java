@@ -93,6 +93,7 @@ public class IfcMVDConstraintChecker {
 	    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
 		communication.post(new CheckerElementValidityNotificationEvent("Concept rule: " + templateRule.getParameters()));
 	    }
+	    
 	    List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
 	    try {
 		Class cls = null;
