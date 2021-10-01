@@ -48,7 +48,6 @@ public class IfcHashMapBuilder {
 		this.hashMaps.add(enrichHashMap(hM));
 	} catch (ClassNotFoundException e) {
 	    communication.post(new CheckerNotificationEvent("The Java class  was not found. Is the spelling correct in mvdXML ? "));
-	    e.printStackTrace();
 	}
 
     }
@@ -162,8 +161,9 @@ public class IfcHashMapBuilder {
 		value = null;
 	    }
 	} catch (NoSuchMethodException | SecurityException e) {
-	    communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
-	    e.printStackTrace();
+	    //communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
+	    communication.post(new CheckerErrorEvent("Attribute defined in mvdXML ConceptTemplate does not exist in IFC: ", e.getMessage()));
+	    //e.printStackTrace();
 	} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 	    communication.post(new CheckerErrorEvent(this.getClass().getName(), e.getMessage()));
 	    e.printStackTrace();
@@ -201,7 +201,6 @@ public class IfcHashMapBuilder {
 					}
 				    } catch (ClassNotFoundException e) {
 					    communication.post(new CheckerNotificationEvent( "The IFC Java class for "+entityName+" was not found. Is the spelling correct in mvdXML ?"));
-					e.printStackTrace();
 				    }
 				}
 			    } else {
@@ -212,7 +211,6 @@ public class IfcHashMapBuilder {
 				    }
 				} catch (ClassNotFoundException e) {
 				    communication.post(new CheckerNotificationEvent("The IFC Java class for "+entityName+" was not found. Is the spelling correct in mvdXML ?"));
-				    e.printStackTrace();
 				}
 			    }
 			}

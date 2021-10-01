@@ -15,18 +15,18 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
-import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.plugins.deserializers.DeserializeException;
 import org.bimserver.plugins.renderengine.RenderEngineException;
-import org.eclipse.emf.common.util.Enumerator;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance.IfcVersion;
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.events.CheckerElementApplicabilityNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerBreakEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerElementApplicabilityNotificationEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerElementValidityNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
+import de.rwth_aachen.dc.mvd.events.CheckerIssueEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.AbstractRule;
@@ -81,7 +81,7 @@ public class IfcMVDConstraintChecker {
 	    }
 	    if (constraint.getConcept() != null && constraint.getConcept().getUuid() != null) {
 		communication.post(new CheckerBreakEvent());
-		communication.post(new CheckerNotificationEvent("<P>CONCEPT: " + constraint.getConcept().getUuid()));
+		communication.post(new CheckerInfoEvent("<P>CONCEPT: ",constraint.getConcept().getUuid()));
 	    }
 
 	    communication.post(new CheckerElementApplicabilityNotificationEvent("Applicability Operator: " + constraint.getApplicability_operator()));
@@ -89,10 +89,11 @@ public class IfcMVDConstraintChecker {
 		communication.post(new CheckerElementApplicabilityNotificationEvent("Applicability rule: " + applicability_templateRule.getParameters()));
 	    }
 
-	    communication.post(new CheckerNotificationEvent("Concept acceptance Operator: " + constraint.getConcept_operator()));
+	    communication.post(new CheckerInfoEvent("Concept validity Operator: ",constraint.getConcept_operator()));
 	    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
-		communication.post(new CheckerNotificationEvent("Concept rule: " + templateRule.getParameters()));
+		communication.post(new CheckerElementValidityNotificationEvent("Concept rule: " + templateRule.getParameters()));
 	    }
+	    
 	    List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
 	    try {
 		Class cls = null;
@@ -115,10 +116,10 @@ public class IfcMVDConstraintChecker {
 
 		for (Object ifcObject : allClassInstances) {
 
-		    if (this.ifcversion == ifcversion.IFC2x3)
-			communication.post(new CheckerNotificationEvent("<B>Element " + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "</B> of class " + ifcObject.getClass().getSimpleName()));
-		    else if (this.ifcversion == ifcversion.IFC4)
-			communication.post(new CheckerNotificationEvent("<B>Element " + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "</B> of class " + ifcObject.getClass().getSimpleName()));
+		    if (this.ifcversion == IfcVersion.IFC2x3)
+			communication.post(new CheckerInfoEvent("<B>Element " + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "</B> of class " ,ifcObject.getClass().getSimpleName()));
+		    else if (this.ifcversion == IfcVersion.IFC4)
+			communication.post(new CheckerInfoEvent("<B>Element " + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "</B> of class " ,ifcObject.getClass().getSimpleName()));
 
 		    IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(ifcObject, concept_attributeRules, this.ifcversion);
 		    List<HashMap<AbstractRule, ObjectToValue>> concept_hashMaps = concept_ifcHashMapBuilder.getHashMaps();
@@ -127,170 +128,10 @@ public class IfcMVDConstraintChecker {
 		    for (HashMap<AbstractRule, ObjectToValue> hashMap : concept_hashMaps)
 			templateLevelRuleCheck(hashMap);
 
-		    if (applicability_check(constraint, ifcObject) == false)
-			continue;
-
-		    boolean valid = false;
-		    int ci = 0;
-		    if (constraint.getConcept_operator() != null)
-			if (constraint.getConcept_operator().toLowerCase().trim().equals("or")) {
-			    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
-				for (int i = 0; i < concept_hashMaps.size(); i++) {
-				    communication.post(new CheckerNotificationEvent("<p style=\"margin-left:10%;\"><BR>Concept value set: " + ci++));
-				    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
-				    if (result == null)
-					continue;
-				    if (result == true) {
-					valid = true;
-					communication.post(new CheckerNotificationEvent("   <BR>Test value set accepted,"));
-					break;
-				    }
-				}
-			    }
-			    communication.post(new CheckerShortNotificationEvent("</p>"));
-
-			    if (!valid) {
-				comment = comment + "\n This Object has to fulfil one of the template requirements. ";
-				for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
-				    boolean template_validity = false;
-				    for (int i = 0; i < concept_hashMaps.size(); i++) {
-					Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
-					if (result == null)
-					    continue;
-					if (result == true) {
-					    template_validity = true;
-					    break;
-					}
-				    }
-				    if (!template_validity)
-					comment = comment + "\n It does not fulfil the  requirements of " + templateRule.getParameters();
-				}
-			    }
-			} else {
-			    valid = true;
-			    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
-				boolean template_validity = false;
-				for (int i = 0; i < concept_hashMaps.size(); i++) {
-				    communication.post(new CheckerNotificationEvent("<p style=\"margin-left:10%;\"><BR>Concept value set: " + ci++));
-				    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
-				    if (result == null)
-					continue;
-				    if (result == true) {
-					template_validity = true;
-					communication.post(new CheckerNotificationEvent("   <BR>Test value set accepted,"));
-					break;
-				    }
-				    communication.post(new CheckerShortNotificationEvent("</p>"));
-				}
-				if (!template_validity) {
-				    comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
-				    valid = false;
-				}
-
-			    }
-			}
-
-		    if (comment.length() > 0) {
-			if (this.ifcversion == ifcversion.IFC2x3)
-			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
-			else if (this.ifcversion == ifcversion.IFC4)
-			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
-		    } else {
-			if (this.ifcversion == ifcversion.IFC2x3) {
-			    communication.post(new CheckerNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
-			} else if (this.ifcversion == ifcversion.IFC4) {
-			    communication.post(new CheckerNotificationEvent("<P>RESULT:  <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
-			}
+		    if (elementApplicability_check(constraint, ifcObject)) {
+			// APPLICABLE
+			elementValidity_check(issuereport, constraint, ifcObject, concept_hashMaps, comment);
 		    }
-
-		    if (comment.length() > 0) {
-			Definitions definitions = constraint.getConcept().getDefinitions();
-			if (definitions != null) {
-			    List<Definition> definitionList = definitions.getDefinition();
-			    for (Definition definition : definitionList)
-				comment = comment + "\n" + definition.getBody().getValue();
-			}
-			String type = ifcObject.getClass().getSimpleName();
-			type = type.substring(0, type.length() - 4);
-
-			comment += " IFC class of the elemet: " + ifcObject.getClass().getSimpleName();
-
-			switch (this.ifcversion) {
-			case IFC2x3:
-			    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
-				String spatialStructureElement = new String();
-				if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcElement)
-				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
-				List<String> componantGuids = new LinkedList<String>();
-				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
-				issuereport.addIssue(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject),
-					((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
-				communication.post(new CheckerInfoEvent("<B>IfcProduct IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
-			    } else {
-				issuereport.addIssue(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
-				communication.post(new CheckerInfoEvent("<B>Other than issue</B><BR> guid=" + ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
-			    }
-			    break;
-			case IFC4:
-
-			    if (ifcObject instanceof org.bimserver.models.ifc4.IfcProduct) {
-				String spatialStructureElement = new String();
-				if (ifcObject instanceof org.bimserver.models.ifc4.IfcElement)
-				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
-				List<String> componantGuids = new LinkedList<String>();
-				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
-				issuereport.addIssue(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject), ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
-				communication.post(new CheckerInfoEvent("<B>IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
-			    } else {
-				issuereport.addIssue(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
-				communication.post(new CheckerInfoEvent("<B>Other than IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId(), "<BR>" + comment));
-			    }
-			    break;
-			default:
-			    communication.post(new CheckerNotificationEvent("Unsupported IFC version"));
-			    throw new RuntimeException("Unsupported IFC version");
-			}
-		    } else {
-			switch (this.ifcversion) {
-			case IFC2x3:
-			    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
-				String spatialStructureElement = new String();
-				if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcElement)
-				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
-				List<String> componantGuids = new LinkedList<String>();
-				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
-				issuereport.addPassedElementResult(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject));
-			    } else {
-				issuereport.addPassedElementResult(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject);
-			    }
-			    break;
-			case IFC4:
-
-			    if (ifcObject instanceof org.bimserver.models.ifc4.IfcProduct) {
-				String spatialStructureElement = new String();
-				if (ifcObject instanceof org.bimserver.models.ifc4.IfcElement)
-				    spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
-				List<String> componantGuids = new LinkedList<String>();
-				componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
-				issuereport.addPassedElementResult(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject));
-			    } else {
-				issuereport.addPassedElementResult(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc4.IfcRoot) ifcObject);
-			    }
-			    break;
-			default:
-			    communication.post(new CheckerNotificationEvent("Unsupported IFC version"));
-			    throw new RuntimeException("Unsupported IFC version");
-			}
-		    }
-
-		    /*
-		     * if (concept_hashMaps.size() > 0) { communication.post(new
-		     * CheckerNotificationEvent("<B>Values were:</B>")); int i = 1; for
-		     * (HashMap<AbstractRule, ObjectToValue> hashMap : concept_hashMaps) {
-		     * communication.post(new CheckerNotificationEvent("<BR>Set: " + i++ + ""));
-		     * showParameterValue(hashMap); } } else communication.post(new
-		     * CheckerNotificationEvent("<B>No concept values.</B>")); //
-		     */
 
 		}
 	    } catch (ClassNotFoundException e) {
@@ -302,7 +143,8 @@ public class IfcMVDConstraintChecker {
 
     }
 
-    private boolean applicability_check(MVDConceptConstraint constraint, Object ifcObject) {
+
+    private boolean elementApplicability_check(MVDConceptConstraint constraint, Object ifcObject) {
 	boolean applicable = false;
 	int ai = 0;
 
@@ -325,7 +167,6 @@ public class IfcMVDConstraintChecker {
 			    communication.post(new CheckerElementApplicabilityNotificationEvent("   <BR>Test passed."));
 			    break;
 			}
-
 		    }
 		}
 
@@ -351,71 +192,178 @@ public class IfcMVDConstraintChecker {
 		}
 	    }
 	if (!applicable) {
-	    if (this.ifcversion == ifcversion.IFC2x3)
+	    if (this.ifcversion == IfcVersion.IFC2x3)
 		communication.post(new CheckerElementApplicabilityNotificationEvent("<B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is not applicable.</B>"));
-	    else if (this.ifcversion == ifcversion.IFC4)
+	    else if (this.ifcversion == IfcVersion.IFC4)
 		communication.post(new CheckerElementApplicabilityNotificationEvent("<B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is not applicable.</B>"));
-
-	    /*
-	     * if (applicability_hashMaps.size() > 0) { communication.post(new
-	     * CheckerNotificationEvent("<B>Values were:</B>")); int i = 1; for
-	     * (HashMap<AbstractRule, ObjectToValue> hashMap : applicability_hashMaps) {
-	     * communication.post(new CheckerNotificationEvent("<BR>Set: " + i++ + ""));
-	     * showParameterValue(hashMap); } } else communication.post(new
-	     * CheckerNotificationEvent("<B>No applicability values.</B>"));
-	     */
 	    return false; // No check since not applicable
 	} else {
-	    if (this.ifcversion == ifcversion.IFC2x3)
+	    if (this.ifcversion == IfcVersion.IFC2x3)
 		communication.post(new CheckerElementApplicabilityNotificationEvent("<B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is applicable.</B>"));
-	    else if (this.ifcversion == ifcversion.IFC4)
+	    else if (this.ifcversion == IfcVersion.IFC4)
 		communication.post(new CheckerElementApplicabilityNotificationEvent("<B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is applicable.</B>"));
 	}
 	return true;
     }
+    
+    
+    private void elementValidity_check(IssueReport issuereport, MVDConceptConstraint constraint, Object ifcObject, List<HashMap<AbstractRule, ObjectToValue>> concept_hashMaps, String comment) {
+	boolean valid = false;
+	int ci = 0;
+	if (constraint.getConcept_operator() != null)
+	    if (constraint.getConcept_operator().toLowerCase().trim().equals("or")) {
+		for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
+		    for (int i = 0; i < concept_hashMaps.size(); i++) {
+			communication.post(new CheckerInfoEvent("<p style=\"margin-left:10%;\"><BR>Concept value set: ",""+ci++));
+			Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
+			if (result == null)
+			    continue;
+			if (result == true) {
+			    valid = true;
+			    communication.post(new CheckerElementValidityNotificationEvent("   <BR>Value set accepted against OR TemplateRules,"));
+			    break;
+			}
+		    }
+		}
+		communication.post(new CheckerShortNotificationEvent("</p>"));
 
-    private void showParameterValue(HashMap<AbstractRule, ObjectToValue> hashMap) {
+		if (!valid) {
+		    comment = comment + "\n This Object has to fulfil one of the template requirements. ";
+		    for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
+			boolean template_validity = false;
+			for (int i = 0; i < concept_hashMaps.size(); i++) {
+			    Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
+			    if (result == null)
+				continue;
+			    if (result == true) {
+				template_validity = true;
+				break;
+			    }
+			}
+			if (!template_validity)
+			    comment = comment + "\n It does not fulfil the  requirements of " + templateRule.getParameters();
+		    }
+		}
+	    } else {
+		valid = true;
+		for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
+		    boolean template_validity = false;
+		    for (int i = 0; i < concept_hashMaps.size(); i++) {
+			communication.post(new CheckerInfoEvent("<p style=\"margin-left:10%;\"><BR>Concept value set: ",""+ci++));
+			Boolean result = conceptLevelRuleCheck(templateRule.getParameters(), concept_hashMaps.get(i));
+			if (result == null)
+			    continue;
+			if (result == true) {
+			    template_validity = true;
+			    communication.post(new CheckerElementValidityNotificationEvent("   <BR>Value set accepted against TemplateRules,"));
+			    break;
+			}
+			communication.post(new CheckerShortNotificationEvent("</p>"));
+		    }
+		    if (!template_validity) {
+			comment = comment + "\n This Object has to fulfil the requirements of " + templateRule.getParameters();
+			valid = false;
+		    }
 
-	for (AbstractRule rule : hashMap.keySet()) {
-	    Object paramValue;
-	    Object value = hashMap.get(rule).value;
-	    if (rule.getRuleID() == null)
-		continue;
-	    if (value == null)
-		continue;
-	    if (value instanceof Collection)
-		paramValue = value;
-	    else if (value instanceof Double || value instanceof String)
-		paramValue = value;
-	    else if (value instanceof Enumerator)
-		paramValue = ((Enumerator) value).getLiteral();
-	    else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcLabelImpl)
-		paramValue = ((org.bimserver.models.ifc2x3tc1.impl.IfcLabelImpl) value).getWrappedValue().toString();
-	    else if (value instanceof org.bimserver.models.ifc4.impl.IfcLabelImpl)
-		paramValue = ((org.bimserver.models.ifc4.impl.IfcLabelImpl) value).getWrappedValue().toString();
+		}
+	    }
 
-	    else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcRealImpl)
-		paramValue = ((org.bimserver.models.ifc2x3tc1.impl.IfcRealImpl) value).getWrappedValue();
-	    else if (value instanceof org.bimserver.models.ifc4.impl.IfcRealImpl)
-		paramValue = ((org.bimserver.models.ifc4.impl.IfcRealImpl) value).getWrappedValue();
-
-	    else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcBooleanImpl)
-		paramValue = ((org.bimserver.models.ifc2x3tc1.impl.IfcBooleanImpl) value).getWrappedValue().toString();
-	    else if (value instanceof org.bimserver.models.ifc4.impl.IfcBooleanImpl)
-		paramValue = ((org.bimserver.models.ifc4.impl.IfcBooleanImpl) value).getWrappedValue().toString();
-	    else if (value instanceof org.bimserver.models.ifc4.impl.IfcTextImpl)
-		paramValue = ((org.bimserver.models.ifc4.impl.IfcTextImpl) value).getWrappedValue().toString();
-	    else if (value instanceof org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl)
-		paramValue = ((org.bimserver.models.ifc2x3tc1.impl.IfcTextImpl) value).getWrappedValue().toString();
-
-	    else if (value instanceof IdEObject)
-		paramValue = value;
-	    else
-		paramValue = value;
-	    communication.post(new CheckerInfoEvent(">> " + rule.getRuleID(), "" + paramValue));
+	if (comment.length() > 0) {
+	    if (this.ifcversion == IfcVersion.IFC2x3)
+		communication.post(new CheckerElementValidityNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
+	    else if (this.ifcversion == IfcVersion.IFC4)
+		communication.post(new CheckerElementValidityNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " has issues</B>"));
+	} else {
+	    if (this.ifcversion == IfcVersion.IFC2x3) {
+		communication.post(new CheckerElementValidityNotificationEvent("<P>RESULT: <B>" + ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
+	    } else if (this.ifcversion == IfcVersion.IFC4) {
+		communication.post(new CheckerElementValidityNotificationEvent("<P>RESULT:  <B>" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is fine</B>"));
+	    }
 	}
 
+	if (comment.length() > 0) {
+	    Definitions definitions = constraint.getConcept().getDefinitions();
+	    if (definitions != null) {
+		List<Definition> definitionList = definitions.getDefinition();
+		for (Definition definition : definitionList)
+		    comment = comment + "\n" + definition.getBody().getValue();
+	    }
+	    String type = ifcObject.getClass().getSimpleName();
+	    type = type.substring(0, type.length() - 4);
+
+	    comment += " IFC class of the elemet: " + ifcObject.getClass().getSimpleName();
+
+	    switch (this.ifcversion) {
+	    case IFC2x3:
+		if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
+		    String spatialStructureElement = new String();
+		    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcElement)
+			spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
+		    List<String> componantGuids = new LinkedList<String>();
+		    componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
+		    issuereport.addIssue(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject),
+			    ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+		    communication.post(new CheckerIssueEvent("<B>IfcProduct IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
+		} else {
+		    issuereport.addIssue(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject, ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+		    communication.post(new CheckerIssueEvent("<B>Other than issue</B><BR> guid=" + ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
+		}
+		break;
+	    case IFC4:
+
+		if (ifcObject instanceof org.bimserver.models.ifc4.IfcProduct) {
+		    String spatialStructureElement = new String();
+		    if (ifcObject instanceof org.bimserver.models.ifc4.IfcElement)
+			spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
+		    List<String> componantGuids = new LinkedList<String>();
+		    componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
+		    issuereport.addIssue(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject),
+			    ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId() + "\n" + comment);
+		    communication.post(new CheckerIssueEvent("<B>IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcProduct) ifcObject).getGlobalId(), "<BR>" + comment));
+		} else {
+		    issuereport.addIssue(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc4.IfcRoot) ifcObject, ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "\n" + comment);
+		    communication.post(new CheckerIssueEvent("<B>Other than IfcProduct issue</B><BR> guid=" + ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId(), "<BR>" + comment));
+		}
+		break;
+	    default:
+		communication.post(new CheckerNotificationEvent("Unsupported IFC version"));
+		throw new RuntimeException("Unsupported IFC version");
+	    }
+	} else {
+	    switch (this.ifcversion) {
+	    case IFC2x3:
+		if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcProduct) {
+		    String spatialStructureElement = new String();
+		    if (ifcObject instanceof org.bimserver.models.ifc2x3tc1.IfcElement)
+			spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc2x3tc1.IfcElement) ifcObject);
+		    List<String> componantGuids = new LinkedList<String>();
+		    componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject);
+		    issuereport.addPassedElementResult(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc2x3tc1.IfcProduct) ifcObject));
+		} else {
+		    issuereport.addPassedElementResult(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject);
+		}
+		break;
+	    case IFC4:
+
+		if (ifcObject instanceof org.bimserver.models.ifc4.IfcProduct) {
+		    String spatialStructureElement = new String();
+		    if (ifcObject instanceof org.bimserver.models.ifc4.IfcElement)
+			spatialStructureElement = getIfcSpatialStructure((org.bimserver.models.ifc4.IfcElement) ifcObject);
+		    List<String> componantGuids = new LinkedList<String>();
+		    componantGuids = getComponantGuids(componantGuids, (org.bimserver.models.ifc4.IfcProduct) ifcObject);
+		    issuereport.addPassedElementResult(constraint.getConcept().getUuid(), spatialStructureElement, ((org.bimserver.models.ifc4.IfcProduct) ifcObject));
+		} else {
+		    issuereport.addPassedElementResult(constraint.getConcept().getUuid(), null, (org.bimserver.models.ifc4.IfcRoot) ifcObject);
+		}
+		break;
+	    default:
+		communication.post(new CheckerNotificationEvent("Unsupported IFC version"));
+		throw new RuntimeException("Unsupported IFC version");
+	    }
+	}
     }
+
+
 
     private String getIfcSpatialStructure(org.bimserver.models.ifc2x3tc1.IfcElement ifcObject) {
 	String guid = new String();
