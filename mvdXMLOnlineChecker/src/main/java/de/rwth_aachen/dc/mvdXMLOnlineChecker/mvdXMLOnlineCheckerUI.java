@@ -167,7 +167,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	showExtraInfo = new CheckBox();
 	showExtraInfo.setCaption("Show extra info.");
 	showExtraInfo.setValue(false);
-	showIssues.addValueChangeListener(x->{
+	showExtraInfo.addValueChangeListener(x->{
 	    checkIFCFile();
 	});
 	button_layout2.addComponent(showExtraInfo);
