@@ -16,6 +16,7 @@ import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
@@ -23,6 +24,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.RichTextArea;
@@ -75,17 +77,24 @@ public class mvdXMLOnlineCheckerUI extends UI {
     // Create a rich text area
     final RichTextArea reasoning_area = new RichTextArea();
     final StringBuilder reasoning = new StringBuilder();
+    
+    Image image;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 	final VerticalLayout layout = new VerticalLayout();
+	Resource res = new ThemeResource("rwth_caad_en_schwarz_grau_rgb.svg");
+	this.image = new Image("",res);
+	this.image.setHeight("200px");
+        this.image.setHeight("100px");
+	layout.addComponent(this.image);
 	final Label labelH1 = new Label("mvdXML Online Checker");
 	labelH1.addStyleName(ValoTheme.LABEL_H1);
 	layout.addComponent(labelH1);
 
 	final Label instruction_label = new Label("Currently supported versions are mvdXML V1-1, V1.1 and  V1.2 draft3.");
 	layout.addComponent(instruction_label);
-
+	
 	layout.addComponents(mvdXMLFileLabel, ifcFileLabel);
 
 	WebFileHandler file_receiver = null;
