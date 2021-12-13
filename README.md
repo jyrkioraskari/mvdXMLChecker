@@ -1,5 +1,5 @@
 # mvdXML Checker
-version 2.51.0
+version 2.51.1
 
 Jyrki Oraskari
 
@@ -7,6 +7,8 @@ Jyrki Oraskari
 
 
 The MVD Checker is a generic tool for verifying IFC models. The validation rules are defined in the mvdXML schema. The software produces a BIM Collaboration Format (BCF) report that can be used in BIM tools like Solibri to review the viewpoints and the comment of the validation issues.
+
+- 13 December 2021: Security patch added for the web interface. 
 
 References:
 1. Model Support Group (MSG) of buildingSMART International Ltd.

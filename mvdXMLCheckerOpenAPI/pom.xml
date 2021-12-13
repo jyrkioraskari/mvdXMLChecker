@@ -10,7 +10,7 @@
 	<name>mvdXMLChecker OpenAPI Interface</name>
 
 	<properties>
-		<mvdxml_check_project.version>2.51.0</mvdxml_check_project.version>
+		<mvdxml_check_project.version>2.51.1</mvdxml_check_project.version>
 		<jersey2.version>2.30</jersey2.version>
 		<jaxrs.version>2.1.1</jaxrs.version>
 		<tomcat.version>7.0.69</tomcat.version>

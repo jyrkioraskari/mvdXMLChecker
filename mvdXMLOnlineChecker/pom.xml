@@ -11,9 +11,8 @@
 	<name>mvdXMLChecker User Interface</name>
 
 	<properties>
-		<mvdxml_check_project.version>2.51.0</mvdxml_check_project.version>
-		<vaadin.version>8.12.3</vaadin.version>
-		<vaadin.plugin.version>8.10.0</vaadin.plugin.version>
+		<mvdxml_check_project.version>2.51.1</mvdxml_check_project.version>
+		<vaadin.plugin.version>8.14.0</vaadin.plugin.version>
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -47,8 +46,7 @@
 			<dependency>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-bom</artifactId>
-				<version>${vaadin.version}</version>
-				<type>pom</type>
+				<version>[8.14.1,)</version>
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
@@ -56,27 +54,26 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
+			<version>[8.14.1,)</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
+			<version>[8.14.1,)</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
+			<version>[8.14.1,)</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
+			<version>[8.14.1,)</version>
 		</dependency>
+
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCore1dot1</artifactId>

@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-        
-    <wb-module deploy-name="mvdXMLChecker">
-                
-        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                
-        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-                
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot1-2.51.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCommon-2.51.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot2-2.51.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot2/mvdXMLCheckerCore1dot2">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-2.51.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-                
-        <property name="java-output-path" value="/mvdXMLCheckerOpenAPI/build/classes"/>
-                
-        <property name="context-root" value="mvdXMLChecker"/>
             
-    </wb-module>
     
+    <wb-module deploy-name="mvdXMLChecker">
+                        
+        
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+                        
+        
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+                        
+        
+        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
+        <dependent-module archiveName="mvdXMLCheckerCore1dot1-2.51.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mvdXMLCheckerCommon-2.51.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mvdXMLCheckerCore1dot2-2.51.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot2/mvdXMLCheckerCore1dot2">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-2.51.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+                        
+        
+        <property name="java-output-path" value="/mvdXMLCheckerOpenAPI/build/classes"/>
+                        
+        
+        <property name="context-root" value="mvdXMLChecker"/>
+                    
+    
+    </wb-module>
+        
+
 </project-modules>
