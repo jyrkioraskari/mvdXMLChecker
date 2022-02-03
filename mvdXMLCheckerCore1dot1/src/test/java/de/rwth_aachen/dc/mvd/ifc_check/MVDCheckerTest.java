@@ -31,7 +31,7 @@ public class MVDCheckerTest {
 		IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
 		for (IssueBean i : issuereport.getIssues())
 		    System.out.println("Issue: "+ i.getComment());
-		String outputFolder = "c:\\temp\\1\\";
+		String outputFolder = "c:\\jo\\2022_02_Noemi_1\\";
 		new File(outputFolder).mkdir();
 		issuereport.writeReport(outputFolder + "checking_result" + ".bcfzip");
 	    }
@@ -43,9 +43,11 @@ public class MVDCheckerTest {
     }
 
     public static void main(String[] args) throws Exception {
+    //new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200922_Prüfdatei_Wartung.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
+    new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200923_Wartungsmanagement_neu.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
 
 	
-	new MVDCheckerTest("c:\\test\\noemi_collection\\noemi14\\20201110_Reinigung.ifc", "c:\\test\\noemi_collection\\noemi14\\ILC_0-Bauherr-Eigentümer.mvdxml");
+	//new MVDCheckerTest("c:\\test\\noemi_collection\\noemi14\\20201110_Reinigung.ifc", "c:\\test\\noemi_collection\\noemi14\\ILC_0-Bauherr-Eigentümer.mvdxml");
 
 	//new MVDCheckerTest("c:\\test\\noemi10\\BUW_HC-Gebäude-Wartung (1).ifc", "c:\\test\\noemi12\\ILC_Wartungs-LV erstellen (6).mvdxml");
 
