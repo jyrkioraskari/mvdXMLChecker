@@ -12,122 +12,114 @@ import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 // rewritten by JO 2020
 
-public class LessOperator extends AbstractComparatorOperator{
+public class LessOperator extends AbstractComparatorOperator {
 
-    // fields
-    private Object leftOperand;
-    private Object rightOperand;
+	// fields
+	private Object leftOperand;
+	private Object rightOperand;
 
-    // constructors
-    public LessOperator() {
-    }
-
-    public LessOperator(Object leftOperand, Object rightOperand) {
-	this.leftOperand = leftOperand;
-	this.rightOperand = rightOperand;
-	//System.out.println("LESS operator");
-
-    }
-
-    // methods
-    public Object getLeftOperand() {
-	return leftOperand;
-    }
-
-    public void setLeftOperand(Object leftOperand) {
-	this.leftOperand = leftOperand;
-    }
-
-    public Object getRightOperand() {
-	return rightOperand;
-    }
-
-    public void setRightOperand(Object rightOperand) {
-	this.rightOperand = rightOperand;
-    }
-
-    public Boolean getResult() {
-	Boolean result = false;
-	Double right = Double.NaN;
-	Double left = Double.NaN;
-
-	if (rightOperand instanceof String  && leftOperand instanceof String && (((String)rightOperand).contains(":") || ((String)leftOperand).contains(":"))) {
-	    
-	    try
-	    {
-	       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-	       Date lefttime = sdf.parse((String) leftOperand);
-	       left=(double)lefttime.getTime();
-	    }
-	    catch (ParseException e0) {
-		try
-		    {
-		       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		       Date lefttime = sdf.parse((String) leftOperand);
-		       left=(double)lefttime.getTime();
-		    }
-		    catch (ParseException e1) {
-			try
-			    {
-			       SimpleDateFormat sdf = new SimpleDateFormat("HH");
-			       Date lefttime = sdf.parse((String) leftOperand);
-			       left=(double)lefttime.getTime();
-			    }
-			    catch (ParseException e2) {
-				    
-			    }
-		    }
-	    }
-	    try
-	    {
-	       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-	       Date righttime = sdf.parse((String) rightOperand);
-	       right=(double)righttime.getTime();
-	    }
-	    catch (ParseException e0) {
-		try
-		    {
-		       SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		       Date righttime = sdf.parse((String) rightOperand);
-		       right=(double)righttime.getTime();
-		    }
-		    catch (ParseException e1) {
-			try
-			    {
-			       SimpleDateFormat sdf = new SimpleDateFormat("HH");
-			       Date righttime = sdf.parse((String) rightOperand);
-			       right=(double)righttime.getTime();
-			    }
-			    catch (ParseException e2) {
-				    
-			    }
-		    }
-	    }
-	    
+	// constructors
+	public LessOperator(String userId) {
+		super(userId);
 	}
-	if(Double.isNaN(left)||Double.isNaN(right))
-	{
-	  left=getValue(leftOperand);
-	  right=getValue(rightOperand);
+
+	public LessOperator(String userId, Object leftOperand, Object rightOperand) {
+		super(userId);
+		this.leftOperand = leftOperand;
+		this.rightOperand = rightOperand;
+		// System.out.println("LESS operator");
+
 	}
-	if(right==null)
-	    return false;
-	if(left==null)
-	    return false;
 
-	if (right != Double.NaN && left != Double.NaN) {
-	    if (left < right)
-		result = true;
-	    else
-		result = false;
-	} else
-	    return null;
+	// methods
+	public Object getLeftOperand() {
+		return leftOperand;
+	}
 
-	if (result == false)
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> " + leftOperand + " NOT < " + rightOperand + "</B> )"));
-	else
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> " + leftOperand + " < " + rightOperand + "</B> )"));
+	public void setLeftOperand(Object leftOperand) {
+		this.leftOperand = leftOperand;
+	}
 
-	return result;
-    }
+	public Object getRightOperand() {
+		return rightOperand;
+	}
+
+	public void setRightOperand(Object rightOperand) {
+		this.rightOperand = rightOperand;
+	}
+
+	public Boolean getResult() {
+		Boolean result = false;
+		Double right = Double.NaN;
+		Double left = Double.NaN;
+
+		if (rightOperand instanceof String && leftOperand instanceof String
+				&& (((String) rightOperand).contains(":") || ((String) leftOperand).contains(":"))) {
+
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+				Date lefttime = sdf.parse((String) leftOperand);
+				left = (double) lefttime.getTime();
+			} catch (ParseException e0) {
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+					Date lefttime = sdf.parse((String) leftOperand);
+					left = (double) lefttime.getTime();
+				} catch (ParseException e1) {
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat("HH");
+						Date lefttime = sdf.parse((String) leftOperand);
+						left = (double) lefttime.getTime();
+					} catch (ParseException e2) {
+
+					}
+				}
+			}
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+				Date righttime = sdf.parse((String) rightOperand);
+				right = (double) righttime.getTime();
+			} catch (ParseException e0) {
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+					Date righttime = sdf.parse((String) rightOperand);
+					right = (double) righttime.getTime();
+				} catch (ParseException e1) {
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat("HH");
+						Date righttime = sdf.parse((String) rightOperand);
+						right = (double) righttime.getTime();
+					} catch (ParseException e2) {
+
+					}
+				}
+			}
+
+		}
+		if (Double.isNaN(left) || Double.isNaN(right)) {
+			left = getValue(leftOperand);
+			right = getValue(rightOperand);
+		}
+		if (right == null)
+			return false;
+		if (left == null)
+			return false;
+
+		if (right != Double.NaN && left != Double.NaN) {
+			if (left < right)
+				result = true;
+			else
+				result = false;
+		} else
+			return null;
+
+		if (result == false)
+			communication.post(new CheckerShortNotificationEvent(
+					this.userId,"( <B style=\"color:red\"> " + leftOperand + " NOT < " + rightOperand + "</B> )"));
+		else
+			communication.post(new CheckerShortNotificationEvent(
+					this.userId,"( <B style=\"color:green\"> " + leftOperand + " < " + rightOperand + "</B> )"));
+
+		return result;
+	}
 }

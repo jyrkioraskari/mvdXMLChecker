@@ -32,6 +32,7 @@ import nl.tue.ddss.mvdxml1dot1.rule_operators.XorOperator;
 
 @SuppressWarnings("all")
 public class MvdXMLv1_1Parser extends Parser {
+	private final String userId;
 	public static final String[] tokenNames = new String[] {
 		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "AND", "DIGIT", "EQUAL", "ESC_SEQ", 
 		"EXISTS", "FALSE", "GREATER_THAN", "GREATER_THAN_OR_EQUAL", "HEX_DIGIT", 
@@ -87,11 +88,12 @@ public class MvdXMLv1_1Parser extends Parser {
 	// delegators
 
 
-	public MvdXMLv1_1Parser(TokenStream input) {
-		this(input, new RecognizerSharedState());
+	public MvdXMLv1_1Parser(String userId,TokenStream input) {
+		this(userId,input, new RecognizerSharedState());
 	}
-	public MvdXMLv1_1Parser(TokenStream input, RecognizerSharedState state) {
+	public MvdXMLv1_1Parser(String userId,TokenStream input, RecognizerSharedState state) {
 		super(input, state);
+		this.userId = userId;
 	}
 
 	@Override public String[] getTokenNames() { return MvdXMLv1_1Parser.tokenNames; }
@@ -99,8 +101,8 @@ public class MvdXMLv1_1Parser extends Parser {
 
 
 	HashMap <AbstractRule,ObjectToValue> hashMap;
-	public MvdXMLv1_1Parser(TokenStream input,HashMap <AbstractRule,ObjectToValue> hashMap) {
-	        this(input, new RecognizerSharedState());
+	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,ObjectToValue> hashMap) {
+	        this(userId,input, new RecognizerSharedState());
 	        this.hashMap=hashMap;
 	    }
 
@@ -446,22 +448,22 @@ public class MvdXMLv1_1Parser extends Parser {
 					}
 
 					if (op.equals("=")){
-						 EqualOperator equalOperator=new EqualOperator(leftOperand,rightOperand);
+						 EqualOperator equalOperator=new EqualOperator(this.userId,leftOperand,rightOperand);
 						 boolTermReturns =equalOperator.getResult();
 					   }if (op.equals(">")){
-					   GreaterOperator greaterOperator=new GreaterOperator(leftOperand,rightOperand);
+					   GreaterOperator greaterOperator=new GreaterOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =greaterOperator.getResult();
 					   }if (op.equals("<")){
-					   LessOperator lessOperator=new LessOperator(leftOperand,rightOperand);
+					   LessOperator lessOperator=new LessOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =lessOperator.getResult();
 					   }if (op.equals(">=")){
-					   GreaterEqualOperator greaterEqualOperator=new GreaterEqualOperator(leftOperand,rightOperand);
+					   GreaterEqualOperator greaterEqualOperator=new GreaterEqualOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =greaterEqualOperator.getResult();
 					   }if (op.equals("<=")){
-					   LessEqualOperator lessEqualOperator=new LessEqualOperator(leftOperand,rightOperand);
+					   LessEqualOperator lessEqualOperator=new LessEqualOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =lessEqualOperator.getResult();
 					   }if (op.equals("!=")){
-					   InEqualOperator inEqualOperator=new InEqualOperator(leftOperand,rightOperand);
+					   InEqualOperator inEqualOperator=new InEqualOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =inEqualOperator.getResult();
 					   }  
 

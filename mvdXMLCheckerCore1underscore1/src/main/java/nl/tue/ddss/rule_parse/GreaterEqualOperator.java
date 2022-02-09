@@ -15,14 +15,17 @@ public class GreaterEqualOperator extends AbstractComparatorOperator{
     private Object leftOperand;
     private Object rightOperand;
 
-    // constructors
-    public GreaterEqualOperator() {
-    }
+ // constructors
+ 	public GreaterEqualOperator(String userId) {
+ 		super(userId);
+ 	}
 
-    public GreaterEqualOperator(Object leftOperand, Object rightOperand) {
-	this.leftOperand = leftOperand;
-	this.rightOperand = rightOperand;
-    }
+ 	public GreaterEqualOperator(String userId, Object leftOperand, Object rightOperand) {
+ 		super(userId);
+ 		this.leftOperand = leftOperand;
+ 		this.rightOperand = rightOperand;
+ 	}
+
 
     // methods
     public Object getLeftOperand() {
@@ -62,9 +65,9 @@ public class GreaterEqualOperator extends AbstractComparatorOperator{
 	    return null;
 
 	if (result == false)
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> " + left + " NOT >= " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:red\"> " + left + " NOT >= " + right + "</B> )"));
 	else
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> " + left + " >= " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:green\"> " + left + " >= " + right + "</B> )"));
 
 	return result;
     }

@@ -14,14 +14,16 @@ public class LessEqualOperator extends AbstractComparatorOperator{
     private Object leftOperand;
     private Object rightOperand;
 
-    // constructors
-    public LessEqualOperator() {
-    }
+	// constructors
+	public LessEqualOperator(String userId) {
+		super(userId);
+	}
 
-    public LessEqualOperator(Object leftOperand, Object rightOperand) {
-	this.leftOperand = leftOperand;
-	this.rightOperand = rightOperand;
-    }
+	public LessEqualOperator(String userId,Object leftOperand, Object rightOperand) {
+		super(userId);
+		this.leftOperand = leftOperand;
+		this.rightOperand = rightOperand;
+	}
 
     // methods
     public Object getLeftOperand() {
@@ -60,9 +62,9 @@ public class LessEqualOperator extends AbstractComparatorOperator{
 	} else
 	    return null;
 	if (result == false)
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> " + left + " NOT <= " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:red\"> " + left + " NOT <= " + right + "</B> )"));
 	else
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> " + left + " < " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:green\"> " + left + " < " + right + "</B> )"));
 
 	return result;
     }

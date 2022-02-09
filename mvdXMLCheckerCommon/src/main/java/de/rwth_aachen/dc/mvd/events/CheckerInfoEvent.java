@@ -1,10 +1,10 @@
 package de.rwth_aachen.dc.mvd.events;
 
-public class CheckerInfoEvent {
+public class CheckerInfoEvent extends SessionEvent{
     private final String topic;
     private final String value;
-    public CheckerInfoEvent(String topic, String value) {
-	super();
+    public CheckerInfoEvent(String userId, String topic, String value) {
+	super(userId);
 	this.topic = topic;
 	this.value = value;
     }
@@ -15,6 +15,7 @@ public class CheckerInfoEvent {
     public String getValue() {
         return value;
     }
+
 
     
 }

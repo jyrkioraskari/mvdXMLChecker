@@ -15,7 +15,10 @@ import org.buildingsmart_tech.mvdxml.mvdxml1_1.EntityRule;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
+//Modified by JO 2020, 2022
+
 public class IfcHashMapBuilder {
+	private final String userId;
     private EventBusCommunication communication = EventBusCommunication.getInstance();
     private Object ifcObject;
     private List<AttributeRule> attributeRules;
@@ -29,10 +32,11 @@ public class IfcHashMapBuilder {
 	return attributeRules;
     }
 
-    public IfcHashMapBuilder(Object ifcObject, List<AttributeRule> attributeRules) {
+    public IfcHashMapBuilder(String userId, Object ifcObject, List<AttributeRule> attributeRules) {
 	this.ifcObject = ifcObject;
 	this.attributeRules = attributeRules;
-    }
+	this.userId = userId;
+}
 
     public List<HashMap<AbstractRule, ObjectToValue>> getHashMaps() throws ClassNotFoundException {
 	HashMap<AttributeRule, ObjectToValue> initialHM = new HashMap<AttributeRule, ObjectToValue>();
@@ -60,10 +64,10 @@ public class IfcHashMapBuilder {
 		    value = null;
 		}
 	    } catch (NoSuchMethodException | SecurityException e) {
-		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+		communication.post(new CheckerErrorEvent(this.userId,this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-		communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+		communication.post(new CheckerErrorEvent(this.userId,this.getClass().getName(),e.getMessage()));
 		e.printStackTrace();
 	    }
 
@@ -191,7 +195,7 @@ public class IfcHashMapBuilder {
 					    ((ArrayList<Object>) derivedValue).add(object);
 					}
 				    } catch (ClassNotFoundException e) {
-					communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));				    }
+					communication.post(new CheckerErrorEvent(this.userId,this.getClass().getName(),e.getMessage()));				    }
 				}
 			    } else {
 				derivedValue = null;
@@ -200,7 +204,7 @@ public class IfcHashMapBuilder {
 					derivedValue = value;
 				    }
 				} catch (ClassNotFoundException e) {
-				    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+				    communication.post(new CheckerErrorEvent(this.userId,this.getClass().getName(),e.getMessage()));
 				    }
 			    }
 			}

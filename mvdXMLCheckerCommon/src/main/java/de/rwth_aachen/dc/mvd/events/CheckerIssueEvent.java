@@ -1,15 +1,14 @@
 package de.rwth_aachen.dc.mvd.events;
 
-public class CheckerIssueEvent {
+public class CheckerIssueEvent extends SessionEvent{
     private final String topic;
     private final String value;
-    public CheckerIssueEvent(String topic, String value) {
-	super();
+    public CheckerIssueEvent(String userId, String topic, String value) {
+	super(userId);
 	this.topic = topic;
 	this.value = value;
     }
     
-
     public String getTopic() {
         return topic;
     }

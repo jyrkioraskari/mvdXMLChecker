@@ -18,10 +18,10 @@ public class MVDCheckerTest {
 
     public MVDCheckerTest(String ifcFileName, String mvdXMLFile) {
 	try {
-	    MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(mvdXMLFile);
+	    MvdXMLValidationRules mvdXML = new MvdXMLValidationRules(".",mvdXMLFile);
 	    Path ifcFile = Paths.get(ifcFileName);
 	    IfcModelInstance model = new IfcModelInstance();
-	    IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+	    IfcModelInterface bimserver_ifcModel = model.readModel(".",ifcFile, Paths.get("."));
 	    bimserver_ifcModel.fixInverseMismatches();
 	    List<MVDConceptConstraint> constraints = mvdXML.getMVDConstraints();
 	    System.out.println(constraints.size());

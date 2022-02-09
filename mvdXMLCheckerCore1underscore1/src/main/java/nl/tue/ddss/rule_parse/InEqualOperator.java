@@ -11,17 +11,20 @@ import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 public class InEqualOperator {
-    private EventBusCommunication communication = EventBusCommunication.getInstance();
+	private final String userId;
+	private EventBusCommunication communication = EventBusCommunication.getInstance();
 
 	// fields
 	private Object leftOperand;
 	private Object rightOperand;
 
 	// constructors
-	public InEqualOperator() {
+	public InEqualOperator(String userId) {
+		this.userId = userId;
 	}
 
-	public InEqualOperator(Object leftOperand, Object rightOperand) {
+	public InEqualOperator(String userId, Object leftOperand, Object rightOperand) {
+		this.userId = userId;
 		this.leftOperand = leftOperand;
 		this.rightOperand = rightOperand;
 	}
@@ -49,7 +52,7 @@ public class InEqualOperator {
 			if (((String) rightOperand).startsWith("reg")) {
 				String reg = ((String) rightOperand).substring(4);
 				if (leftOperand instanceof String) {
-					if (Pattern.matches(reg,(String)leftOperand)){
+					if (Pattern.matches(reg, (String) leftOperand)) {
 						result = false;
 					} else {
 						result = true;
@@ -80,21 +83,17 @@ public class InEqualOperator {
 								result = true;
 								break;
 							}
-							if (valueList.get(i).equals(rightOperand)
-									&& i == valueList.size() - 1) {
+							if (valueList.get(i).equals(rightOperand) && i == valueList.size() - 1) {
 								result = false;
 							}
 						} else if (valueList.get(i) instanceof IdEObject) {
-							String typeName = valueList.get(i).getClass()
-									.getSimpleName();
-							typeName = typeName.substring(0,
-									typeName.length() - 4);
+							String typeName = valueList.get(i).getClass().getSimpleName();
+							typeName = typeName.substring(0, typeName.length() - 4);
 							if (!typeName.equals(rightOperand)) {
 								result = true;
 								break;
 							}
-							if (typeName.equals(rightOperand)
-									&& i == valueList.size() - 1) {
+							if (typeName.equals(rightOperand) && i == valueList.size() - 1) {
 								result = false;
 							}
 						} else
@@ -111,8 +110,8 @@ public class InEqualOperator {
 				else
 					result = true;
 			} else if (leftOperand instanceof Integer) {
-				int left=((Integer)leftOperand).intValue();
-				Double doub=new Double(left);
+				int left = ((Integer) leftOperand).intValue();
+				Double doub = new Double(left);
 				if (doub.equals(rightOperand))
 					result = false;
 				else
@@ -127,19 +126,20 @@ public class InEqualOperator {
 				} else {
 					result = true;
 				}
-			}
-			else
-			//System.out.println("To be later supported");
-			result = false;
+			} else
+				// System.out.println("To be later supported");
+				result = false;
 		} else if (rightOperand instanceof Collection) {
-			//System.out.println("To be later supported");
+			// System.out.println("To be later supported");
 			result = false;
 		}
-		
-		if(result==false)
-			communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \""+leftOperand+ "\" NOT <> \"" + rightOperand+"\"</B> )"));
+
+		if (result == false)
+			communication.post(new CheckerShortNotificationEvent(
+					this.userId,"( <B style=\"color:red\"> \"" + leftOperand + "\" NOT <> \"" + rightOperand + "\"</B> )"));
 		else
-			communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
+			communication.post(new CheckerShortNotificationEvent(
+					this.userId,"( <B style=\"color:green\"> \"" + leftOperand + "\" <> \"" + rightOperand + "\"</B> )"));
 
 		return result;
 	}

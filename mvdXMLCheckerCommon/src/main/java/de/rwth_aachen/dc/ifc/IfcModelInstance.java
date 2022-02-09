@@ -35,9 +35,9 @@ public class IfcModelInstance {
     private Optional<IfcVersion> ifcversion=Optional.empty();
     
 
-    public IfcModelInterface readModel(Path ifcFilePath, Path ifcShcemaDirectory) {
+    public IfcModelInterface readModel(String id,Path ifcFilePath, Path ifcShcemaDirectory) {
 	if (ifcFilePath.toFile().exists() && ifcFilePath.toFile().isFile()) {
-	    switch (getExpressSchema(ifcFilePath.toString())) {
+	    switch (getExpressSchema(id,ifcFilePath.toString())) {
 	    case IFC2x3:
 		ifcversion=Optional.of(IfcModelInstance.IfcVersion.IFC2x3);
 		Deserializer deserializer2x3 = new Ifc2x3tc1StepDeserializer();
@@ -46,7 +46,7 @@ public class IfcModelInstance {
 		try {
 		    return DeserializerUtils.readFromFile(deserializer2x3, ifcFilePath);
 		} catch (Exception e) {
-		    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+		    communication.post(new CheckerErrorEvent(id,this.getClass().getName(),e.getMessage()));
 		    e.printStackTrace();
 		}
 		break;
@@ -58,7 +58,7 @@ public class IfcModelInstance {
 		try {
 		    return DeserializerUtils.readFromFile(deserializer4, ifcFilePath);
 		} catch (Exception e) {
-		    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+		    communication.post(new CheckerErrorEvent(id,this.getClass().getName(),e.getMessage()));
 		    e.printStackTrace();
 		}
 		break;
@@ -69,7 +69,7 @@ public class IfcModelInstance {
 	return null;
     }
 
-    public IfcVersion getExpressSchema(String ifc_file) {
+    public IfcVersion getExpressSchema(String id,String ifc_file) {
 	try {
 	    FileInputStream fstream = new FileInputStream(ifc_file);
 	    DataInputStream in = new DataInputStream(fstream);
@@ -92,7 +92,7 @@ public class IfcModelInstance {
 		br.close();
 	    }
 	} catch (IOException e) {
-	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
+	    communication.post(new CheckerErrorEvent(id,this.getClass().getName(),e.getMessage()));
 	    e.printStackTrace();
 	}
 	return IfcModelInstance.IfcVersion.UNKNOWN;
@@ -110,7 +110,7 @@ public class IfcModelInstance {
 	//IfcModelInterface ifcmodel2x3 = model.readModel(Paths.get("c:\\ifc\\Duplex_A_20110505.ifc"), Paths.get("."));
 
 	// IFC4
-	IfcModelInterface ifcmodel4 =model.readModel(Paths.get("c:\\ifc\\20160125Autodesk_Hospital_Parking Garage_2015 - IFC4.ifc"), Paths.get("."));
+	IfcModelInterface ifcmodel4 =model.readModel(".",Paths.get("c:\\ifc\\20160125Autodesk_Hospital_Parking Garage_2015 - IFC4.ifc"), Paths.get("."));
 	System.out.println(ifcmodel4.size());
     }
 }

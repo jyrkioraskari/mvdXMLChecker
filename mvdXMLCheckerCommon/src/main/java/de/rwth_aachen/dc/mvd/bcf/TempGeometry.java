@@ -15,151 +15,147 @@ import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import nl.tue.ddss.bcf.BoundingBox;
 
-//Modified ny JO, 22/04/2020 and 4/05/2020 from the original 
+//Modified by JO, 22/04/2020 and 4/05/2020, 09/02/2022 from the original 
 // nl.tue.ddss.bcf.TempGeometry
 
 public class TempGeometry {
-    private EventBusCommunication communication = EventBusCommunication.getInstance();
-    private final BoundingBox boundingBox;
-    private double cameraViewPointX;
-    private double cameraViewPointY;
-    private double cameraViewPointZ;
-    private double cameraUpVectorX;
-    private double cameraUpVectorY;
-    private double cameraUpVectorZ;
-    private double cameraDirectionX;
-    private double cameraDirectionY;
-    private double cameraDirectionZ;
+	private final String userId;
+	private EventBusCommunication communication = EventBusCommunication.getInstance();
+	private final BoundingBox boundingBox;
+	private double cameraViewPointX;
+	private double cameraViewPointY;
+	private double cameraViewPointZ;
+	private double cameraUpVectorX;
+	private double cameraUpVectorY;
+	private double cameraUpVectorZ;
+	private double cameraDirectionX;
+	private double cameraDirectionY;
+	private double cameraDirectionZ;
 
-    public TempGeometry(IfcOpenShellModel renderEngineModel, long ifcProductExpressId) {
-	this.boundingBox = getBoundingBox(renderEngineModel, ifcProductExpressId);
-	if(boundingBox==null)
-	{
-	    // No need to repeat
-	    //System.err.println("Does not have a geometry");
-	    return;
-	}
-
-	Point3d max = boundingBox.getMax();
-	Point3d min = boundingBox.getMin();
-
-	double centerX = (max.getX() + min.getX()) / 2;
-	double centerY = (max.getY() + min.getY()) / 2;
-	double centerZ = (max.getZ() + min.getZ()) / 2;
-	double lengthX = max.getX() - min.getX();
-	double lengthY = max.getY() - min.getY();
-	double lengthZ = max.getZ() - min.getZ();
-
-	double lengthMax = lengthX;
-	if (lengthY > lengthMax)
-	    lengthMax = lengthY;
-	if (lengthZ > lengthMax)
-	    lengthMax = lengthZ;
-
-	cameraViewPointX = centerX + ((2 * lengthMax) * Math.cos(Math.PI / 4));
-	cameraViewPointY = centerY + ((2 * lengthMax) * Math.cos(Math.PI / 4));
-	cameraViewPointZ = centerZ + 0.5 * lengthMax;
-
-	cameraDirectionX = centerX - cameraViewPointX;
-	cameraDirectionY = centerY - cameraViewPointY;
-	cameraDirectionZ = centerZ - cameraViewPointZ;
-
-	cameraUpVectorX = cameraDirectionX;
-	cameraUpVectorY = cameraDirectionY;
-	cameraUpVectorZ = ((Math.pow(cameraDirectionX, 2) + Math.pow(cameraDirectionY, 2)) / -cameraDirectionZ);
-
-    }
-
-   
-    private BoundingBox getBoundingBox(IfcOpenShellModel renderEngineModel, long ifcProductExpressId) {
-	BoundingBox boundingBox=null;
-	IfcOpenShellEntityInstance renderEngineInstance;
-	try {
-	    renderEngineInstance = renderEngineModel.getInstanceFromExpressId((int)ifcProductExpressId); // new version uses long
-	    //System.out.println("RenderEngineInstance for "+ifcProductExpressId+" is "+renderEngineInstance);
-	    if(renderEngineInstance==null)
-	    {
-		System.err.println("Product of the express id "+ifcProductExpressId+" does not have a geometry");
-		
-		return null;
-	    }
-	    IfcGeomServerClientEntity geometry = renderEngineInstance.generateGeometry();
-	    if (geometry != null && geometry.getIndices().length > 0) {
-		boundingBox = new BoundingBox();
-		double[] tranformationMatrix = new double[16];
-		if (renderEngineInstance.getTransformationMatrix() != null) {
-		    tranformationMatrix = renderEngineInstance.getTransformationMatrix();
-		    tranformationMatrix = Matrix.changeOrientation(tranformationMatrix);
-		} else {
-		    Matrix.setIdentityM(tranformationMatrix, 0);
+	public TempGeometry(String userId,IfcOpenShellModel renderEngineModel, long ifcProductExpressId) {
+		this.userId = userId;
+		this.boundingBox = getBoundingBox(renderEngineModel, ifcProductExpressId);
+		if (boundingBox == null) {
+			// No need to repeat
+			// System.err.println("Does not have a geometry");
+			return;
 		}
 
-		float[] vertices=geometry.getPositions();
-		for (int i = 0; i < geometry.getPositions().length; i+=3) {
-		    processExtends(boundingBox, tranformationMatrix, vertices[i],vertices[i+1],vertices[i+2]);
-		}
-	    }
-	} catch (RenderEngineException e) {
-	    communication.post(new CheckerErrorEvent(this.getClass().getName(),e.getMessage()));
-	    e.printStackTrace();
+		Point3d max = boundingBox.getMax();
+		Point3d min = boundingBox.getMin();
+
+		double centerX = (max.getX() + min.getX()) / 2;
+		double centerY = (max.getY() + min.getY()) / 2;
+		double centerZ = (max.getZ() + min.getZ()) / 2;
+		double lengthX = max.getX() - min.getX();
+		double lengthY = max.getY() - min.getY();
+		double lengthZ = max.getZ() - min.getZ();
+
+		double lengthMax = lengthX;
+		if (lengthY > lengthMax)
+			lengthMax = lengthY;
+		if (lengthZ > lengthMax)
+			lengthMax = lengthZ;
+
+		cameraViewPointX = centerX + ((2 * lengthMax) * Math.cos(Math.PI / 4));
+		cameraViewPointY = centerY + ((2 * lengthMax) * Math.cos(Math.PI / 4));
+		cameraViewPointZ = centerZ + 0.5 * lengthMax;
+
+		cameraDirectionX = centerX - cameraViewPointX;
+		cameraDirectionY = centerY - cameraViewPointY;
+		cameraDirectionZ = centerZ - cameraViewPointZ;
+
+		cameraUpVectorX = cameraDirectionX;
+		cameraUpVectorY = cameraDirectionY;
+		cameraUpVectorZ = ((Math.pow(cameraDirectionX, 2) + Math.pow(cameraDirectionY, 2)) / -cameraDirectionZ);
+
 	}
-	return boundingBox;
-    }
 
-    private void processExtends(BoundingBox boundingBox, double[] transformationMatrix, double x, double y, double z) {
-	double[] result = new double[4];
-	Matrix.multiplyMV(result, 0, transformationMatrix, 0, new double[] { x, y, z, 1 }, 0);
-	x = result[0];
-	y = result[1];
-	z = result[2];
-	Point3d point = new Point3d(x / 1000, y / 1000, z / 1000);
-	boundingBox.add(point);
-    }
+	private BoundingBox getBoundingBox(IfcOpenShellModel renderEngineModel, long ifcProductExpressId) {
+		BoundingBox boundingBox = null;
+		IfcOpenShellEntityInstance renderEngineInstance;
+		try {
+			renderEngineInstance = renderEngineModel.getInstanceFromExpressId((int) ifcProductExpressId); // new version
+																											// uses long
+			// System.out.println("RenderEngineInstance for "+ifcProductExpressId+" is
+			// "+renderEngineInstance);
+			if (renderEngineInstance == null) {
+				System.err.println("Product of the express id " + ifcProductExpressId + " does not have a geometry");
 
-    
-    // Getters
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
-    }
+				return null;
+			}
+			IfcGeomServerClientEntity geometry = renderEngineInstance.generateGeometry();
+			if (geometry != null && geometry.getIndices().length > 0) {
+				boundingBox = new BoundingBox();
+				double[] tranformationMatrix = new double[16];
+				if (renderEngineInstance.getTransformationMatrix() != null) {
+					tranformationMatrix = renderEngineInstance.getTransformationMatrix();
+					tranformationMatrix = Matrix.changeOrientation(tranformationMatrix);
+				} else {
+					Matrix.setIdentityM(tranformationMatrix, 0);
+				}
 
-    
-    public double getCameraViewPointX() {
-        return cameraViewPointX;
-    }
+				float[] vertices = geometry.getPositions();
+				for (int i = 0; i < geometry.getPositions().length; i += 3) {
+					processExtends(boundingBox, tranformationMatrix, vertices[i], vertices[i + 1], vertices[i + 2]);
+				}
+			}
+		} catch (RenderEngineException e) {
+			communication.post(new CheckerErrorEvent(this.userId,this.getClass().getName(), e.getMessage()));
+			e.printStackTrace();
+		}
+		return boundingBox;
+	}
 
-    public double getCameraViewPointY() {
-        return cameraViewPointY;
-    }
+	private void processExtends(BoundingBox boundingBox, double[] transformationMatrix, double x, double y, double z) {
+		double[] result = new double[4];
+		Matrix.multiplyMV(result, 0, transformationMatrix, 0, new double[] { x, y, z, 1 }, 0);
+		x = result[0];
+		y = result[1];
+		z = result[2];
+		Point3d point = new Point3d(x / 1000, y / 1000, z / 1000);
+		boundingBox.add(point);
+	}
 
-    public double getCameraViewPointZ() {
-        return cameraViewPointZ;
-    }
+	// Getters
+	public BoundingBox getBoundingBox() {
+		return boundingBox;
+	}
 
-    public double getCameraUpVectorX() {
-        return cameraUpVectorX;
-    }
+	public double getCameraViewPointX() {
+		return cameraViewPointX;
+	}
 
-    public double getCameraUpVectorY() {
-        return cameraUpVectorY;
-    }
+	public double getCameraViewPointY() {
+		return cameraViewPointY;
+	}
 
-    public double getCameraUpVectorZ() {
-        return cameraUpVectorZ;
-    }
+	public double getCameraViewPointZ() {
+		return cameraViewPointZ;
+	}
 
-    public double getCameraDirectionX() {
-        return cameraDirectionX;
-    }
+	public double getCameraUpVectorX() {
+		return cameraUpVectorX;
+	}
 
-    public double getCameraDirectionY() {
-        return cameraDirectionY;
-    }
+	public double getCameraUpVectorY() {
+		return cameraUpVectorY;
+	}
 
-    public double getCameraDirectionZ() {
-        return cameraDirectionZ;
-    }
+	public double getCameraUpVectorZ() {
+		return cameraUpVectorZ;
+	}
 
-    
-    
-    
+	public double getCameraDirectionX() {
+		return cameraDirectionX;
+	}
+
+	public double getCameraDirectionY() {
+		return cameraDirectionY;
+	}
+
+	public double getCameraDirectionZ() {
+		return cameraDirectionZ;
+	}
+
 }

@@ -22,42 +22,65 @@ import nl.tue.ddss.mvdparser.MvdXMLParser;
 
 public class MvdXMLv1undescore1Check {
 
-    public static IssueReport check(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
-	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
-	
-	IfcModelInstance model = new IfcModelInstance();
-	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-	if(bimserver_ifcModel==null)  // IFC2x2 causes this to return null
-	    return null;
-	bimserver_ifcModel.fixInverseMismatches();
-	List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
+	public static IssueReport check(Path ifcFile, String mvdXMLFile)
+			throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
+		MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
 
-	if (model.getIfcversion().isPresent()) {
-	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
-	    return issuereport;
+		IfcModelInstance model = new IfcModelInstance();
+		IfcModelInterface bimserver_ifcModel = model.readModel(".",ifcFile, Paths.get("."));
+		if (bimserver_ifcModel == null) // IFC2x2 causes this to return null
+			return null;
+		bimserver_ifcModel.fixInverseMismatches();
+		List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
+
+		if (model.getIfcversion().isPresent()) {
+			IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+			IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
+			return issuereport;
+		}
+
+		return null;
 	}
 	
-	return null;
-    }
+	public static IssueReport check(String id,Path ifcFile, String mvdXMLFile)
+			throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
+		MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
 
-    /*public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
-  	List<IssueBean> issues = new ArrayList<>();
-  	
-  	MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
-  	
-  	IfcModelInstance model = new IfcModelInstance();
-  	IfcModelInterface bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
-  	bimserver_ifcModel.fixInverseMismatches();
-  	List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
+		IfcModelInstance model = new IfcModelInstance();
+		IfcModelInterface bimserver_ifcModel = model.readModel(id,ifcFile, Paths.get("."));
+		if (bimserver_ifcModel == null) // IFC2x2 causes this to return null
+			return null;
+		bimserver_ifcModel.fixInverseMismatches();
+		List<MVDConstraint> constraints = mvdXMLParser.getMVDConstraints();
 
-  	if (model.getIfcversion().isPresent()) {
-  	    IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
-  	    IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
-  	    issues.addAll(issuereport.getIssues());
-  	}
-  	
-  	return issues;
-      }*/
+		if (model.getIfcversion().isPresent()) {
+			IfcMVDConstraintChecker ifcChecker = new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+			IssueReport issuereport = ifcChecker.checkModel(bimserver_ifcModel, ifcFile.toFile());
+			return issuereport;
+		}
+
+		return null;
+	}
+
+	/*
+	 * public static List<IssueBean> checkModel4Web(Path ifcFile, String mvdXMLFile)
+	 * throws JAXBException, DeserializeException, IOException, URISyntaxException,
+	 * RenderEngineException { List<IssueBean> issues = new ArrayList<>();
+	 * 
+	 * MvdXMLParser mvdXMLParser = new MvdXMLParser(mvdXMLFile);
+	 * 
+	 * IfcModelInstance model = new IfcModelInstance(); IfcModelInterface
+	 * bimserver_ifcModel = model.readModel(ifcFile, Paths.get("."));
+	 * bimserver_ifcModel.fixInverseMismatches(); List<MVDConstraint> constraints =
+	 * mvdXMLParser.getMVDConstraints();
+	 * 
+	 * if (model.getIfcversion().isPresent()) { IfcMVDConstraintChecker ifcChecker =
+	 * new IfcMVDConstraintChecker(constraints, model.getIfcversion().get());
+	 * IssueReport issuereport =
+	 * ifcChecker.checkModel(bimserver_ifcModel,ifcFile.toFile());
+	 * issues.addAll(issuereport.getIssues()); }
+	 * 
+	 * return issues; }
+	 */
 
 }

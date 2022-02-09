@@ -10,19 +10,23 @@ import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 public class EqualOperator {
+	private final String userId;
     private EventBusCommunication communication = EventBusCommunication.getInstance();
     // fields
     private Object leftOperand;
     private Object rightOperand;
 
     // constructors
-    public EqualOperator() {
-    }
+    public EqualOperator(String userId) {
+		this.userId = userId;
+	}
 
-    public EqualOperator(Object leftOperand, Object rightOperand) {
-	this.leftOperand = leftOperand;
-	this.rightOperand = rightOperand;
-    }
+    public EqualOperator(String userId, Object leftOperand, Object rightOperand) {
+		this.userId = userId;
+
+		this.leftOperand = leftOperand;
+		this.rightOperand = rightOperand;
+	}
 
     // methods
     public Object getLeftOperand() {
@@ -158,9 +162,9 @@ public class EqualOperator {
 	    }
 	}
 	if(result==false)
-		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
+		communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:red\"> \""+leftOperand+ "\" <> \"" + rightOperand+"\"</B> )"));
 	else
-		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> \""+leftOperand+ "\" = \"" + rightOperand+"\"</B> )"));
+		communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:green\"> \""+leftOperand+ "\" = \"" + rightOperand+"\"</B> )"));
 
 
 	return result;

@@ -15,16 +15,19 @@ public class LessOperator extends AbstractComparatorOperator{
     private Object leftOperand;
     private Object rightOperand;
 
-    // constructors
-    public LessOperator() {
-    }
+	// constructors
+	public LessOperator(String userId) {
+		super(userId);
+	}
 
-    public LessOperator(Object leftOperand, Object rightOperand) {
-	this.leftOperand = leftOperand;
-	this.rightOperand = rightOperand;
-	//System.out.println("LESS operator");
+	public LessOperator(String userId, Object leftOperand, Object rightOperand) {
+		super(userId);
+		this.leftOperand = leftOperand;
+		this.rightOperand = rightOperand;
+		// System.out.println("LESS operator");
 
-    }
+	}
+
 
     // methods
     public Object getLeftOperand() {
@@ -64,9 +67,9 @@ public class LessOperator extends AbstractComparatorOperator{
 	    return null;
 
 	if (result == false)
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> " + left + " NOT < " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:red\"> " + left + " NOT < " + right + "</B> )"));
 	else
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> " + left + " < " + right + "</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:green\"> " + left + " < " + right + "</B> )"));
 
 	return result;
     }

@@ -16,14 +16,15 @@ public class GreaterOperator extends AbstractComparatorOperator{
     private Object rightOperand;
 
     // constructors
-    public GreaterOperator() {
-    }
+ 	public GreaterOperator(String userId) {
+ 		super(userId);
+ 	}
 
-    public GreaterOperator(Object leftOperand, Object rightOperand) {
-	this.leftOperand = leftOperand;
-	this.rightOperand = rightOperand;
-    }
-
+ 	public GreaterOperator(String userId,Object leftOperand, Object rightOperand) {
+ 		super(userId);
+ 		this.leftOperand = leftOperand;
+ 		this.rightOperand = rightOperand;
+ 	}
     // methods
     public Object getLeftOperand() {
 	return leftOperand;
@@ -62,15 +63,15 @@ public class GreaterOperator extends AbstractComparatorOperator{
 	}
 	else 
 	{
-	    communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
+	    communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:red\"> "+leftOperand+ " NOT > " + rightOperand+"</B> )"));
 	    return false;
         }
 	
 	
 	if(result==false)
-		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:red\"> "+left+ " NOT > " + right+"</B> )"));
+		communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:red\"> "+left+ " NOT > " + right+"</B> )"));
 	else
-		communication.post(new CheckerShortNotificationEvent("( <B style=\"color:green\"> "+left+ " > " + right+"</B> )"));
+		communication.post(new CheckerShortNotificationEvent(this.userId,"( <B style=\"color:green\"> "+left+ " > " + right+"</B> )"));
 
 	//System.out.println("was greater");
 	return result;

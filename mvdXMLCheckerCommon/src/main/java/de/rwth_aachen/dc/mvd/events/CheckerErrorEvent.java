@@ -1,10 +1,10 @@
 package de.rwth_aachen.dc.mvd.events;
 
-public class CheckerErrorEvent {
+public class CheckerErrorEvent extends SessionEvent{
     private final String message;
     private final String class_name;
-    public CheckerErrorEvent(String class_name,String message) {
-	super();
+    public CheckerErrorEvent(String userId, String class_name,String message) {
+	super(userId);
 	this.message = message;
 	this.class_name = class_name;
     }
