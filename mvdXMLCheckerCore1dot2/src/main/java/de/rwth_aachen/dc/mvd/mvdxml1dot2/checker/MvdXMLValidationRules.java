@@ -2,7 +2,9 @@ package de.rwth_aachen.dc.mvd.mvdxml1dot2.checker;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -12,7 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
-import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart_tech.mvd_xml_1dot2.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot2.Concept;
@@ -20,31 +21,31 @@ import generated.buildingsmart_tech.mvd_xml_1dot2.ConceptRoot;
 import generated.buildingsmart_tech.mvd_xml_1dot2.ConceptTemplate;
 import generated.buildingsmart_tech.mvd_xml_1dot2.EntityRule;
 import generated.buildingsmart_tech.mvd_xml_1dot2.ModelView;
-import generated.buildingsmart_tech.mvd_xml_1dot2.ModelView.ExchangeRequirements.ExchangeRequirement;
 import generated.buildingsmart_tech.mvd_xml_1dot2.MvdXML;
-import generated.buildingsmart_tech.mvd_xml_1dot2.Requirements.Requirement;
-import nl.tue.ddss.mvdxml1dot1.mvdparser.MvdXMLException;
 
 // Based on nl.tue.ddss.mvdparser.MvdXMLParser
+// Rewritten by JO 2022
+// JO 2022_02
 
 public class MvdXMLValidationRules {
 	private final String userId;
 	private EventBusCommunication communication = EventBusCommunication.getInstance();
 
 	private MvdXML mvdXML;
-	private List<ConceptTemplate> concept_templates = new ArrayList<ConceptTemplate>();
+	//private List<ConceptTemplate> concept_templates = new ArrayList<ConceptTemplate>();
+	private Map<String,ConceptTemplate> concept_templates = new HashMap<String,ConceptTemplate>();
 	private boolean valid = true;
 
-	public MvdXMLValidationRules(String userId,String filename) throws JAXBException {
+	public MvdXMLValidationRules(String userId, String filename) throws JAXBException {
 		this.userId = userId;
 		if (!MvdXMLVersionCheck.checkMvdXMLSchemaVersion(filename)) {
 			// System.out.println("Not valid");
 			this.valid = false;
 			return;
 		}
-		// System.out.println("Valid mvdXML 1.2");
+		// System.out.println("Valid mvdXML 1.1");
 		try {
-			JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_2dot1");
+			JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_1dot1");
 			Unmarshaller unmarshaller = mvdXMLSchema.createUnmarshaller();
 			StreamSource streamSource = new StreamSource(new File(filename));
 
@@ -56,19 +57,22 @@ public class MvdXMLValidationRules {
 
 			for (ConceptTemplate t : main_concept_templates)
 				addSubTemplates(t);
-			this.concept_templates.addAll(main_concept_templates);
+			//this.concept_templates.addAll(main_concept_templates);
+			for(ConceptTemplate ct:main_concept_templates)
+				this.concept_templates.put(ct.getUuid(), ct);
 		} catch (Exception e) {
 			communication.post(new CheckerErrorEvent(this.userId,this.getClass().getName(), e.getMessage()));
 			this.valid = false;
 			e.printStackTrace();
 		}
+		
 	}
 
 	private void addSubTemplates(ConceptTemplate concept_template) {
 		if (concept_template.getSubTemplates() == null)
 			return;
 		for (ConceptTemplate t : concept_template.getSubTemplates().getConceptTemplate()) {
-			this.concept_templates.add(t);
+			this.concept_templates.put(t.getUuid(),t);
 			addSubTemplates(t);
 		}
 
@@ -121,51 +125,34 @@ public class MvdXMLValidationRules {
 		return conceptTemplates;
 	}
 
-	public List<MVDConceptConstraint> getMVDConstraints() {
-		List<MVDConceptConstraint> conceptTrees = new ArrayList<MVDConceptConstraint>();
+	//JO 2022_02
+	public List<MVDConceptConstraintRootSet> getMVDConstraints() {
+		List<MVDConceptConstraintRootSet> constraints = new ArrayList<MVDConceptConstraintRootSet>();
 
 		for (ConceptRoot conceptRoot : extractConceptRoots()) {
-			ConceptTemplate applicability_conceptTemplate = null;
+			String applicableIfcElement=conceptRoot.getApplicableRootEntity();
+			MVDConceptConstraintRootSet conceptSet =new MVDConceptConstraintRootSet(conceptRoot,applicableIfcElement);
+			constraints.add(conceptSet);
+			
 			try {
-				String applicability_templateRef = applicability_templateRef = conceptRoot.getApplicability()
+				String applicability_templateRef = conceptRoot.getApplicability()
 						.getTemplate().getRef();
-				for (ConceptTemplate conceptTemplate : concept_templates) {
-					if (conceptTemplate.getUuid().equals(applicability_templateRef)) {
-						applicability_conceptTemplate = conceptTemplate;
-					}
-				}
+				conceptSet.setapplicabilityTemplates(this.concept_templates.get(applicability_templateRef));
+				
 			} catch (Exception e) {
 				// if not exists
 			}
+			
 			List<Concept> concepts = conceptRoot.getConcepts().getConcept();
 			for (Concept concept : concepts) {
 				String concept_templateRef = concept.getTemplate().getRef();
-				for (ConceptTemplate concept_conceptTemplate : concept_templates) {
-					if (concept_conceptTemplate.getUuid().equals(concept_templateRef)) {
-						conceptTrees.add(new MVDConceptConstraint(conceptRoot, concept, concept_conceptTemplate,
-								applicability_conceptTemplate));
-					}
-				}
-			}
-		}
-		return conceptTrees;
-	}
-
-	public List<MVDConceptConstraint> getALLMVDConstraints() throws MvdXMLException {
-		List<ModelView> modelViews = getModelViews();
-		List<MVDConceptConstraint> constraints = new ArrayList<MVDConceptConstraint>();
-		for (ModelView modelView : modelViews) {
-			List<ExchangeRequirement> exchangeRequirements = modelView.getExchangeRequirements()
-					.getExchangeRequirement();
-			for (ExchangeRequirement er : exchangeRequirements) {
-				List<MVDConceptConstraint> mcs = buildExchangeRequirementConceptConstraints(modelView, er);
-				for (MVDConceptConstraint mc : mcs) {
-					constraints.add(mc);
-				}
+				conceptSet.add(new MVDConceptConstraint(conceptRoot, concept, this.concept_templates.get(concept_templateRef)));
+			
 			}
 		}
 		return constraints;
 	}
+
 
 	public List<AttributeRule.Constraints.Constraint> getConstraints(AttributeRule attributeRule) {
 		List<AttributeRule.Constraints.Constraint> constraints = attributeRule.getConstraints().getConstraint();
@@ -177,58 +164,6 @@ public class MvdXMLValidationRules {
 		return constraints;
 	}
 
-	private List<MVDConceptConstraint> buildExchangeRequirementConceptConstraints(ModelView modelView,
-			ExchangeRequirement modelView_er) throws MvdXMLException {
-		List<MVDConceptConstraint> constraints = new ArrayList<MVDConceptConstraint>();
-		// NOTE: modelView.getRoots().getConceptRoot() give list of
-		// ModelView.Roots.ConceptRoot (Roots is gingular)
-		// This is a curiosity because of the XML definition (
-		List<ConceptRoot> conceptRoots = modelView.getRoots().getConceptRoot();
-		for (ConceptRoot root : conceptRoots) {
-			List<Concept> concepts = root.getConcepts().getConcept();
-			for (Concept concept : concepts) {
-				List<Requirement> requirements = concept.getRequirements().getRequirement();
-				for (Requirement requirement : requirements) {
-					if (requirement.getExchangeRequirement().equals(modelView_er.getUuid())) {
-						communication.post(new CheckerNotificationEvent(
-								this.userId,"Concept requirement " + concept.getUuid() + " is used since it refers to "
-										+ modelView_er.getUuid() + " exchangeRequirement in mvdXML"));
-						constraints.add(new MVDConceptConstraint(root, concept, getTemplate(concept), getTemplate(root),
-								requirement.getRequirement()));
-					}
-				}
-			}
-		}
-		return constraints;
-	}
-
-	private ConceptTemplate getTemplate(Concept concept) {
-		ConceptTemplate ct = null;
-		for (ConceptTemplate conceptTemplate : concept_templates) {
-			if (conceptTemplate.getUuid().equals(concept.getTemplate())) {
-				communication.post(new CheckerNotificationEvent(
-						this.userId,"Concept template " + conceptTemplate.getUuid() + " was found for " + concept.getUuid()));
-				ct = conceptTemplate;
-			}
-		}
-		return ct;
-	}
-
-	private ConceptTemplate getTemplate(ConceptRoot concept_root) {
-		try {
-			ConceptTemplate ct = null;
-			for (ConceptTemplate conceptTemplate : concept_templates) {
-				if (conceptTemplate.getUuid().equals(concept_root.getApplicability().getTemplate())) {
-					communication.post(new CheckerNotificationEvent(this.userId,"Applicability concept template "
-							+ conceptTemplate.getUuid() + " was found for " + concept_root.getUuid()));
-					ct = conceptTemplate;
-				}
-			}
-			return ct;
-		} catch (Exception e) {
-			return null;
-		}
-	}
 
 	public boolean isValid() {
 		return valid;

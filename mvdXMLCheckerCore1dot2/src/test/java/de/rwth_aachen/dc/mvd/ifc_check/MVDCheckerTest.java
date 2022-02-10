@@ -11,6 +11,7 @@ import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MVDConceptConstraint;
+import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MVDConceptConstraintRootSet;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLValidationRules;
 import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcMVDConstraintChecker;
 
@@ -23,7 +24,7 @@ public class MVDCheckerTest {
 	    IfcModelInstance model = new IfcModelInstance();
 	    IfcModelInterface bimserver_ifcModel = model.readModel(".",ifcFile, Paths.get("."));
 	    bimserver_ifcModel.fixInverseMismatches();
-	    List<MVDConceptConstraint> constraints = mvdXML.getMVDConstraints();
+	    List<MVDConceptConstraintRootSet> constraints = mvdXML.getMVDConstraints();
 	    System.out.println(constraints.size());
 
 	    if (model.getIfcversion().isPresent()) {

@@ -31,6 +31,7 @@ import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.AbstractRule;
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MVDConceptConstraint;
+import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MVDConceptConstraintRootSet;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart_tech.mvd_xml_1dot2.AttributeRule;
 import generated.buildingsmart_tech.mvd_xml_1dot2.Definitions;
@@ -43,25 +44,25 @@ import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.ObjectToValue;
 
 /*
  * Modified by J0 2020, 2021, 2022
- * 
  */
 
 public class IfcMVDConstraintChecker {
 	private final String userId;
-
 	private final EventBusCommunication communication = EventBusCommunication.getInstance();
-	private final List<MVDConceptConstraint> constraints;
+	private final List<MVDConceptConstraintRootSet> constraints;
 
 	private IfcVersion ifcversion;
 
-	public IfcMVDConstraintChecker(List<MVDConceptConstraint> constraints, IfcVersion ifcversion)
+	// JO 2022_02
+	public IfcMVDConstraintChecker(List<MVDConceptConstraintRootSet> constraints, IfcVersion ifcversion)
 			throws DeserializeException, IOException, URISyntaxException {
 		this.constraints = constraints;
 		this.ifcversion = ifcversion;
 		this.userId = ".";
 	}
 
-	public IfcMVDConstraintChecker(String userId, List<MVDConceptConstraint> constraints, IfcVersion ifcversion)
+	// JO 2022_02
+	public IfcMVDConstraintChecker(String userId, List<MVDConceptConstraintRootSet> constraints, IfcVersion ifcversion)
 			throws DeserializeException, IOException, URISyntaxException {
 		this.constraints = constraints;
 		this.ifcversion = ifcversion;
@@ -86,57 +87,39 @@ public class IfcMVDConstraintChecker {
 		}
 		communication.post(new CheckerInfoEvent(this.userId, "Checking against", "mvdXML 1.1 <P>"));
 		// For each set of constraings
-		for (MVDConceptConstraint constraint : constraints) {
-			if (constraint == null) {
-				communication.post(new CheckerNotificationEvent(this.userId, "Constraint was null <P>"));
-				issuereport.addIssue("Constraint was null");
-				continue;
-			}
-			if (constraint.getConcept() != null && constraint.getConcept().getUuid() != null) {
-				communication.post(new CheckerBreakEvent(this.userId));
-				communication
-						.post(new CheckerInfoEvent(this.userId, "<P>CONCEPT: ", constraint.getConcept().getUuid()));
-			}
+		for (MVDConceptConstraintRootSet constraint_rootset : constraints) { // TODO JO 2022_02 This should be the
+																				// ConceptRoot level
+			System.out.println("FOR constraints start");
 
-			communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId,
-					"Applicability Operator: " + constraint.getApplicability_operator()));
-			for (TemplateRule applicability_templateRule : constraint.getApplicability_templateRules()) {
-				communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId,
-						"Applicability rule: " + applicability_templateRule.getParameters()));
-			}
-
-			communication.post(
-					new CheckerInfoEvent(this.userId, "Concept validity Operator: ", constraint.getConcept_operator()));
-			for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
-				communication.post(new CheckerElementValidityNotificationEvent(this.userId,
-						"Concept rule: " + templateRule.getParameters()));
-			}
-
-			List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
 			try {
 				Class cls = null;
 				switch (this.ifcversion) {
 				case IFC2x3:
-					cls = Class.forName(
-							"org.bimserver.models.ifc2x3tc1." + constraint.getConceptRoot().getApplicableRootEntity());
+					cls = Class
+							.forName("org.bimserver.models.ifc2x3tc1." + constraint_rootset.getApplicableIfcElement());
 					break;
 				case IFC4:
-					cls = Class.forName(
-							"org.bimserver.models.ifc4." + constraint.getConceptRoot().getApplicableRootEntity());
+					cls = Class.forName("org.bimserver.models.ifc4." + constraint_rootset.getApplicableIfcElement());
 					break;
 				default:
 				}
-
-				List<Object> allClassInstances = ifcModel.getAllWithSubTypes(cls);
-
-				if (allClassInstances.size() == 0) {
+				System.out.println("ifcRoot class was "+cls);
+				List<Object> allIfcClassInstances = ifcModel.getAllWithSubTypes(cls);
+				List<Object> applicableIfElements = new ArrayList<>();
+				if (allIfcClassInstances.size() == 0) {
 					issuereport.addIssue("No " + cls.getCanonicalName() + " element in the model");
 					communication.post(new CheckerErrorEvent(this.userId, cls.getCanonicalName(),
 							"No " + cls.getCanonicalName() + " element in the model"));
 				}
 
-				for (Object ifcObject : allClassInstances) {
+				communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId,
+						"Applicability Operator: " + constraint_rootset.getApplicability_operator()));
+				for (TemplateRule applicability_templateRule : constraint_rootset.getApplicability_templateRules()) {
+					communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId,
+							"Applicability rule: " + applicability_templateRule.getParameters()));
+				}
 
+				for (Object ifcObject : allIfcClassInstances) {
 					if (this.ifcversion == IfcVersion.IFC2x3)
 						communication.post(new CheckerInfoEvent(this.userId, "<B>Element "
 								+ ((org.bimserver.models.ifc2x3tc1.IfcRoot) ifcObject).getGlobalId() + "</B> of class ",
@@ -146,45 +129,79 @@ public class IfcMVDConstraintChecker {
 								+ ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "</B> of class ",
 								ifcObject.getClass().getSimpleName()));
 
-					IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId,ifcObject,
-							concept_attributeRules, this.ifcversion);
-					List<HashMap<AbstractRule, ObjectToValue>> concept_hashMaps = concept_ifcHashMapBuilder
-							.getHashMaps();
-
-					String comment = new String();
-					for (HashMap<AbstractRule, ObjectToValue> hashMap : concept_hashMaps)
-						templateLevelRuleCheck(hashMap);
-
-					if (elementApplicability_check(constraint, ifcObject)) {
+					System.out.println("IfcElement: "+ifcObject.toString());
+					if (elementApplicability_check(constraint_rootset, ifcObject)) {
 						// APPLICABLE
-						elementValidity_check(issuereport, constraint, ifcObject, concept_hashMaps, comment);
+						System.out.println("APPLICABLE");
+						applicableIfElements.add(ifcObject);
 					}
 
 				}
+
+				for (MVDConceptConstraint constraint : constraint_rootset.getConcept_constraints()) {
+					
+					if (constraint == null) {
+						communication.post(new CheckerNotificationEvent(this.userId, "Constraint was null <P>"));
+						issuereport.addIssue("Constraint was null");
+						continue;
+					}
+					if (constraint.getConcept() != null && constraint.getConcept().getUuid() != null) {
+						communication.post(new CheckerBreakEvent(this.userId));
+						communication.post(
+								new CheckerInfoEvent(this.userId, "<P>CONCEPT: ", constraint.getConcept().getUuid()));
+					}
+
+					communication.post(new CheckerInfoEvent(this.userId, "Concept validity Operator: ",
+							constraint.getConcept_operator()));
+					for (TemplateRule templateRule : constraint.getConcept_templateRules()) {
+						communication.post(new CheckerElementValidityNotificationEvent(this.userId,
+								"Concept rule: " + templateRule.getParameters()));
+					}
+
+					for (Object ifcObject : applicableIfElements) {
+						List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
+						IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
+								concept_attributeRules, this.ifcversion);
+						List<HashMap<AbstractRule, ObjectToValue>> concept_hashMaps = concept_ifcHashMapBuilder
+								.getHashMaps();
+
+						String comment = new String();
+						for (HashMap<AbstractRule, ObjectToValue> hashMap : concept_hashMaps)
+							templateLevelRuleCheck(hashMap);
+
+						elementValidity_check(issuereport, constraint, ifcObject, concept_hashMaps, comment);
+					}
+				}
+
 			} catch (ClassNotFoundException e) {
 				communication.post(new CheckerErrorEvent(this.userId, this.getClass().getName(), e.getMessage()));
 				e.printStackTrace();
 			}
+			System.out.println("FOR constraints stop");
 		}
+		System.out.println("Checking done");
 		return issuereport;
 
 	}
 
-	private boolean elementApplicability_check(MVDConceptConstraint constraint, Object ifcObject) {
+	private boolean elementApplicability_check(MVDConceptConstraintRootSet conceptset_constraint, Object ifcObject) {
 		boolean applicable = false;
 		int ai = 0;
 
-		List<AttributeRule> applicability_attributeRules = constraint.getApplicability_attributeRules();
+		List<AttributeRule> applicability_attributeRules = conceptset_constraint.getApplicability_attributeRules();
 		if (applicability_attributeRules == null)
-			return false;
-		IfcHashMapBuilder applicability_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId,ifcObject,
+		{
+			System.out.println("NO Rules, should pass!");
+			return true;
+		}
+		IfcHashMapBuilder applicability_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
 				applicability_attributeRules, this.ifcversion);
 		List<HashMap<AbstractRule, ObjectToValue>> applicability_hashMaps = applicability_ifcHashMapBuilder
 				.getHashMaps();
 
-		if (constraint.getApplicability_operator() != null)
-			if (constraint.getApplicability_operator().toLowerCase().trim().equals("or")) {
-				for (TemplateRule applicability_templateRule : constraint.getApplicability_templateRules()) {
+		if (conceptset_constraint.getApplicability_operator() != null)
+			if (conceptset_constraint.getApplicability_operator().toLowerCase().trim().equals("or")) {
+				for (TemplateRule applicability_templateRule : conceptset_constraint.getApplicability_templateRules()) {
 					for (int i = 0; i < applicability_hashMaps.size(); i++) {
 						communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId,
 								"<BR>Tested applicability value set: " + ai++ + ""));
@@ -203,7 +220,7 @@ public class IfcMVDConstraintChecker {
 
 			} else {
 				applicable = true;
-				for (TemplateRule applicability_templateRule : constraint.getApplicability_templateRules()) {
+				for (TemplateRule applicability_templateRule : conceptset_constraint.getApplicability_templateRules()) {
 					boolean template_validity = false;
 					for (int i = 0; i < applicability_hashMaps.size(); i++) {
 						communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId,
@@ -233,6 +250,7 @@ public class IfcMVDConstraintChecker {
 			else if (this.ifcversion == IfcVersion.IFC4)
 				communication.post(new CheckerElementApplicabilityNotificationEvent(this.userId, "<B>"
 						+ ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + " is not applicable.</B>"));
+			System.out.println("NOT Applicable");
 			return false; // No check since not applicable
 		} else {
 			if (this.ifcversion == IfcVersion.IFC2x3)
@@ -525,7 +543,7 @@ public class IfcMVDConstraintChecker {
 		CharStream charStream = new ANTLRStringStream(rule);
 		MvdXMLv1_1Lexer lexer = new MvdXMLv1_1Lexer(charStream);
 		TokenStream tokenStream = new CommonTokenStream(lexer);
-		MvdXMLv1_1Parser parser = new MvdXMLv1_1Parser(this.userId,tokenStream, hashMap);
+		MvdXMLv1_1Parser parser = new MvdXMLv1_1Parser(this.userId, tokenStream, hashMap);
 		try {
 			result = parser.expression();
 		} catch (RecognitionException e) {
