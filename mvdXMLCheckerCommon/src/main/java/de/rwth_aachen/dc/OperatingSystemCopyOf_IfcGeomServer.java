@@ -60,7 +60,7 @@ public class OperatingSystemCopyOf_IfcGeomServer {
 		try {
 		    Files.copy(in, geomserverPath,StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e1) {
-		    e1.printStackTrace();
+			System.err.println(e1.getMessage());  // JO 2022_02
 		}
 		if (ixsystem) {
 		    try {

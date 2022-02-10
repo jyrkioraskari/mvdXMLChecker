@@ -71,7 +71,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	private CheckBox showApplicability;
 	private CheckBox showValidation;
-	private CheckBox showIssues;
+	private CheckBox showReasoning;
 	private CheckBox showExtraInfo;
 	private Button check_button;
 
@@ -89,7 +89,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		this.image.setHeight("200px");
 		this.image.setHeight("100px");
 		layout.addComponent(this.image);
-		final Label labelH1 = new Label("mvdXML Online Checker");
+		final Label labelH1 = new Label("mvdXML Online Checker 2022");
 		labelH1.addStyleName(ValoTheme.LABEL_H1);
 		layout.addComponent(labelH1);
 
@@ -144,7 +144,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 		button_layout2.addComponent(save_as_bcfzip_button);
 		showApplicability = new CheckBox();
-		showApplicability.setCaption("Show reasoning for element applicability.");
+		showApplicability.setCaption("Show element applicability.");
 		showApplicability.setValue(true);
 		showApplicability.addValueChangeListener(x -> {
 			checkIFCFile();
@@ -152,20 +152,20 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		button_layout2.addComponent(showApplicability);
 
 		showValidation = new CheckBox();
-		showValidation.setCaption("Show reasoning for element validation.");
-		showValidation.setValue(false);
+		showValidation.setCaption("Show element validation.");
+		showValidation.setValue(true);
 		showValidation.addValueChangeListener(x -> {
 			checkIFCFile();
 		});
 		button_layout2.addComponent(showValidation);
 
-		showIssues = new CheckBox();
-		showIssues.setCaption("Show issues.");
-		showIssues.setValue(true);
-		showIssues.addValueChangeListener(x -> {
+		showReasoning = new CheckBox();
+		showReasoning.setCaption("Show details.");
+		showReasoning.setValue(false);
+		showReasoning.addValueChangeListener(x -> {
 			checkIFCFile();
 		});
-		button_layout2.addComponent(showIssues);
+		button_layout2.addComponent(showReasoning);
 
 		showExtraInfo = new CheckBox();
 		showExtraInfo.setCaption("Show extra info.");
@@ -206,6 +206,10 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
 
 	public void checkIFCFile() {
+		if(this.mvdXMLFile==null)
+			return;
+		if(this.ifcFile==null)
+			return;
 		issues.clear();
 		reasoning.setLength(0); // clean the content
 		reasoning_area.clear();
@@ -373,7 +377,18 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	@Subscribe
 	public void notificationEvent(CheckerIssueEvent event) {
-		if (this.showIssues.getValue()) {
+		if (this.showValidation.getValue()) {
+			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+				reasoning.append(" " + event.getValue() + "<P>");
+
+				reasoning_area.setValue(reasoning.toString());
+			}
+		}
+	}
+
+	@Subscribe
+	public void notificationEvent(CheckerNotificationEvent event) {
+		if (this.showReasoning.getValue()) {
 			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
 				reasoning.append(" " + event.getValue() + "<BR>");
 				reasoning_area.setValue(reasoning.toString());
@@ -382,18 +397,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
 
 	@Subscribe
-	public void notificationEvent(CheckerNotificationEvent event) {
-		if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
-			reasoning.append(" " + event.getValue() + "<BR>");
-			reasoning_area.setValue(reasoning.toString());
-		}
-	}
-
-	@Subscribe
 	public void notificationEvent(CheckerShortNotificationEvent event) {
-		if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
-			reasoning.append(" " + event.getValue() + " ");
-			reasoning_area.setValue(reasoning.toString());
+		if (this.showReasoning.getValue()) {
+			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+				reasoning.append(" " + event.getValue() + " ");
+				reasoning_area.setValue(reasoning.toString());
+			}
 		}
 	}
 
@@ -402,6 +411,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
 			reasoning.append("<HR>");
 			reasoning_area.setValue(reasoning.toString());
+
 		}
 	}
 
