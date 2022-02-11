@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.antlr.runtime.ANTLRStringStream;
@@ -40,7 +41,6 @@ import generated.buildingsmart_tech.mvd_xml_1dot2.EntityRule;
 import generated.buildingsmart_tech.mvd_xml_1dot2.TemplateRule;
 import generated.mvdxml1dot2.rule_operators.MvdXMLv1_1Lexer;
 import generated.mvdxml1dot2.rule_operators.MvdXMLv1_1Parser;
-import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.IfcObjectToValue;
 
 /*
  * Modified by J0 2020, 2021, 2022
@@ -162,11 +162,11 @@ public class IfcMVDConstraintChecker {
 						List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
 						IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
 								concept_attributeRules, this.ifcversion);
-						List<HashMap<AbstractRule, IfcObjectToValue>> concept_hashMaps = concept_ifcHashMapBuilder
+						List<HashMap<AbstractRule, Map.Entry<Object, Object>>> concept_hashMaps = concept_ifcHashMapBuilder
 								.getHashMaps();
 
 						String comment = new String();
-						for (HashMap<AbstractRule, IfcObjectToValue> hashMap : concept_hashMaps)
+						for (HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap : concept_hashMaps)
 							templateLevelRuleCheck(hashMap);
 
 						elementValidity_check(issuereport, constraint, ifcObject, concept_hashMaps, comment);
@@ -196,7 +196,7 @@ public class IfcMVDConstraintChecker {
 		}
 		IfcHashMapBuilder applicability_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
 				applicability_attributeRules, this.ifcversion);
-		List<HashMap<AbstractRule, IfcObjectToValue>> applicability_hashMaps = applicability_ifcHashMapBuilder
+		List<HashMap<AbstractRule, Map.Entry<Object, Object>>> applicability_hashMaps = applicability_ifcHashMapBuilder
 				.getHashMaps();
 
 		if (conceptset_constraint.getApplicability_operator() != null)
@@ -264,7 +264,7 @@ public class IfcMVDConstraintChecker {
 	}
 
 	private void elementValidity_check(IssueReport issuereport, MVDConceptConstraint constraint, Object ifcObject,
-			List<HashMap<AbstractRule, IfcObjectToValue>> concept_hashMaps, String comment) {
+			List<HashMap<AbstractRule, Map.Entry<Object, Object>>> concept_hashMaps, String comment) {
 		boolean valid = false;
 		int ci = 0;
 		if (constraint.getConcept_operator() != null)
@@ -514,12 +514,12 @@ public class IfcMVDConstraintChecker {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void templateLevelRuleCheck(HashMap<AbstractRule, IfcObjectToValue> hashMap) {
+	private void templateLevelRuleCheck(HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap) {
 		// No effect, since the cardinality check is not valid anymore in the 1.1
 		// version of the specification
 		Set<AbstractRule> rules = hashMap.keySet();
 		for (AbstractRule rule : rules) {
-			IfcObjectToValue objectToValue = hashMap.get(rule);
+			Map.Entry<Object, Object> objectToValue = hashMap.get(rule);
 			// Object ifcObject = objectToValue.getIfcObject();
 			Object value = objectToValue.getValue();
 			List<Object> valueList = new ArrayList<Object>();
@@ -536,7 +536,7 @@ public class IfcMVDConstraintChecker {
 		}
 	}
 
-	private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, IfcObjectToValue> hashMap) {
+	private Boolean conceptLevelRuleCheck(String rule, HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap) {
 		rule = filterCharacters(rule);
 		Boolean result = false;
 		// System.out.println("RULE: "+rule);

@@ -2,6 +2,8 @@
 
 package generated.mvdxml1dot2.rule_operators;
 import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.runtime.BitSet;
 import org.antlr.runtime.MismatchedSetException;
 import org.antlr.runtime.NoViableAltException;
@@ -24,12 +26,6 @@ import nl.tue.ddss.mvdxml1dot1.rule_operators.OrOperator;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.XorOperator;
 import nl.tue.ddss.mvdxml1dot2.ifc_check.Metric;
 import nl.tue.ddss.mvdxml1dot2.ifc_check.Parameter;
-import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.IfcObjectToValue;
-
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
 
 @SuppressWarnings("all")
 public class MvdXMLv1_1Parser extends Parser {
@@ -97,8 +93,8 @@ public class MvdXMLv1_1Parser extends Parser {
 	@Override public String getGrammarFileName() { return "MvdXMLv1_1.g"; }
 
 
-	HashMap <AbstractRule,IfcObjectToValue> hashMap;
-	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,IfcObjectToValue> hashMap) {
+	HashMap <AbstractRule,Map.Entry<Object, Object>> hashMap;
+	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,Map.Entry<Object, Object>> hashMap) {
         this(userId,input, new RecognizerSharedState());
         this.hashMap=hashMap;
     }

@@ -2,22 +2,20 @@ package nl.tue.ddss.mvdxml1dot1.ifc_check;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.bimserver.emf.IdEObject;
 import org.eclipse.emf.common.util.Enumerator;
 
-import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
-import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
-import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcHashMapBuilder.ObjectToValue;
 
 public class Parameter {
     Object result;
     String name;
-    HashMap<AbstractRule, ObjectToValue> hashMap;
+    HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap;
 
-    public Parameter(String name, HashMap<AbstractRule, ObjectToValue> hashMap) {
+    public Parameter(String name, HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap) {
 	this.name = name;
 	this.hashMap = hashMap;
     }
