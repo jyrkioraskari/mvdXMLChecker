@@ -23,7 +23,7 @@ public class IfcHashMapBuilder {
 
 	private Object ifcObject;
 	private List<AttributeRule> attributeRules;
-	private final List<HashMap<AbstractRule, ObjectToValue>> hashMaps = new ArrayList<HashMap<AbstractRule, ObjectToValue>>();
+	private final List<HashMap<AbstractRule, IfcObjectToValue>> hashMaps = new ArrayList<HashMap<AbstractRule, IfcObjectToValue>>();
 	private final String ifc_class_base;
 
 	public IfcHashMapBuilder(String userId, Object ifcObject, List<AttributeRule> attributeRules,
@@ -41,14 +41,13 @@ public class IfcHashMapBuilder {
 			ifc_class_base = "org.bimserver.models.ifc4.";
 			break;
 		}
-		// System.out.println("ifcObject: " + ifcObject);
-		List<HashMap<AttributeRule, ObjectToValue>> initialHMs = new ArrayList<HashMap<AttributeRule, ObjectToValue>>();
-		initialHMs.add(new HashMap<AttributeRule, ObjectToValue>());
+		List<HashMap<AttributeRule, IfcObjectToValue>> initialHMs = new ArrayList<HashMap<AttributeRule, IfcObjectToValue>>();
+		initialHMs.add(new HashMap<AttributeRule, IfcObjectToValue>());
 
 		try {
-			List<HashMap<AttributeRule, ObjectToValue>> hMs = buildHashMaps(ifcObject, attributeRules, initialHMs);
+			List<HashMap<AttributeRule, IfcObjectToValue>> hMs = buildValueMaps(ifcObject, attributeRules, initialHMs);
 
-			for (HashMap<AttributeRule, ObjectToValue> hM : hMs)
+			for (HashMap<AttributeRule, IfcObjectToValue> hM : hMs)
 				this.hashMaps.add(enrichHashMap(hM));
 		} catch (ClassNotFoundException e) {
 			communication.post(new CheckerNotificationEvent(this.userId,
@@ -57,76 +56,75 @@ public class IfcHashMapBuilder {
 
 	}
 
-	public List<HashMap<AbstractRule, ObjectToValue>> getHashMaps() {
+	public List<HashMap<AbstractRule, IfcObjectToValue>> getHashMaps() {
 		return this.hashMaps;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<HashMap<AttributeRule, ObjectToValue>> buildHashMaps(Object ifcObject,
-			List<AttributeRule> attributeRules, List<HashMap<AttributeRule, ObjectToValue>> hashMaps)
+	private List<HashMap<AttributeRule, IfcObjectToValue>> buildValueMaps(Object ifcObject,
+			List<AttributeRule> mvdXML_template_attributeRules, List<HashMap<AttributeRule, IfcObjectToValue>> hashMaps)
 			throws ClassNotFoundException {
-		for (AttributeRule attributeRule : attributeRules) {
-			Object value = getAttributeValue(ifcObject, attributeRule.getAttributeName());
-			for (HashMap<AttributeRule, ObjectToValue> hm : hashMaps) {
-				hm.put(attributeRule, new ObjectToValue(ifcObject, value));
+		for (AttributeRule mvdXML_attributeRule : mvdXML_template_attributeRules) {
+			Object IFC_value = getIFCAttributeValue(ifcObject, mvdXML_attributeRule.getAttributeName());
+			for (HashMap<AttributeRule, IfcObjectToValue> hm : hashMaps) {
+				hm.put(mvdXML_attributeRule, new IfcObjectToValue(ifcObject, IFC_value));
 			}
-			if (attributeRule.getEntityRules() == null)
+			if (mvdXML_attributeRule.getEntityRules() == null)
 				continue;
-			if (value == null) {
-				List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-				for (EntityRule entityRule : entityRules)
-					if ((entityRule.getAttributeRules() != null)
-							&& (entityRule.getAttributeRules().getAttributeRule().size() >= 1))
-						hashMaps = buildHashMaps(null, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
+			if (IFC_value == null) {
+				List<EntityRule> mvdXML_entityRules = mvdXML_attributeRule.getEntityRules().getEntityRule();
+				for (EntityRule mvdXML_entityRule : mvdXML_entityRules)
+					if ((mvdXML_entityRule.getAttributeRules() != null)
+							&& (mvdXML_entityRule.getAttributeRules().getAttributeRule().size() >= 1))
+						hashMaps = buildValueMaps(null, mvdXML_entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 
 			}
-			if (value instanceof Collection) {
-				List<Object> valueList = new ArrayList<Object>();
-				valueList.addAll((Collection) value);
-				List<EntityRule> entityRules;
-				switch (valueList.size()) {
+			else if (IFC_value instanceof Collection) {
+				List<Object> IFC_valueList = new ArrayList<Object>();  // Collection of any kind into List
+				IFC_valueList.addAll((Collection) IFC_value);
+				List<EntityRule> mvdXML_entityRules;
+				switch (IFC_valueList.size()) {
 				case 0:
-					entityRules = attributeRule.getEntityRules().getEntityRule();
-					for (EntityRule entityRule : entityRules) {
-						if ((entityRule.getAttributeRules() != null)
-								&& (entityRule.getAttributeRules().getAttributeRule().size() >= 1))
-							hashMaps = buildHashMaps(null, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
+					mvdXML_entityRules = mvdXML_attributeRule.getEntityRules().getEntityRule();
+					for (EntityRule mvdXML_entityRule : mvdXML_entityRules) {
+						if ((mvdXML_entityRule.getAttributeRules() != null)
+								&& (mvdXML_entityRule.getAttributeRules().getAttributeRule().size() >= 1))
+							hashMaps = buildValueMaps(null, mvdXML_entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 
 					}
 
 					break;
 				case 1:
-					entityRules = attributeRule.getEntityRules().getEntityRule();
-					for (EntityRule entityRule : entityRules)
-						if (isInstance(valueList.get(0), this.ifc_class_base + entityRule.getEntityName()))
-							if ((entityRule.getAttributeRules() != null)
-									&& (entityRule.getAttributeRules().getAttributeRule().size() >= 1))
-								hashMaps = buildHashMaps(valueList.get(0),
-										entityRule.getAttributeRules().getAttributeRule(), hashMaps);
+					mvdXML_entityRules = mvdXML_attributeRule.getEntityRules().getEntityRule();
+					for (EntityRule mvdXML_entityRule : mvdXML_entityRules)
+						if (mvdXML_entityRule.getAttributeRules() != null && (mvdXML_entityRule.getAttributeRules().getAttributeRule().size() >= 1)
+						&& isInstance(IFC_valueList.get(0), this.ifc_class_base + mvdXML_entityRule.getEntityName()))
+								hashMaps = buildValueMaps(IFC_valueList.get(0),
+										mvdXML_entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 
 					break;
 				default:
-					List<HashMap<AttributeRule, ObjectToValue>> hMs = copyHashMaps(hashMaps);
-					for (int i = 0; i < valueList.size(); i++) {
+					List<HashMap<AttributeRule, IfcObjectToValue>> hMs = copyHashMaps(hashMaps);
+					for (int i = 0; i < IFC_valueList.size(); i++) {
 						if (i == 0) {
-							entityRules = attributeRule.getEntityRules().getEntityRule();
-							for (EntityRule entityRule : entityRules) {
-								if (isInstance(valueList.get(i), this.ifc_class_base + entityRule.getEntityName())
-										&& entityRule.getAttributeRules() != null)
-									hashMaps = buildHashMaps((valueList).get(i),
-											entityRule.getAttributeRules().getAttributeRule(), hashMaps);
+							mvdXML_entityRules = mvdXML_attributeRule.getEntityRules().getEntityRule();
+							for (EntityRule mvdXML_entityRule : mvdXML_entityRules) {
+								if (mvdXML_entityRule.getAttributeRules() != null && isInstance(IFC_valueList.get(i), this.ifc_class_base + mvdXML_entityRule.getEntityName())
+										)
+									hashMaps = buildValueMaps((IFC_valueList).get(i),
+											mvdXML_entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 							}
 
 						} else if (i >= 1) {
-							List<HashMap<AttributeRule, ObjectToValue>> hashMapList = copyHashMaps(hMs);
-							entityRules = attributeRule.getEntityRules().getEntityRule();
-							for (EntityRule entityRule : entityRules) {
-								if (isInstance(valueList.get(i), this.ifc_class_base + entityRule.getEntityName())
-										&& entityRule.getAttributeRules() != null) {
-									List<AttributeRule> attRuleList = entityRule.getAttributeRules().getAttributeRule();
+							List<HashMap<AttributeRule, IfcObjectToValue>> hashMapList = copyHashMaps(hMs);
+							mvdXML_entityRules = mvdXML_attributeRule.getEntityRules().getEntityRule();
+							for (EntityRule mvdXML_entityRule : mvdXML_entityRules) {
+								if (mvdXML_entityRule.getAttributeRules() != null && isInstance(IFC_valueList.get(i), this.ifc_class_base + mvdXML_entityRule.getEntityName())
+										) {
+									List<AttributeRule> attRuleList = mvdXML_entityRule.getAttributeRules().getAttributeRule();
 									if (attRuleList.size() >= 1)
-										hashMaps.addAll(buildHashMaps(valueList.get(i),
-												entityRule.getAttributeRules().getAttributeRule(), hashMapList));
+										hashMaps.addAll(buildValueMaps(IFC_valueList.get(i),
+												mvdXML_entityRule.getAttributeRules().getAttributeRule(), hashMapList));
 
 								}
 							}
@@ -134,12 +132,12 @@ public class IfcHashMapBuilder {
 					}
 
 				}
-			} else if (!(value instanceof String || value instanceof Double || value == null)) {
-				List<EntityRule> entityRules = attributeRule.getEntityRules().getEntityRule();
-				for (EntityRule entityRule : entityRules)
-					if (isInstance(value, this.ifc_class_base + entityRule.getEntityName())
-							&& entityRule.getAttributeRules() != null)
-						hashMaps = buildHashMaps(value, entityRule.getAttributeRules().getAttributeRule(), hashMaps);
+			} else if (!(IFC_value instanceof String || IFC_value instanceof Double || IFC_value == null)) {
+				List<EntityRule> mvdXML_entityRules = mvdXML_attributeRule.getEntityRules().getEntityRule();
+				for (EntityRule mvdXML_entityRule : mvdXML_entityRules)
+					if (mvdXML_entityRule.getAttributeRules() != null && isInstance(IFC_value, this.ifc_class_base + mvdXML_entityRule.getEntityName())
+							)
+						hashMaps = buildValueMaps(IFC_value, mvdXML_entityRule.getAttributeRules().getAttributeRule(), hashMaps);
 			}
 		}
 		return hashMaps;
@@ -155,7 +153,7 @@ public class IfcHashMapBuilder {
 		return false;
 	}
 
-	private Object getAttributeValue(Object ifcObject, String attributeName) {
+	private Object getIFCAttributeValue(Object ifcObject, String attributeName) {
 		Object value = new Object();
 		try {
 			if (ifcObject != null)
@@ -164,11 +162,8 @@ public class IfcHashMapBuilder {
 				value = null;
 			}
 		} catch (NoSuchMethodException | SecurityException e) {
-			// communication.post(new CheckerErrorEvent(this.getClass().getName(),
-			// e.getMessage()));
 			communication.post(new CheckerErrorEvent(this.userId,
 					"Attribute defined in mvdXML ConceptTemplate does not exist in IFC: ", e.getMessage()));
-			// e.printStackTrace();
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			communication.post(new CheckerErrorEvent(this.userId, this.getClass().getName(), e.getMessage()));
 			e.printStackTrace();
@@ -177,9 +172,9 @@ public class IfcHashMapBuilder {
 	}
 
 	@SuppressWarnings("unchecked")
-	private HashMap<AbstractRule, ObjectToValue> enrichHashMap(HashMap<AttributeRule, ObjectToValue> hM) {
+	private HashMap<AbstractRule, IfcObjectToValue> enrichHashMap(HashMap<AttributeRule, IfcObjectToValue> hM) {
 		Set<AttributeRule> attributeRules = hM.keySet();
-		HashMap<AbstractRule, ObjectToValue> enrichedHashMap = new HashMap<AbstractRule, ObjectToValue>();
+		HashMap<AbstractRule, IfcObjectToValue> enrichedHashMap = new HashMap<AbstractRule, IfcObjectToValue>();
 		for (AttributeRule attributeRule : attributeRules) {
 			enrichedHashMap.put(attributeRule, hM.get(attributeRule));
 			Object ifcObject = hM.get(attributeRule).getIfcObject();
@@ -223,7 +218,7 @@ public class IfcHashMapBuilder {
 								}
 							}
 						}
-						enrichedHashMap.put(entityRule, new ObjectToValue(ifcObject, derivedValue));
+						enrichedHashMap.put(entityRule, new IfcObjectToValue(ifcObject, derivedValue));
 					}
 				}
 			}
@@ -231,11 +226,11 @@ public class IfcHashMapBuilder {
 		return enrichedHashMap;
 	}
 
-	private List<HashMap<AttributeRule, ObjectToValue>> copyHashMaps(
-			List<HashMap<AttributeRule, ObjectToValue>> hashMaps) {
-		List<HashMap<AttributeRule, ObjectToValue>> hashMapList = new ArrayList<HashMap<AttributeRule, ObjectToValue>>();
-		for (HashMap<AttributeRule, ObjectToValue> hashMap : hashMaps) {
-			HashMap<AttributeRule, ObjectToValue> hm = new HashMap<AttributeRule, ObjectToValue>();
+	private List<HashMap<AttributeRule, IfcObjectToValue>> copyHashMaps(
+			List<HashMap<AttributeRule, IfcObjectToValue>> hashMaps) {
+		List<HashMap<AttributeRule, IfcObjectToValue>> hashMapList = new ArrayList<HashMap<AttributeRule, IfcObjectToValue>>();
+		for (HashMap<AttributeRule, IfcObjectToValue> hashMap : hashMaps) {
+			HashMap<AttributeRule, IfcObjectToValue> hm = new HashMap<AttributeRule, IfcObjectToValue>();
 			Set<AttributeRule> keySet = hashMap.keySet();
 			for (AttributeRule attributeRule : keySet) {
 				hm.put(attributeRule, hashMap.get(attributeRule));
@@ -253,11 +248,11 @@ public class IfcHashMapBuilder {
 		return attributeRules;
 	}
 
-	public class ObjectToValue {
-		Object ifcObject;
-		Object value;
+	public class IfcObjectToValue {
+		private final Object ifcObject;
+		private final Object value;
 
-		public ObjectToValue(Object ifcObject, Object value) {
+		public IfcObjectToValue(Object ifcObject, Object value) {
 			this.ifcObject = ifcObject;
 			this.value = value;
 		}

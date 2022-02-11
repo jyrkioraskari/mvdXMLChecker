@@ -8,14 +8,14 @@ import org.bimserver.emf.IdEObject;
 import org.eclipse.emf.common.util.Enumerator;
 
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.AbstractRule;
-import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.ObjectToValue;
+import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.IfcObjectToValue;
 
 public class Parameter {
     Object result;
     String name;
-    HashMap<AbstractRule, ObjectToValue> hashMap;
+    HashMap<AbstractRule, IfcObjectToValue> hashMap;
 
-    public Parameter(String name, HashMap<AbstractRule, ObjectToValue> hashMap) {
+    public Parameter(String name, HashMap<AbstractRule, IfcObjectToValue> hashMap) {
 	this.name = name;
 	this.hashMap = hashMap;
     }

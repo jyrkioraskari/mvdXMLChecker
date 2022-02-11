@@ -24,7 +24,7 @@ import nl.tue.ddss.mvdxml1dot1.rule_operators.OrOperator;
 import nl.tue.ddss.mvdxml1dot1.rule_operators.XorOperator;
 import nl.tue.ddss.mvdxml1dot2.ifc_check.Metric;
 import nl.tue.ddss.mvdxml1dot2.ifc_check.Parameter;
-import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.ObjectToValue;
+import nl.tue.ddss.mvdxml1dot2.ifc_check.IfcHashMapBuilder.IfcObjectToValue;
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -97,8 +97,8 @@ public class MvdXMLv1_1Parser extends Parser {
 	@Override public String getGrammarFileName() { return "MvdXMLv1_1.g"; }
 
 
-	HashMap <AbstractRule,ObjectToValue> hashMap;
-	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,ObjectToValue> hashMap) {
+	HashMap <AbstractRule,IfcObjectToValue> hashMap;
+	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,IfcObjectToValue> hashMap) {
         this(userId,input, new RecognizerSharedState());
         this.hashMap=hashMap;
     }
