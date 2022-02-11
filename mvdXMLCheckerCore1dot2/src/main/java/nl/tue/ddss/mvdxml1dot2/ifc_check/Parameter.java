@@ -2,7 +2,6 @@ package nl.tue.ddss.mvdxml1dot2.ifc_check;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.bimserver.emf.IdEObject;
@@ -10,12 +9,13 @@ import org.eclipse.emf.common.util.Enumerator;
 
 import de.rwth_aachen.dc.mvd.mvdxml1dot2.AbstractRule;
 
+
 public class Parameter {
     Object result;
     String name;
-    HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap;
+    HashMap<AbstractRule, Object> hashMap;
 
-    public Parameter(String name, HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap) {
+    public Parameter(String name, HashMap<AbstractRule, Object> hashMap) {
 	this.name = name;
 	this.hashMap = hashMap;
     }
@@ -26,7 +26,7 @@ public class Parameter {
 	for (AbstractRule rule : rules) {
 	    if (name.equals(rule.getRuleID())) {
 		//System.out.println(name+" equals");
-		value = this.hashMap.get(rule).getValue();
+		value = this.hashMap.get(rule);
 		//System.out.println("value is: "+value);
 		break;
 	    }

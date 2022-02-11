@@ -100,8 +100,8 @@ public class MvdXMLv1_1Parser extends Parser {
 	@Override public String getGrammarFileName() { return "MvdXMLv1_1.g"; }
 
 
-	HashMap <AbstractRule,Map.Entry<Object, Object>> hashMap;
-	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,Map.Entry<Object, Object>> hashMap) {
+	HashMap <AbstractRule,Object> hashMap;
+	public MvdXMLv1_1Parser(String userId,TokenStream input,HashMap <AbstractRule,Object> hashMap) {
 	        this(userId,input, new RecognizerSharedState());
 	        this.hashMap=hashMap;
 	    }

@@ -13,9 +13,9 @@ import de.rwth_aachen.dc.mvd.mvdxml1dot1.AbstractRule;
 public class Parameter {
     Object result;
     String name;
-    HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap;
+    HashMap<AbstractRule, Object> hashMap;
 
-    public Parameter(String name, HashMap<AbstractRule, Map.Entry<Object, Object>> hashMap) {
+    public Parameter(String name, HashMap<AbstractRule, Object> hashMap) {
 	this.name = name;
 	this.hashMap = hashMap;
     }
@@ -26,7 +26,7 @@ public class Parameter {
 	for (AbstractRule rule : rules) {
 	    if (name.equals(rule.getRuleID())) {
 		//System.out.println(name+" equals");
-		value = this.hashMap.get(rule).getValue();
+		value = this.hashMap.get(rule);
 		//System.out.println("value is: "+value);
 		break;
 	    }
