@@ -160,16 +160,21 @@ public class IfcMVDConstraintChecker {
 
 					for (Object ifcObject : applicableIfElements) {
 						List<AttributeRule> concept_attributeRules = constraint.getConcept_attributeRules();
+						System.out.println("JO IfcHashMapBuilder");
 						IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
 								concept_attributeRules, this.ifcversion);
 						List<HashMap<AbstractRule, Object>> concept_hashMaps = concept_ifcHashMapBuilder
 								.getHashMaps();
-
+						System.out.println("JO IfcHashMapBuilder done");
+						System.out.println("JO templateLevelRuleChecks");
 						String comment = new String();
 						for (HashMap<AbstractRule, Object> hashMap : concept_hashMaps)
 							templateLevelRuleCheck(hashMap);
+						System.out.println("JO templateLevelRuleChecks done");
 
+						System.out.println("JO Element validity checks");
 						elementValidity_check(issuereport, constraint, ifcObject, concept_hashMaps, comment);
+						System.out.println("JO Element validity checks done");
 					}
 				}
 
