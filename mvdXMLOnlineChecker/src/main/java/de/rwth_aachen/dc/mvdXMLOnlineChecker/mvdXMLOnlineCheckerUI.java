@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.FileDownloader;
@@ -55,6 +56,7 @@ import de.rwth_aachen.dc.mvdXMLOnlineChecker.upload.WebFileHandler;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 
 @Theme("rwth")
+@Push
 public class mvdXMLOnlineCheckerUI extends UI {
 	private EventBusCommunication communication = EventBusCommunication.getInstance();
 
@@ -81,9 +83,15 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	Image image;
 
+	
+	private UI ui_interface;
+	private String vaadin_session;
+	
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 		final VerticalLayout layout = new VerticalLayout();
+		this.ui_interface = this.getUI();
+		this.vaadin_session = VaadinSession.getCurrent().getSession().getId();
 		Resource res = new ThemeResource("rwth_caad_en_schwarz_grau_rgb.svg");
 		this.image = new Image("", res);
 		this.image.setHeight("200px");
@@ -206,79 +214,59 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	}
 
 	public void checkIFCFile() {
-		if(this.mvdXMLFile==null)
+		if (this.mvdXMLFile == null)
 			return;
-		if(this.ifcFile==null)
+		if (this.ifcFile == null)
 			return;
 		issues.clear();
 		reasoning.setLength(0); // clean the content
 		reasoning_area.clear();
 		reasoning.append("");
 		reasoning_area.setValue(reasoning.toString());
-		try {
+		
+		Thread t = new Thread(() -> {
 
-			// mvdXML 1.1
-			if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
-					"http://buildingsmart-tech.org/mvd/XML/1.1")) {
-				Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
-				n.setDelayMsec(5000);
-				n.show(Page.getCurrent());
-				IssueReport issuereport = MvdXMLv1dot1Check.check(VaadinSession.getCurrent().getSession().getId(),
-						this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-				issues.addAll(issuereport.getIssues());
+			try {
 
-				File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-				tempBCFZipFile.deleteOnExit();
-				issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-				Resource res = new FileResource(tempBCFZipFile);
-				if (this.fileDownloader == null) {
-					this.fileDownloader = new FileDownloader(res);
-					this.fileDownloader.extend(this.save_as_bcfzip_button);
-				} else {
-					this.fileDownloader.setFileDownloadResource(res);
-				}
-				this.save_as_bcfzip_button.setEnabled(true);
-
-			} else
-			// mvdXML 1.2
-			if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
-					"http://buildingsmart-tech.org/mvd/XML/1.2")) {
-				Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
-				n.setDelayMsec(5000);
-				n.show(Page.getCurrent());
-				IssueReport issuereport = MvdXMLv1dot2Check.check(VaadinSession.getCurrent().getSession().getId(),
-						this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-				issues.addAll(issuereport.getIssues());
-
-				File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-				tempBCFZipFile.deleteOnExit();
-				issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-				Resource res = new FileResource(tempBCFZipFile);
-				if (this.fileDownloader == null) {
-					this.fileDownloader = new FileDownloader(res);
-					this.fileDownloader.extend(this.save_as_bcfzip_button);
-				} else {
-					this.fileDownloader.setFileDownloadResource(res);
-				}
-				this.save_as_bcfzip_button.setEnabled(true);
-
-			} else {
-				// mvdXML 1_1
+				// mvdXML 1.1
 				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
-						"http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-					Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
-					n.setDelayMsec(5000);
-					n.show(Page.getCurrent());
-					IssueReport issuereport = MvdXMLv1undescore1Check.check(
-							VaadinSession.getCurrent().getSession().getId(), this.ifcFile.toPath(),
-							this.mvdXMLFile.getAbsolutePath());
+						"http://buildingsmart-tech.org/mvd/XML/1.1")) {
+					//Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+					//n.setDelayMsec(5000);
+					//n.show(Page.getCurrent());
+					IssueReport issuereport = MvdXMLv1dot1Check.check(vaadin_session,
+							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 					issues.addAll(issuereport.getIssues());
 
 					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 					tempBCFZipFile.deleteOnExit();
 					issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+
+					Resource res = new FileResource(tempBCFZipFile);
+					if (this.fileDownloader == null) {
+						this.fileDownloader = new FileDownloader(res);
+						this.fileDownloader.extend(this.save_as_bcfzip_button);
+					} else {
+						this.fileDownloader.setFileDownloadResource(res);
+					}
+					this.save_as_bcfzip_button.setEnabled(true);
+
+				} else
+				// mvdXML 1.2
+				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
+						"http://buildingsmart-tech.org/mvd/XML/1.2")) {
+					//Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
+					//n.setDelayMsec(5000);
+					//n.show(Page.getCurrent());
+
+					IssueReport issuereport = MvdXMLv1dot2Check.check(vaadin_session,
+							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
+					issues.addAll(issuereport.getIssues());
+
+					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+					tempBCFZipFile.deleteOnExit();
+					issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+
 					Resource res = new FileResource(tempBCFZipFile);
 					if (this.fileDownloader == null) {
 						this.fileDownloader = new FileDownloader(res);
@@ -289,16 +277,43 @@ public class mvdXMLOnlineCheckerUI extends UI {
 					this.save_as_bcfzip_button.setEnabled(true);
 
 				} else {
-					Notification n = new Notification("Unknown mvdXML version.", Notification.Type.TRAY_NOTIFICATION);
-					n.setDelayMsec(5000);
-					n.show(Page.getCurrent());
+					// mvdXML 1_1
+					if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
+							"http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
+						//Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
+						//n.setDelayMsec(5000);
+						//n.show(Page.getCurrent());
+						IssueReport issuereport = MvdXMLv1undescore1Check.check(
+								vaadin_session, this.ifcFile.toPath(),
+								this.mvdXMLFile.getAbsolutePath());
+						issues.addAll(issuereport.getIssues());
 
+						File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+						tempBCFZipFile.deleteOnExit();
+						issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+						Resource res = new FileResource(tempBCFZipFile);
+						if (this.fileDownloader == null) {
+							this.fileDownloader = new FileDownloader(res);
+							this.fileDownloader.extend(this.save_as_bcfzip_button);
+						} else {
+							this.fileDownloader.setFileDownloadResource(res);
+						}
+						this.save_as_bcfzip_button.setEnabled(true);
+
+					} else {
+						Notification n = new Notification("Unknown mvdXML version.",
+								Notification.Type.TRAY_NOTIFICATION);
+						n.setDelayMsec(5000);
+						n.show(Page.getCurrent());
+
+					}
 				}
+				issues_grid.setItems(issues);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			issues_grid.setItems(issues);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
+        t.start();
 	}
 
 	@Subscribe
@@ -339,79 +354,110 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	@Subscribe
 	public void infoEvent(CheckerInfoEvent event) {
-		if (this.showExtraInfo.getValue()) {
-			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
-				reasoning.append(event.getTopic() + ": " + event.getValue() + "<BR>");
-				reasoning_area.setValue(reasoning.toString());
+		if (showExtraInfo.getValue()) {
+			System.out.println("even id: "+event.getUserId());
+			System.out.println("vaadin id: "+vaadin_session);
+			if (event.getUserId().equals(vaadin_session)) {
+				System.out.println("CheckerInfoEvent");
+				ui_interface.access(() -> {
+					reasoning.append(event.getTopic() + ": " + event.getValue() + "<BR>");
+					reasoning_area.setValue(reasoning.toString());
+			    });
 			}
 		}
 	}
 
 	@Subscribe
 	public void errorEvent(CheckerErrorEvent event) {
-		if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		System.out.println("even id: "+event.getUserId());
+		System.out.println("vaadin id: "+vaadin_session);
+		if (event.getUserId().equals(vaadin_session)) {
+			ui_interface.access(() -> {
 			reasoning.append("Issue: " + event.getClass_name() + ": " + event.getMessage() + "<BR>");
 			reasoning_area.setValue(reasoning.toString());
+			});
 		}
 	}
 
 	@Subscribe
 	public void notificationEvent(CheckerElementApplicabilityNotificationEvent event) {
-		if (this.showApplicability.getValue()) {
-			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		if (showApplicability.getValue()) {
+			System.out.println("even id: "+event.getUserId());
+			System.out.println("vaadin id: "+vaadin_session);
+			if (event.getUserId().equals(vaadin_session)) {
+				ui_interface.access(() -> {
 				reasoning.append(" " + event.getValue() + "<BR>");
 				reasoning_area.setValue(reasoning.toString());
+				});
 			}
 		}
 	}
 
 	@Subscribe
 	public void notificationEvent(CheckerElementValidityNotificationEvent event) {
-		if (this.showValidation.getValue()) {
-			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		if (showValidation.getValue()) {
+			System.out.println("even id: "+event.getUserId());
+			System.out.println("vaadin id: "+vaadin_session);
+			if (event.getUserId().equals(vaadin_session)) {
+				ui_interface.access(() -> {
 				reasoning.append(" " + event.getValue() + "<BR>");
 				reasoning_area.setValue(reasoning.toString());
+				});
 			}
 		}
 	}
 
 	@Subscribe
 	public void notificationEvent(CheckerIssueEvent event) {
-		if (this.showValidation.getValue()) {
-			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		if (showValidation.getValue()) {
+			System.out.println("even id: "+event.getUserId());
+			System.out.println("vaadin id: "+vaadin_session);
+			if (event.getUserId().equals(vaadin_session)) {
+				ui_interface.access(() -> {
 				reasoning.append(" " + event.getValue() + "<P>");
-
 				reasoning_area.setValue(reasoning.toString());
+				});
 			}
 		}
 	}
 
 	@Subscribe
 	public void notificationEvent(CheckerNotificationEvent event) {
-		if (this.showReasoning.getValue()) {
-			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		if (showReasoning.getValue()) {
+			System.out.println("even id: "+event.getUserId());
+			System.out.println("vaadin id: "+vaadin_session);
+			if (event.getUserId().equals(vaadin_session)) {
+				ui_interface.access(() -> {
 				reasoning.append(" " + event.getValue() + "<BR>");
 				reasoning_area.setValue(reasoning.toString());
+				});
 			}
 		}
 	}
 
 	@Subscribe
 	public void notificationEvent(CheckerShortNotificationEvent event) {
-		if (this.showReasoning.getValue()) {
-			if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		if (showReasoning.getValue()) {
+			System.out.println("even id: "+event.getUserId());
+			System.out.println("vaadin id: "+vaadin_session);
+			if (event.getUserId().equals(vaadin_session)) {
+				ui_interface.access(() -> {
 				reasoning.append(" " + event.getValue() + " ");
 				reasoning_area.setValue(reasoning.toString());
+				});
 			}
 		}
 	}
 
 	@Subscribe
 	public void breakEvent(CheckerBreakEvent event) {
-		if (event.getUserId().equals(VaadinSession.getCurrent().getSession().getId())) {
+		System.out.println("even id: "+event.getUserId());
+		System.out.println("vaadin id: "+vaadin_session);
+		if (event.getUserId().equals(vaadin_session)) {
+			ui_interface.access(() -> {
 			reasoning.append("<HR>");
 			reasoning_area.setValue(reasoning.toString());
-
+			});
 		}
 	}
 
