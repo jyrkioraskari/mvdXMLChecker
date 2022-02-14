@@ -86,12 +86,15 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	
 	private UI ui_interface;
 	private String vaadin_session;
+	private Page vaadin_page; 
 	
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 		final VerticalLayout layout = new VerticalLayout();
 		this.ui_interface = this.getUI();
 		this.vaadin_session = VaadinSession.getCurrent().getSession().getId();
+		this.vaadin_page = Page.getCurrent();
+		
 		Resource res = new ThemeResource("rwth_caad_en_schwarz_grau_rgb.svg");
 		this.image = new Image("", res);
 		this.image.setHeight("200px");
@@ -232,9 +235,9 @@ public class mvdXMLOnlineCheckerUI extends UI {
 				// mvdXML 1.1
 				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
 						"http://buildingsmart-tech.org/mvd/XML/1.1")) {
-					//Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
-					//n.setDelayMsec(5000);
-					//n.show(Page.getCurrent());
+					Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+					n.setDelayMsec(5000);
+					n.show(vaadin_page);
 					IssueReport issuereport = MvdXMLv1dot1Check.check(vaadin_session,
 							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 					ui_interface.access(() -> {
@@ -259,9 +262,9 @@ public class mvdXMLOnlineCheckerUI extends UI {
 				// mvdXML 1.2
 				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
 						"http://buildingsmart-tech.org/mvd/XML/1.2")) {
-					//Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
-					//n.setDelayMsec(5000);
-					//n.show(Page.getCurrent());
+					Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
+					n.setDelayMsec(5000);
+					n.show(vaadin_page);
 
 					IssueReport issuereport = MvdXMLv1dot2Check.check(vaadin_session,
 							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
@@ -287,9 +290,9 @@ public class mvdXMLOnlineCheckerUI extends UI {
 					// mvdXML 1_1
 					if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
 							"http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-						//Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
-						//n.setDelayMsec(5000);
-						//n.show(Page.getCurrent());
+						Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
+						n.setDelayMsec(5000);
+						n.show(vaadin_page);
 						IssueReport issuereport = MvdXMLv1undescore1Check.check(
 								vaadin_session, this.ifcFile.toPath(),
 								this.mvdXMLFile.getAbsolutePath());
