@@ -219,6 +219,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		if (this.ifcFile == null)
 			return;
 		issues.clear();
+		issues_grid.setItems(issues);
 		reasoning.setLength(0); // clean the content
 		reasoning_area.clear();
 		reasoning.append("");
@@ -236,7 +237,10 @@ public class mvdXMLOnlineCheckerUI extends UI {
 					//n.show(Page.getCurrent());
 					IssueReport issuereport = MvdXMLv1dot1Check.check(vaadin_session,
 							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-					issues.addAll(issuereport.getIssues());
+					ui_interface.access(() -> {
+					  issues.addAll(issuereport.getIssues());
+					  issues_grid.setItems(issues);
+					});
 
 					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 					tempBCFZipFile.deleteOnExit();
@@ -261,7 +265,10 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 					IssueReport issuereport = MvdXMLv1dot2Check.check(vaadin_session,
 							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
-					issues.addAll(issuereport.getIssues());
+					ui_interface.access(() -> {
+						  issues.addAll(issuereport.getIssues());
+						  issues_grid.setItems(issues);
+						});
 
 					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 					tempBCFZipFile.deleteOnExit();
@@ -286,7 +293,10 @@ public class mvdXMLOnlineCheckerUI extends UI {
 						IssueReport issuereport = MvdXMLv1undescore1Check.check(
 								vaadin_session, this.ifcFile.toPath(),
 								this.mvdXMLFile.getAbsolutePath());
-						issues.addAll(issuereport.getIssues());
+						ui_interface.access(() -> {
+							  issues.addAll(issuereport.getIssues());
+							  issues_grid.setItems(issues);
+							});
 
 						File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 						tempBCFZipFile.deleteOnExit();
