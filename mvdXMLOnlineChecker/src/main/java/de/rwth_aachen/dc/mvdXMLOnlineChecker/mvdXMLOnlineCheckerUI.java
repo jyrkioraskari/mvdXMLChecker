@@ -83,18 +83,17 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	Image image;
 
-	
 	private UI ui_interface;
 	private String vaadin_session;
-	private Page vaadin_page; 
-	
+	private Page vaadin_page;
+
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 		final VerticalLayout layout = new VerticalLayout();
 		this.ui_interface = this.getUI();
 		this.vaadin_session = VaadinSession.getCurrent().getSession().getId();
 		this.vaadin_page = Page.getCurrent();
-		
+
 		Resource res = new ThemeResource("rwth_caad_en_schwarz_grau_rgb.svg");
 		this.image = new Image("", res);
 		this.image.setHeight("200px");
@@ -227,7 +226,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		reasoning_area.clear();
 		reasoning.append("");
 		reasoning_area.setValue(reasoning.toString());
-		
+
 		Thread t = new Thread(() -> {
 
 			try {
@@ -235,14 +234,16 @@ public class mvdXMLOnlineCheckerUI extends UI {
 				// mvdXML 1.1
 				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
 						"http://buildingsmart-tech.org/mvd/XML/1.1")) {
-					Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
-					n.setDelayMsec(5000);
-					n.show(vaadin_page);
-					IssueReport issuereport = MvdXMLv1dot1Check.check(vaadin_session,
-							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 					ui_interface.access(() -> {
-					  issues.addAll(issuereport.getIssues());
-					  issues_grid.setItems(issues);
+						Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
+						n.setDelayMsec(5000);
+						n.show(vaadin_page);
+					});
+					IssueReport issuereport = MvdXMLv1dot1Check.check(vaadin_session, this.ifcFile.toPath(),
+							this.mvdXMLFile.getAbsolutePath());
+					ui_interface.access(() -> {
+						issues.addAll(issuereport.getIssues());
+						issues_grid.setItems(issues);
 					});
 
 					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
@@ -262,16 +263,17 @@ public class mvdXMLOnlineCheckerUI extends UI {
 				// mvdXML 1.2
 				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
 						"http://buildingsmart-tech.org/mvd/XML/1.2")) {
-					Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
-					n.setDelayMsec(5000);
-					n.show(vaadin_page);
-
-					IssueReport issuereport = MvdXMLv1dot2Check.check(vaadin_session,
-							this.ifcFile.toPath(), this.mvdXMLFile.getAbsolutePath());
 					ui_interface.access(() -> {
-						  issues.addAll(issuereport.getIssues());
-						  issues_grid.setItems(issues);
-						});
+						Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
+						n.setDelayMsec(5000);
+						n.show(vaadin_page);
+					});
+					IssueReport issuereport = MvdXMLv1dot2Check.check(vaadin_session, this.ifcFile.toPath(),
+							this.mvdXMLFile.getAbsolutePath());
+					ui_interface.access(() -> {
+						issues.addAll(issuereport.getIssues());
+						issues_grid.setItems(issues);
+					});
 
 					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 					tempBCFZipFile.deleteOnExit();
@@ -290,16 +292,18 @@ public class mvdXMLOnlineCheckerUI extends UI {
 					// mvdXML 1_1
 					if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
 							"http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-						Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
-						n.setDelayMsec(5000);
-						n.show(vaadin_page);
-						IssueReport issuereport = MvdXMLv1undescore1Check.check(
-								vaadin_session, this.ifcFile.toPath(),
+
+						ui_interface.access(() -> {
+							Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
+							n.setDelayMsec(5000);
+							n.show(vaadin_page);
+						});
+						IssueReport issuereport = MvdXMLv1undescore1Check.check(vaadin_session, this.ifcFile.toPath(),
 								this.mvdXMLFile.getAbsolutePath());
 						ui_interface.access(() -> {
-							  issues.addAll(issuereport.getIssues());
-							  issues_grid.setItems(issues);
-							});
+							issues.addAll(issuereport.getIssues());
+							issues_grid.setItems(issues);
+						});
 
 						File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 						tempBCFZipFile.deleteOnExit();
@@ -326,7 +330,7 @@ public class mvdXMLOnlineCheckerUI extends UI {
 				e.printStackTrace();
 			}
 		});
-        t.start();
+		t.start();
 	}
 
 	@Subscribe
@@ -368,26 +372,26 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	@Subscribe
 	public void infoEvent(CheckerInfoEvent event) {
 		if (showExtraInfo.getValue()) {
-			System.out.println("even id: "+event.getUserId());
-			System.out.println("vaadin id: "+vaadin_session);
+			System.out.println("even id: " + event.getUserId());
+			System.out.println("vaadin id: " + vaadin_session);
 			if (event.getUserId().equals(vaadin_session)) {
 				System.out.println("CheckerInfoEvent");
 				ui_interface.access(() -> {
 					reasoning.append(event.getTopic() + ": " + event.getValue() + "<BR>");
 					reasoning_area.setValue(reasoning.toString());
-			    });
+				});
 			}
 		}
 	}
 
 	@Subscribe
 	public void errorEvent(CheckerErrorEvent event) {
-		System.out.println("even id: "+event.getUserId());
-		System.out.println("vaadin id: "+vaadin_session);
+		System.out.println("even id: " + event.getUserId());
+		System.out.println("vaadin id: " + vaadin_session);
 		if (event.getUserId().equals(vaadin_session)) {
 			ui_interface.access(() -> {
-			reasoning.append("Issue: " + event.getClass_name() + ": " + event.getMessage() + "<BR>");
-			reasoning_area.setValue(reasoning.toString());
+				reasoning.append("Issue: " + event.getClass_name() + ": " + event.getMessage() + "<BR>");
+				reasoning_area.setValue(reasoning.toString());
 			});
 		}
 	}
@@ -395,12 +399,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	@Subscribe
 	public void notificationEvent(CheckerElementApplicabilityNotificationEvent event) {
 		if (showApplicability.getValue()) {
-			System.out.println("even id: "+event.getUserId());
-			System.out.println("vaadin id: "+vaadin_session);
+			System.out.println("even id: " + event.getUserId());
+			System.out.println("vaadin id: " + vaadin_session);
 			if (event.getUserId().equals(vaadin_session)) {
 				ui_interface.access(() -> {
-				reasoning.append(" " + event.getValue() + "<BR>");
-				reasoning_area.setValue(reasoning.toString());
+					reasoning.append(" " + event.getValue() + "<BR>");
+					reasoning_area.setValue(reasoning.toString());
 				});
 			}
 		}
@@ -409,12 +413,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	@Subscribe
 	public void notificationEvent(CheckerElementValidityNotificationEvent event) {
 		if (showValidation.getValue()) {
-			System.out.println("even id: "+event.getUserId());
-			System.out.println("vaadin id: "+vaadin_session);
+			System.out.println("even id: " + event.getUserId());
+			System.out.println("vaadin id: " + vaadin_session);
 			if (event.getUserId().equals(vaadin_session)) {
 				ui_interface.access(() -> {
-				reasoning.append(" " + event.getValue() + "<BR>");
-				reasoning_area.setValue(reasoning.toString());
+					reasoning.append(" " + event.getValue() + "<BR>");
+					reasoning_area.setValue(reasoning.toString());
 				});
 			}
 		}
@@ -423,12 +427,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	@Subscribe
 	public void notificationEvent(CheckerIssueEvent event) {
 		if (showValidation.getValue()) {
-			System.out.println("even id: "+event.getUserId());
-			System.out.println("vaadin id: "+vaadin_session);
+			System.out.println("even id: " + event.getUserId());
+			System.out.println("vaadin id: " + vaadin_session);
 			if (event.getUserId().equals(vaadin_session)) {
 				ui_interface.access(() -> {
-				reasoning.append(" " + event.getValue() + "<P>");
-				reasoning_area.setValue(reasoning.toString());
+					reasoning.append(" " + event.getValue() + "<P>");
+					reasoning_area.setValue(reasoning.toString());
 				});
 			}
 		}
@@ -437,12 +441,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	@Subscribe
 	public void notificationEvent(CheckerNotificationEvent event) {
 		if (showReasoning.getValue()) {
-			System.out.println("even id: "+event.getUserId());
-			System.out.println("vaadin id: "+vaadin_session);
+			System.out.println("even id: " + event.getUserId());
+			System.out.println("vaadin id: " + vaadin_session);
 			if (event.getUserId().equals(vaadin_session)) {
 				ui_interface.access(() -> {
-				reasoning.append(" " + event.getValue() + "<BR>");
-				reasoning_area.setValue(reasoning.toString());
+					reasoning.append(" " + event.getValue() + "<BR>");
+					reasoning_area.setValue(reasoning.toString());
 				});
 			}
 		}
@@ -451,12 +455,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 	@Subscribe
 	public void notificationEvent(CheckerShortNotificationEvent event) {
 		if (showReasoning.getValue()) {
-			System.out.println("even id: "+event.getUserId());
-			System.out.println("vaadin id: "+vaadin_session);
+			System.out.println("even id: " + event.getUserId());
+			System.out.println("vaadin id: " + vaadin_session);
 			if (event.getUserId().equals(vaadin_session)) {
 				ui_interface.access(() -> {
-				reasoning.append(" " + event.getValue() + " ");
-				reasoning_area.setValue(reasoning.toString());
+					reasoning.append(" " + event.getValue() + " ");
+					reasoning_area.setValue(reasoning.toString());
 				});
 			}
 		}
@@ -464,12 +468,12 @@ public class mvdXMLOnlineCheckerUI extends UI {
 
 	@Subscribe
 	public void breakEvent(CheckerBreakEvent event) {
-		System.out.println("even id: "+event.getUserId());
-		System.out.println("vaadin id: "+vaadin_session);
+		System.out.println("even id: " + event.getUserId());
+		System.out.println("vaadin id: " + vaadin_session);
 		if (event.getUserId().equals(vaadin_session)) {
 			ui_interface.access(() -> {
-			reasoning.append("<HR>");
-			reasoning_area.setValue(reasoning.toString());
+				reasoning.append("<HR>");
+				reasoning_area.setValue(reasoning.toString());
 			});
 		}
 	}
