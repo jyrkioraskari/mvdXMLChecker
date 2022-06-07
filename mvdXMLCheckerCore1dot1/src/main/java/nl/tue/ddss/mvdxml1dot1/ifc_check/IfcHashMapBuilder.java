@@ -52,6 +52,7 @@ public class IfcHashMapBuilder {
 			System.out.println("JO buildValueMaps done");
 			handled.clear();
             System.out.println("JO enrichHashMap");
+            if(hMs!=null)  //TODO sub templates
 			for (HashMap<AttributeRule, Object> hM : hMs)
 				if(hM!=null)
 				  this.hashMaps.add(enrichHashMap(hM));
@@ -222,7 +223,7 @@ public class IfcHashMapBuilder {
 		try {
 			return Class.forName(className).isInstance(obj);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			communication.post(new CheckerNotificationEvent(this.userId, "There is no class named: " + className));
 		}
 		return false;

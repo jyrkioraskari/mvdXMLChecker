@@ -75,9 +75,45 @@ public class IfcMVDConstraintChecker {
 
 		switch (this.ifcversion) {
 		case IFC2x3:
+
+			if (this.constraints.size() > 0 && this.constraints.get(0).getConcept_constraints().size() > 0) {
+				if (this.constraints.get(0).getConcept_constraints().get(0).getConcept_conceptTemplate() != null) {
+					boolean applicable = false;
+					for (String schema : this.constraints.get(0).getConcept_constraints().get(0)
+							.getConcept_conceptTemplate().getApplicableSchema()) {
+						if (schema.toUpperCase().equals("IFC2X3"))
+							applicable = true;
+					}
+					if (applicable == false)
+					{					
+						System.err.println("IFC version (IFC2x3)of the model is not applicable  for the given mcdXML rules.\"");
+						issuereport.addIssue("IFC version of the model is not applicable for the given mcdXML rules.");
+						return issuereport;
+					}
+				}
+
+			}
 			communication.post(new CheckerInfoEvent(this.userId, "IFC Version", "IFC2x3"));
 			break;
 		case IFC4:
+			if (this.constraints.size() > 0 && this.constraints.get(0).getConcept_constraints().size() > 0) {
+				if (this.constraints.get(0).getConcept_constraints().get(0).getConcept_conceptTemplate() != null) {
+					boolean applicable = false;
+					for (String schema : this.constraints.get(0).getConcept_constraints().get(0)
+							.getConcept_conceptTemplate().getApplicableSchema()) {
+						if (schema.toUpperCase().equals("IFC4"))
+							applicable = true;
+					}
+					if (applicable == false)
+					{
+						System.err.println("IFC version (IFC4) of the model is not applicable for the given mcdXML rules.\"");
+						issuereport.addIssue("IFC version of the model is not applicable for the given mcdXML rules..");
+						return issuereport;
+
+					}
+				}
+
+			}
 			communication.post(new CheckerInfoEvent(this.userId, "IFC Version", "IFC4"));
 			break;
 		default:
@@ -103,7 +139,7 @@ public class IfcMVDConstraintChecker {
 					break;
 				default:
 				}
-				System.out.println("ifcRoot class was "+cls);
+				System.out.println("ifcRoot class was " + cls);
 				List<Object> allIfcClassInstances = ifcModel.getAllWithSubTypes(cls);
 				List<Object> applicableIfElements = new ArrayList<>();
 				if (allIfcClassInstances.size() == 0) {
@@ -129,7 +165,7 @@ public class IfcMVDConstraintChecker {
 								+ ((org.bimserver.models.ifc4.IfcRoot) ifcObject).getGlobalId() + "</B> of class ",
 								ifcObject.getClass().getSimpleName()));
 
-					System.out.println("IfcElement: "+ifcObject.toString());
+					System.out.println("IfcElement: " + ifcObject.toString());
 					if (elementApplicability_check(constraint_rootset, ifcObject)) {
 						// APPLICABLE
 						System.out.println("APPLICABLE");
@@ -139,7 +175,7 @@ public class IfcMVDConstraintChecker {
 				}
 
 				for (MVDConceptConstraint constraint : constraint_rootset.getConcept_constraints()) {
-					
+
 					if (constraint == null) {
 						communication.post(new CheckerNotificationEvent(this.userId, "Constraint was null <P>"));
 						issuereport.addIssue("Constraint was null");
@@ -163,8 +199,7 @@ public class IfcMVDConstraintChecker {
 						System.out.println("JO IfcHashMapBuilder");
 						IfcHashMapBuilder concept_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
 								concept_attributeRules, this.ifcversion);
-						List<HashMap<AbstractRule, Object>> concept_hashMaps = concept_ifcHashMapBuilder
-								.getHashMaps();
+						List<HashMap<AbstractRule, Object>> concept_hashMaps = concept_ifcHashMapBuilder.getHashMaps();
 						System.out.println("JO IfcHashMapBuilder done");
 						System.out.println("JO templateLevelRuleChecks");
 						String comment = new String();
@@ -194,15 +229,14 @@ public class IfcMVDConstraintChecker {
 		int ai = 0;
 
 		List<AttributeRule> applicability_attributeRules = conceptset_constraint.getApplicability_attributeRules();
-		if (applicability_attributeRules == null)
-		{
+		if (applicability_attributeRules == null) {
 			System.out.println("NO Rules, should pass!");
 			return true;
 		}
+
 		IfcHashMapBuilder applicability_ifcHashMapBuilder = new IfcHashMapBuilder(this.userId, ifcObject,
 				applicability_attributeRules, this.ifcversion);
-		List<HashMap<AbstractRule, Object>> applicability_hashMaps = applicability_ifcHashMapBuilder
-				.getHashMaps();
+		List<HashMap<AbstractRule, Object>> applicability_hashMaps = applicability_ifcHashMapBuilder.getHashMaps();
 
 		if (conceptset_constraint.getApplicability_operator() != null)
 			if (conceptset_constraint.getApplicability_operator().toLowerCase().trim().equals("or")) {

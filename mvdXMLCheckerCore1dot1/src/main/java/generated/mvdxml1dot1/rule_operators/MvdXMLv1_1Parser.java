@@ -446,23 +446,23 @@ public class MvdXMLv1_1Parser extends Parser {
 					}
 
 					}
-
+					if(op!=null) //TOOD sub templates
 					if (op.equals("=")){
 						 EqualOperator equalOperator=new EqualOperator(this.userId,leftOperand,rightOperand);
 						 boolTermReturns =equalOperator.getResult();
-					   }if (op.equals(">")){
+					   }if (op!=null && op.equals(">")){
 					   GreaterOperator greaterOperator=new GreaterOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =greaterOperator.getResult();
-					   }if (op.equals("<")){
+					   }if (op!=null && op.equals("<")){
 					   LessOperator lessOperator=new LessOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =lessOperator.getResult();
-					   }if (op.equals(">=")){
+					   }if (op!=null && op.equals(">=")){
 					   GreaterEqualOperator greaterEqualOperator=new GreaterEqualOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =greaterEqualOperator.getResult();
-					   }if (op.equals("<=")){
+					   }if (op!=null && op.equals("<=")){
 					   LessEqualOperator lessEqualOperator=new LessEqualOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =lessEqualOperator.getResult();
-					   }if (op.equals("!=")){
+					   }if (op!=null && op.equals("!=")){
 					   InEqualOperator inEqualOperator=new InEqualOperator(this.userId,leftOperand,rightOperand);
 					   boolTermReturns =inEqualOperator.getResult();
 					   }  

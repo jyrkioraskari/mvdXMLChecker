@@ -44,6 +44,7 @@ public class MVDConceptConstraint {
 
 		this.concept_templateRules = new ArrayList<TemplateRule>();
 		try {
+			if(concept.getTemplateRules()!=null && concept.getTemplateRules().getTemplateRulesOrTemplateRule()!=null) // TODO sub templates
 			for (Object t : concept.getTemplateRules().getTemplateRulesOrTemplateRule()) {
 				if (TemplateRules.class.isInstance(t)) {
 					for (Object t2 : ((TemplateRules) t).getTemplateRulesOrTemplateRule())
@@ -56,8 +57,11 @@ public class MVDConceptConstraint {
 			e.printStackTrace();
 
 		}
-
-		this.concept_attributeRules = concept_conceptTemplate.getRules().getAttributeRule();
+        if(concept_conceptTemplate.getRules()==null || concept_conceptTemplate.getRules().getAttributeRule()==null ) //TODO sub templates
+        
+        	this.concept_attributeRules = new ArrayList<AttributeRule>();
+        else
+ 		this.concept_attributeRules = concept_conceptTemplate.getRules().getAttributeRule();
 	}
 
 	public ConceptRoot getConceptRoot() {

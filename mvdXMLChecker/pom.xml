@@ -17,6 +17,6 @@
   <version>${mvdxml_check_project.version}</version>
   
   <properties>
-     <mvdxml_check_project.version>2.53.0</mvdxml_check_project.version>
+     <mvdxml_check_project.version>2.54.0</mvdxml_check_project.version>
 </properties>
 </project>

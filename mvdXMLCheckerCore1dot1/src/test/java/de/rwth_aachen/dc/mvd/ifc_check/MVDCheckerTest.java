@@ -23,6 +23,8 @@ public class MVDCheckerTest {
 	    Path ifcFile = Paths.get(ifcFileName);
 	    IfcModelInstance model = new IfcModelInstance();
 	    IfcModelInterface bimserver_ifcModel = model.readModel(".",ifcFile, Paths.get("."));
+	    if(bimserver_ifcModel==null)
+	    	return;
 	    bimserver_ifcModel.fixInverseMismatches();
 	    List<MVDConceptConstraintRootSet> constraints = mvdXML.getMVDConstraints();
 	    System.out.println(constraints.size());
@@ -45,8 +47,9 @@ public class MVDCheckerTest {
 
     public static void main(String[] args) throws Exception {
     //new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200922_Prüfdatei_Wartung.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
-    new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200923_Wartungsmanagement_neu.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
+    //new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200923_Wartungsmanagement_neu.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
 
+    	new MVDCheckerTest("C:\\jo\\2022_06_mvdChecker_bug\\20200922_Prüfdatei_Wartung.ifc", "C:\\jo\\2022_06_mvdChecker_bug\\ReferenceView_V1-2.mvdxml.xml");
 	
 	//new MVDCheckerTest("c:\\test\\noemi_collection\\noemi14\\20201110_Reinigung.ifc", "c:\\test\\noemi_collection\\noemi14\\ILC_0-Bauherr-Eigentümer.mvdxml");
 

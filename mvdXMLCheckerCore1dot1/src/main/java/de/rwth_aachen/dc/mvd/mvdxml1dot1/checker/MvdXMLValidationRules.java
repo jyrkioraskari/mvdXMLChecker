@@ -74,7 +74,9 @@ public class MvdXMLValidationRules {
 
 	private void addSubTemplates(ConceptTemplate concept_template) {
 		if (concept_template.getSubTemplates() == null)
+		{
 			return;
+		}
 		for (ConceptTemplate t : concept_template.getSubTemplates().getConceptTemplate()) {
 			this.concept_templates.put(t.getUuid(),t);
 			addSubTemplates(t);
@@ -146,10 +148,13 @@ public class MvdXMLValidationRules {
 			} catch (Exception e) {
 				// if not exists
 			}
-			
+			if(conceptRoot.getConcepts()==null || conceptRoot.getConcepts().getConcept()==null)  //TODO sub templates
+				continue;
 			List<Concept> concepts = conceptRoot.getConcepts().getConcept();
 			for (Concept concept : concepts) {
 				String concept_templateRef = concept.getTemplate().getRef();
+				if(this.concept_templates.get(concept_templateRef)==null)
+					System.out.println("No template!");
 				conceptSet.add(new MVDConceptConstraint(conceptRoot, concept, this.concept_templates.get(concept_templateRef)));
 			
 			}
