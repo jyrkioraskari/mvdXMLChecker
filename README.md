@@ -1,5 +1,5 @@
 # mvdXML Checker
-version 2.54.1
+version 2.55.0
 
 Jyrki Oraskari
 
@@ -31,6 +31,9 @@ https://github.com/BenzclyZhang/mvdXMLChecker
 
 The test Open API interface can be found here:
 http://lbd.arch.rwth-aachen.de/mvdXMLChecker/apidocs/
+
+It is recommended to use OpenJDK 21 (it is the modt current  Long-Term Support version). Java 17 is supported. OpenJava can be downloaded from  (https://docs.microsoft.com/en-us/java/openjdk/download).
+On a Windows system, download the MSI file that matches your processor type (usually x64 aka Intell), and run it to install Java.
 
 
 ## A Sample Python client source

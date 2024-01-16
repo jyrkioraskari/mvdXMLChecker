@@ -46,34 +46,14 @@ public class MVDCheckerTest {
     }
 
     public static void main(String[] args) throws Exception {
-    //new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200922_Prüfdatei_Wartung.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
-    //new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200923_Wartungsmanagement_neu.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentümer.mvdxml");
-
-    	new MVDCheckerTest("C:\\jo\\2022_06_mvdChecker_bug\\20200922_Prüfdatei_Wartung.ifc", "C:\\jo\\2022_06_mvdChecker_bug\\ReferenceView_V1-2.mvdxml.xml");
+    //new MVDCheckerTest("c:\\jo\\2022_02_Noemi_1\\20200923_Wartungsmanagement_neu.ifc", "c:\\jo\\2022_02_Noemi_1\\ILC_0-Bauherr-Eigentï¿½mer.mvdxml");
 	
-	//new MVDCheckerTest("c:\\test\\noemi_collection\\noemi14\\20201110_Reinigung.ifc", "c:\\test\\noemi_collection\\noemi14\\ILC_0-Bauherr-Eigentümer.mvdxml");
-
-	//new MVDCheckerTest("c:\\test\\noemi10\\BUW_HC-Gebäude-Wartung (1).ifc", "c:\\test\\noemi12\\ILC_Wartungs-LV erstellen (6).mvdxml");
-
-	//new MVDCheckerTest("c:\\test\\noemi10\\BUW_HC-Gebäude-Wartung (1).ifc", "c:\\test\\noemi12\\ILC_Anlagenverzeichnis Wartung erstellen (4).mvdxml");
-
-	//new MVDCheckerTest("c:\\test\\noemi10\\BUW_HC-Gebäude-Wartung (1).ifc", "c:\\test\\noemi10\\ILC_Anlagenverzeichnis Wartung erstellen (2).mvdxml");
-
-	//new MVDCheckerTest("c:\\test\\noemi9\\BUW_HC-Gebäude-Reinigung - Fenster_optimized.ifc", "c:\\test\\noemi9\\ILC_Flächenverzeichnis für Reinigung erstellen.mvdxml");
-	//new MVDCheckerTest("c:\\test\\noemi8\\BUW_HC-Gebäude-Wartung.ifc", "c:\\test\\noemi8\\ILC_Anlagenverzeichnis Wartung erstellen.mvdxml");
-
-	//new MVDCheckerTest("c:\\test\\noemi7\\BUW_HC-Gebäude-Aufzug - Aufzugsanlage.ifc", "c:\\test\\noemi7\\ILC_Wartungs-LV erstellen.mvdxml");
-
-	//new MVDCheckerTest("c:\\temp\\1\\BUW_HC-elevator.ifc", "c:\\temp\\1\\ILC_Anlagenverzeichnis Wartung erstellen.mvdxml");
-	
-	//new MVDCheckerTest("c:\\test\\noemi4\\BUW_HC-Gebäude-Aufzug.ifc", "c:\\test\\noemi4\\ILC_Textdatei_richtig.mvdxml");
-	//new MVDCheckerTest("c:\\temp\\A.ifc", "c:\\temp\\A.mvdxml");
 	//new MVDCheckerTest("c:\\test\\noemi2\\BUW_HC-elevator.ifc", "c:\\test\\noemi2\\Vorlage - Kopie (2).mvdxml");
 	//new MVDCheckerTest("c:\\test\\noemi\\BUW_HC-Gebaude.ifc", "c:\\test\\noemi\\BUW_IfcTransportelement.mvdxml");
 	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "c:\\test\\noemi\\Vorlage2.mvdxml");
 	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "c:\\test\\Simple.mvdxml");
 	//new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc", "C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Simple.mvdxml");
-        //new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc","C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Vorlage.mvdxml");
+    //new MVDCheckerTest("c:\\ifc\\Duplex_A_20110505.ifc","C:\\jo\\BIM4Ren\\Technical\\mvdXML1.1Test\\Vorlage.mvdxml");
 
     }
 }

@@ -17,6 +17,8 @@
   <version>${mvdxml_check_project.version}</version>
   
   <properties>
-     <mvdxml_check_project.version>2.54.1</mvdxml_check_project.version>
+     <mvdxml_check_project.version>2.55.0</mvdxml_check_project.version>
+     <maven.compiler.source>17</maven.compiler.source>
+	 <maven.compiler.target>17</maven.compiler.target>
 </properties>
 </project>

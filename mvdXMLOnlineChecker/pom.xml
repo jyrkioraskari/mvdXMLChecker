@@ -11,12 +11,12 @@
 	<name>mvdXMLChecker User Interface</name>
 
 	<properties>
-		<mvdxml_check_project.version>2.54.1</mvdxml_check_project.version>
+		<mvdxml_check_project.version>2.55.0</mvdxml_check_project.version>
 		<vaadin.plugin.version>8.14.0</vaadin.plugin.version>
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<!-- If there are no local customizations, this can also be "fetch" or 
 			"cdn" -->
 		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
