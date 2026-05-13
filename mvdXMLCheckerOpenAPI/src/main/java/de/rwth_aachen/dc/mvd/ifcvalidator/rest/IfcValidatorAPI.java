@@ -3,7 +3,6 @@ package de.rwth_aachen.dc.mvd.ifcvalidator.rest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -15,19 +14,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
-import org.bimserver.plugins.deserializers.DeserializeException;
-import org.bimserver.plugins.renderengine.RenderEngineException;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLChecker;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLCheckerFactory;
 import de.rwth_aachen.dc.mvd.ifcvalidator.rest.beans.MvdXMLCheckerResultsReportBean;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
-import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLv1dot2Check;
-import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
 
 @Path("/")
 public class IfcValidatorAPI {
@@ -81,39 +75,15 @@ public class IfcValidatorAPI {
 	return issueReportBean;
     }
 
-    private void execute_check(MvdXMLCheckerResultsReportBean issueReportBean, File tempIfcFile, File tempMvdxmlFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
-	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
-	    // mvdXML 1.1
-	    issueReportBean.setMessage("a valid mvdXML 1.1 file");
-	    IssueReport issueReport = MvdXMLv1dot1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-	    if (issueReport != null) {
-		issueReportBean.getIssues().addAll(issueReport.getIssues());
-		issueReportBean.getElement_check_results().addAll(issueReport.getElementCheckResults());
-		issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
-	    }
+    private void execute_check(MvdXMLCheckerResultsReportBean issueReportBean, File tempIfcFile, File tempMvdxmlFile) throws Exception {
+	MvdXMLChecker checker = MvdXMLCheckerFactory.forFile(tempMvdxmlFile.toPath());
+	issueReportBean.setMessage(messageForVersion(checker.getMvdXMLVersion()));
 
-	} else
-	// mvdXML 1.2
-	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
-	    issueReportBean.setMessage("a mvdXML 1.2 file");
-	    IssueReport issueReport = MvdXMLv1dot2Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-	    if (issueReport != null) {
-		issueReportBean.getIssues().addAll(issueReport.getIssues());
-		issueReportBean.getElement_check_results().addAll(issueReport.getElementCheckResults());
-		issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
-	    }
-	} else {
-	    // mvdXML 1_1
-	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-		issueReportBean.setMessage("a mvdXML 1_1 file");
-		IssueReport issueReport = MvdXMLv1undescore1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-		if (issueReport != null) {
-		    issueReportBean.getIssues().addAll(issueReport.getIssues());
-		    issueReportBean.getElement_check_results().addAll(issueReport.getElementCheckResults());
-		    issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
-		}
-	    } else
-		issueReportBean.setMessage("Error: Unknown mvdXML version");
+	IssueReport issueReport = checker.check(tempIfcFile.toPath(), tempMvdxmlFile.toPath());
+	if (issueReport != null) {
+	    issueReportBean.getIssues().addAll(issueReport.getIssues());
+	    issueReportBean.getElement_check_results().addAll(issueReport.getElementCheckResults());
+	    issueReportBean.getGeneral_comments().addAll(issueReport.getGeneral_comments());
 	}
     }
 
@@ -177,36 +147,25 @@ public class IfcValidatorAPI {
 	return Response.noContent().build();
     }
 
-    private File execute_check(File tempBCFZipFile, File tempIfcFile, File tempMvdxmlFile) throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {
-	// mvdXML 1.1
-	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.1")) {
-	    IssueReport issuereport = MvdXMLv1dot1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-
+    private File execute_check(File tempBCFZipFile, File tempIfcFile, File tempMvdxmlFile) throws Exception {
+	MvdXMLChecker checker = MvdXMLCheckerFactory.forFile(tempMvdxmlFile.toPath());
+	IssueReport issuereport = checker.check(tempIfcFile.toPath(), tempMvdxmlFile.toPath());
+	if (issuereport != null) {
 	    tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
 	    tempBCFZipFile.deleteOnExit();
 	    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-	} else
-	// mvdXML 1.2
-	if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvd/XML/1.2")) {
-	    IssueReport issuereport = MvdXMLv1dot2Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-
-	    tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-	    tempBCFZipFile.deleteOnExit();
-	    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-	} else {
-	    // mvdXML 1_1
-	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(tempMvdxmlFile.getAbsolutePath(), "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-		IssueReport issuereport = MvdXMLv1undescore1Check.check(tempIfcFile.toPath(), tempMvdxmlFile.getAbsolutePath());
-
-		tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-		tempBCFZipFile.deleteOnExit();
-		issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-	    }
 	}
 	return tempBCFZipFile;
+    }
+
+    private String messageForVersion(String version) {
+	if ("1.1".equals(version))
+	    return "a valid mvdXML 1.1 file";
+	if ("1.2".equals(version))
+	    return "a mvdXML 1.2 file";
+	if ("1_1".equals(version))
+	    return "a mvdXML 1_1 file";
+	return "Error: Unknown mvdXML version";
     }
 
 }

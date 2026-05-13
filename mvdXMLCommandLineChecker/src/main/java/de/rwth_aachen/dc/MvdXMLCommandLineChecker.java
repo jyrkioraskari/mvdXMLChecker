@@ -1,6 +1,8 @@
 package de.rwth_aachen.dc;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,59 +17,53 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
-import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLChecker;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLCheckerFactory;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLVersionDetector;
 
 public class MvdXMLCommandLineChecker {
+    static String detectMvdXMLVersion(String mvdXML) throws IOException {
+	return MvdXMLVersionDetector.detectLabel(Paths.get(mvdXML));
+    }
 
     public static void check(String mvdXML, String ifcFile) {
-	List<IssueBean> issues = new ArrayList<>();
-
 	try {
+	    Path mvdXMLPath = Paths.get(mvdXML);
+	    Path ifcPath = Paths.get(ifcFile);
+	    MvdXMLChecker checker = MvdXMLCheckerFactory.forFile(mvdXMLPath);
+	    System.out.println("mvdXML " + checker.getMvdXMLVersion() + ".");
 
-	    // mvdXML 1.1
-	    if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXML, "http://buildingsmart-tech.org/mvd/XML/1.1")) {
-		System.out.println("mvdXML 1.1.");
-		IssueReport issuereport = MvdXMLv1dot1Check.check(Paths.get(ifcFile), mvdXML);
-		issues.addAll(issuereport.getIssues());
-		if (issues.size() > 0) {
-		    File tempBCFZipFile = new File("mvdXMLCheckResult_" + System.currentTimeMillis() + ".bcfzip");
-		    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-		    System.out.println("\n\nISSUES FOUND:");
-		    System.out.println("-------------------");
-		    for (IssueBean i : issues)
-			System.out.println("\n- issue: " + i.getComment());
-		    System.out.println("\n\nBCF Zip report of the issuses are in: " + tempBCFZipFile.getAbsolutePath());
-		} else
-		    System.out.println("\nNo issues found.");
-	    } else {
-		//TODO 1.2
-		// mvdXML 1_1
-		if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(mvdXML, "http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-		    System.out.println("mvdXML 1_1.");
-		    IssueReport issuereport = MvdXMLv1undescore1Check.check(Paths.get(ifcFile), mvdXML);
-		    issues.addAll(issuereport.getIssues());
-
-		    if (issues.size() > 0) {
-			File tempBCFZipFile = new File("mvdXMLCheckResult_" + System.currentTimeMillis() + ".bcfzip");
-			issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-			System.out.println("\n\nISSUES FOUND:");
-			System.out.println("-------------------");
-			for (IssueBean i : issues)
-			    System.out.println("\n- issue: " + i.getComment());
-			System.out.println("\n\nBCF Zip report of the issuses are in: " + tempBCFZipFile.getAbsolutePath());
-		    } else
-			System.out.println("\nNo issues found.");
-		} else {
-		    System.err.println("Unknown mvdXML version.");
-		}
-	    }
+	    IssueReport issuereport = checker.check(ifcPath, mvdXMLPath);
+	    printReport(issuereport);
+	} catch (IllegalArgumentException e) {
+	    System.err.println(e.getMessage());
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
 
+    }
+
+    private static void printReport(IssueReport issuereport) throws Exception {
+	if (issuereport == null) {
+	    System.err.println("No report was produced.");
+	    return;
+	}
+
+	List<IssueBean> issues = new ArrayList<>();
+	issues.addAll(issuereport.getIssues());
+
+	if (issues.size() > 0) {
+	    File tempBCFZipFile = new File("mvdXMLCheckResult_" + System.currentTimeMillis() + ".bcfzip");
+	    issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
+	    System.out.println("\n\nISSUES FOUND:");
+	    System.out.println("-------------------");
+	    for (IssueBean i : issues)
+		System.out.println("\n- issue: " + i.getComment());
+	    System.out.println("\n\nBCF Zip report of the issuses are in: " + tempBCFZipFile.getAbsolutePath());
+	} else {
+	    System.out.println("\nNo issues found.");
+	}
     }
 
     public static void main(String[] args) {

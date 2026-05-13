@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.bimserver.emf.IfcModelInterface;
+import org.junit.Ignore;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
@@ -15,6 +16,7 @@ import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MVDConceptConstraintRootSet;
 import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLValidationRules;
 import nl.tue.ddss.mvdxml1dot1.ifc_check.IfcMVDConstraintChecker;
 
+@Ignore("Executable manual test helper; regression coverage lives in package-specific JUnit tests.")
 public class MVDCheckerTest {
 
     public MVDCheckerTest(String ifcFileName, String mvdXMLFile) {

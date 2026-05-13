@@ -2,16 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.rwth-aachen.dc.mvd</groupId>
+		<artifactId>mvdXMLChecker</artifactId>
+		<version>3.0.0</version>
+		<relativePath>../mvdXMLChecker/pom.xml</relativePath>
+	</parent>
+
 	<artifactId>mvdXMLCommandLineChecker</artifactId>
 	<name>mvdXMLCommandLineChecker</name>
-	<groupId>de.rwth-aachen.dc.mvd</groupId>
-	<version>${mvdxml_check_project.version}</version>
-
-	<properties>
-		<mvdxml_check_project.version>2.55.0</mvdxml_check_project.version>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
-	</properties>
 
 	<developers>
 		<developer>
@@ -30,39 +30,29 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
-			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
-			<version>${mvdxml_check_project.version}</version>
+			<artifactId>mvdXMLCheckerCommon</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
-			<artifactId>mvdXMLCheckerCore1dot2</artifactId>
-			<version>${mvdxml_check_project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.rwth-aachen.dc.mvd</groupId>
-			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
-			<version>${mvdxml_check_project.version}</version>
+			<artifactId>mvdXMLCheckerRuntime</artifactId>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
-			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.4.1</version>
-				<configuration>
-					<rules>
-						<dependencyConvergence />
-					</rules>
-				</configuration>
-			</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+				</plugin>
 		</plugins>
 	</build>
 </project>

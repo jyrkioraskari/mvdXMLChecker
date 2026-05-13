@@ -13,6 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLRules;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
@@ -31,7 +32,7 @@ import nl.tue.ddss.mvdxml1dot1.mvdparser.MvdXMLException;
 // Rewritten by JO 2022
 // JO 2022_02
 
-public class MvdXMLValidationRules {
+public class MvdXMLValidationRules implements MvdXMLRules<ModelView, ConceptTemplate, MVDConceptConstraintRootSet> {
 	private final String userId;
 	private EventBusCommunication communication = EventBusCommunication.getInstance();
 

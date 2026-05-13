@@ -15,12 +15,27 @@ import org.bimserver.plugins.renderengine.RenderEngineException;
 
 import de.rwth_aachen.dc.ifc.IfcModelInstance;
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.beans.IssueBean;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLChecker;
 import nl.tue.ddss.ifc_check.IfcMVDConstraintChecker;
 import nl.tue.ddss.mvdparser.MVDConstraint;
 import nl.tue.ddss.mvdparser.MvdXMLParser;
 
-public class MvdXMLv1undescore1Check {
+public class MvdXMLv1undescore1Check implements MvdXMLChecker {
+
+	@Override
+	public String getMvdXMLVersion() {
+		return "1_1";
+	}
+
+	@Override
+	public IssueReport check(Path ifcFile, Path mvdXMLFile) throws Exception {
+		return check(ifcFile, mvdXMLFile.toString());
+	}
+
+	@Override
+	public IssueReport check(String id, Path ifcFile, Path mvdXMLFile) throws Exception {
+		return check(id, ifcFile, mvdXMLFile.toString());
+	}
 
 	public static IssueReport check(Path ifcFile, String mvdXMLFile)
 			throws JAXBException, DeserializeException, IOException, URISyntaxException, RenderEngineException {

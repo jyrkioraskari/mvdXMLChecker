@@ -13,6 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLRules;
 import de.rwth_aachen.dc.mvd.events.CheckerErrorEvent;
 import fi.aalto.drumbeat.DrumbeatUserManager.events.EventBusCommunication;
 import generated.buildingsmart_tech.mvd_xml_1dot2.AttributeRule;
@@ -27,7 +28,7 @@ import generated.buildingsmart_tech.mvd_xml_1dot2.MvdXML;
 // Rewritten by JO 2022
 // JO 2022_02
 
-public class MvdXMLValidationRules {
+public class MvdXMLValidationRules implements MvdXMLRules<ModelView, ConceptTemplate, MVDConceptConstraintRootSet> {
 	private final String userId;
 	private EventBusCommunication communication = EventBusCommunication.getInstance();
 
@@ -38,14 +39,14 @@ public class MvdXMLValidationRules {
 
 	public MvdXMLValidationRules(String userId, String filename) throws JAXBException {
 		this.userId = userId;
-		if (!MvdXMLVersionCheck.checkMvdXMLSchemaVersion(filename)) {
+		if (!MvdXMLVersionCheck.checkMvdXMLSchemaVersion(filename, "http://buildingsmart-tech.org/mvd/XML/1.2")) {
 			// System.out.println("Not valid");
 			this.valid = false;
 			return;
 		}
-		// System.out.println("Valid mvdXML 1.1");
+		// System.out.println("Valid mvdXML 1.2");
 		try {
-			JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_1dot1");
+			JAXBContext mvdXMLSchema = JAXBContext.newInstance("generated.buildingsmart_tech.mvd_xml_1dot2");
 			Unmarshaller unmarshaller = mvdXMLSchema.createUnmarshaller();
 			StreamSource streamSource = new StreamSource(new File(filename));
 

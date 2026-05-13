@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.rwth-aachen.dc.mvd</groupId>
+		<artifactId>mvdXMLChecker</artifactId>
+		<version>3.0.0</version>
+		<relativePath>../mvdXMLChecker/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>mvdXMLCheckerRuntime</artifactId>
+	<name>mvdXMLChecker Runtime</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.rwth-aachen.dc.mvd</groupId>
+			<artifactId>mvdXMLCheckerCommon</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.rwth-aachen.dc.mvd</groupId>
+			<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.rwth-aachen.dc.mvd</groupId>
+			<artifactId>mvdXMLCheckerCore1dot1</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.rwth-aachen.dc.mvd</groupId>
+			<artifactId>mvdXMLCheckerCore1dot2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

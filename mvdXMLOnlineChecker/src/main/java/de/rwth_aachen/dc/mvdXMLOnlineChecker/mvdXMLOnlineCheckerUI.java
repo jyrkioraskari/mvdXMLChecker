@@ -37,8 +37,9 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.rwth_aachen.dc.mvd.IssueReport;
-import de.rwth_aachen.dc.mvd.MvdXMLVersionCheck;
 import de.rwth_aachen.dc.mvd.beans.IssueBean;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLChecker;
+import de.rwth_aachen.dc.mvd.checker.MvdXMLCheckerFactory;
 import de.rwth_aachen.dc.mvd.events.CheckerBreakEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerElementApplicabilityNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerElementValidityNotificationEvent;
@@ -47,9 +48,6 @@ import de.rwth_aachen.dc.mvd.events.CheckerInfoEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerIssueEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerNotificationEvent;
 import de.rwth_aachen.dc.mvd.events.CheckerShortNotificationEvent;
-import de.rwth_aachen.dc.mvd.mvdxml1dot1.checker.MvdXMLv1dot1Check;
-import de.rwth_aachen.dc.mvd.mvdxml1dot2.checker.MvdXMLv1dot2Check;
-import de.rwth_aachen.dc.mvd.mvdxml1underscore1.checker.MvdXMLv1undescore1Check;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_ifcSTEPFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.events.New_mvdXMLFile;
 import de.rwth_aachen.dc.mvdXMLOnlineChecker.upload.WebFileHandler;
@@ -230,101 +228,32 @@ public class mvdXMLOnlineCheckerUI extends UI {
 		Thread t = new Thread(() -> {
 
 			try {
+				MvdXMLChecker checker = MvdXMLCheckerFactory.forFile(this.mvdXMLFile.toPath());
+				ui_interface.access(() -> {
+					Notification n = new Notification("mvdXML " + checker.getMvdXMLVersion() + ".",
+							Notification.Type.TRAY_NOTIFICATION);
+					n.setDelayMsec(5000);
+					n.show(vaadin_page);
+				});
+					IssueReport issuereport = checker.check(vaadin_session, this.ifcFile.toPath(),
+							this.mvdXMLFile.toPath());
+				ui_interface.access(() -> {
+					issues.addAll(issuereport.getIssues());
+					issues_grid.setItems(issues);
+				});
 
-				// mvdXML 1.1
-				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
-						"http://buildingsmart-tech.org/mvd/XML/1.1")) {
-					ui_interface.access(() -> {
-						Notification n = new Notification("mvdXML 1.1.", Notification.Type.TRAY_NOTIFICATION);
-						n.setDelayMsec(5000);
-						n.show(vaadin_page);
-					});
-					IssueReport issuereport = MvdXMLv1dot1Check.check(vaadin_session, this.ifcFile.toPath(),
-							this.mvdXMLFile.getAbsolutePath());
-					ui_interface.access(() -> {
-						issues.addAll(issuereport.getIssues());
-						issues_grid.setItems(issues);
-					});
+				File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
+				tempBCFZipFile.deleteOnExit();
+				issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
 
-					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-					tempBCFZipFile.deleteOnExit();
-					issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-					Resource res = new FileResource(tempBCFZipFile);
-					if (this.fileDownloader == null) {
-						this.fileDownloader = new FileDownloader(res);
-						this.fileDownloader.extend(this.save_as_bcfzip_button);
-					} else {
-						this.fileDownloader.setFileDownloadResource(res);
-					}
-					this.save_as_bcfzip_button.setEnabled(true);
-
-				} else
-				// mvdXML 1.2
-				if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
-						"http://buildingsmart-tech.org/mvd/XML/1.2")) {
-					ui_interface.access(() -> {
-						Notification n = new Notification("mvdXML 1.2.", Notification.Type.TRAY_NOTIFICATION);
-						n.setDelayMsec(5000);
-						n.show(vaadin_page);
-					});
-					IssueReport issuereport = MvdXMLv1dot2Check.check(vaadin_session, this.ifcFile.toPath(),
-							this.mvdXMLFile.getAbsolutePath());
-					ui_interface.access(() -> {
-						issues.addAll(issuereport.getIssues());
-						issues_grid.setItems(issues);
-					});
-
-					File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-					tempBCFZipFile.deleteOnExit();
-					issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-
-					Resource res = new FileResource(tempBCFZipFile);
-					if (this.fileDownloader == null) {
-						this.fileDownloader = new FileDownloader(res);
-						this.fileDownloader.extend(this.save_as_bcfzip_button);
-					} else {
-						this.fileDownloader.setFileDownloadResource(res);
-					}
-					this.save_as_bcfzip_button.setEnabled(true);
-
+				Resource res = new FileResource(tempBCFZipFile);
+				if (this.fileDownloader == null) {
+					this.fileDownloader = new FileDownloader(res);
+					this.fileDownloader.extend(this.save_as_bcfzip_button);
 				} else {
-					// mvdXML 1_1
-					if (MvdXMLVersionCheck.checkMvdXMLSchemaVersion(this.mvdXMLFile.getAbsolutePath(),
-							"http://buildingsmart-tech.org/mvdXML/mvdXML1-1")) {
-
-						ui_interface.access(() -> {
-							Notification n = new Notification("mvdXML 1_1.", Notification.Type.TRAY_NOTIFICATION);
-							n.setDelayMsec(5000);
-							n.show(vaadin_page);
-						});
-						IssueReport issuereport = MvdXMLv1undescore1Check.check(vaadin_session, this.ifcFile.toPath(),
-								this.mvdXMLFile.getAbsolutePath());
-						ui_interface.access(() -> {
-							issues.addAll(issuereport.getIssues());
-							issues_grid.setItems(issues);
-						});
-
-						File tempBCFZipFile = File.createTempFile("mvdXMLCheckResult", ".bcfzip");
-						tempBCFZipFile.deleteOnExit();
-						issuereport.writeReport(tempBCFZipFile.getAbsolutePath().toString());
-						Resource res = new FileResource(tempBCFZipFile);
-						if (this.fileDownloader == null) {
-							this.fileDownloader = new FileDownloader(res);
-							this.fileDownloader.extend(this.save_as_bcfzip_button);
-						} else {
-							this.fileDownloader.setFileDownloadResource(res);
-						}
-						this.save_as_bcfzip_button.setEnabled(true);
-
-					} else {
-						Notification n = new Notification("Unknown mvdXML version.",
-								Notification.Type.TRAY_NOTIFICATION);
-						n.setDelayMsec(5000);
-						n.show(Page.getCurrent());
-
-					}
+					this.fileDownloader.setFileDownloadResource(res);
 				}
+				this.save_as_bcfzip_button.setEnabled(true);
 				issues_grid.setItems(issues);
 			} catch (Exception e) {
 				e.printStackTrace();

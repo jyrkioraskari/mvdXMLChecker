@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                                            
+                                                                    
     
     
     
@@ -13,8 +13,12 @@
     
     
     
-    <wb-module deploy-name="mvdXMLCheckerUserInterface-2.55.0">
-                                                                                                                        
+    
+    
+    <wb-module deploy-name="mvdXMLCheckerUserInterface-3.0.0">
+                                                                                                                                        
+        
+        
         
         
         
@@ -29,7 +33,9 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                                                        
+                                                                                                                                        
+        
+        
         
         
         
@@ -44,7 +50,9 @@
         
         
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-                                                                                                                        
+                                                                                                                                        
+        
+        
         
         
         
@@ -59,7 +67,9 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                                                                                        
+                                                                                                                                        
+        
+        
         
         
         
@@ -74,22 +84,29 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-                        
+                                        
+        
+        
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-resources/gwt"/>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot1-2.55.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
+        <dependent-module archiveName="mvdXMLCheckerRuntime-3.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerRuntime/mvdXMLCheckerRuntime">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCommon-2.55.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
+        <dependent-module archiveName="mvdXMLCheckerCommon-3.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCommon/mvdXMLCheckerCommon">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1dot2-2.55.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot2/mvdXMLCheckerCore1dot2">
+        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-3.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="mvdXMLCheckerCore1underscore1-2.55.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1underscore1/mvdXMLCheckerCore1underscore1">
+        <dependent-module archiveName="mvdXMLCheckerCore1dot1-3.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot1/mvdXMLCheckerCore1dot1">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-                                                                                                                        
+        <dependent-module archiveName="mvdXMLCheckerCore1dot2-3.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mvdXMLCheckerCore1dot2/mvdXMLCheckerCore1dot2">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+                                                                                                                                        
+        
+        
         
         
         
@@ -104,7 +121,9 @@
         
         
         <property name="java-output-path" value="/mvdXMLOnlineChecker/target/classes"/>
-                                                                                                                        
+                                                                                                                                        
+        
+        
         
         
         
@@ -119,7 +138,9 @@
         
         
         <property name="component.exclusion.patterns" value="WEB-INF/classes/VAADIN/widgetsets/WEB-INF/**"/>
-                                                                                                                        
+                                                                                                                                        
+        
+        
         
         
         
@@ -134,7 +155,9 @@
         
         
         <property name="context-root" value="mvdXMLCheckerUserInterface"/>
-                                                                                                                    
+                                                                                                                                    
+    
+    
     
     
     
@@ -149,7 +172,9 @@
     
     
     </wb-module>
-                                                        
+                                                                
+
+
 
 
 

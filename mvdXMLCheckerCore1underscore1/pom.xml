@@ -2,16 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.rwth-aachen.dc.mvd</groupId>
+		<artifactId>mvdXMLChecker</artifactId>
+		<version>3.0.0</version>
+		<relativePath>../mvdXMLChecker/pom.xml</relativePath>
+	</parent>
+
 	<artifactId>mvdXMLCheckerCore1underscore1</artifactId>
 	<name>mvdXMLChecker Core 1_1</name>
-	<groupId>de.rwth-aachen.dc.mvd</groupId>
-	<version>${mvdxml_check_project.version}</version>
-
-	<properties>
-		<mvdxml_check_project.version>2.55.0</mvdxml_check_project.version>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
-	</properties>
 	<description>
 		This is based on the original work of
 		Chi Zhang
@@ -35,26 +35,22 @@
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.common</artifactId>
-			<version>2.29.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.16.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/javax.vecmath/vecmath -->
 		<dependency>
 			<groupId>javax.vecmath</groupId>
 			<artifactId>vecmath</artifactId>
-			<version>1.5.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.antlr/antlr-runtime -->
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr-runtime</artifactId>
-			<version>3.5.3</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
@@ -62,12 +58,10 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>[24.1.1,)</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -75,14 +69,12 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.15.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore -->
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.ecore</artifactId>
-			<version> 2.35.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore.xmi -->
@@ -90,14 +82,12 @@
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-			<version>2.36.0</version>
 		</dependency>
 
 		<!-- the newest version: can cause needs to update the source -->
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>bimserverclientlib</artifactId>
-			<version>1.5.182</version>
 			<exclusions>
 				<exclusion>
 					<groupId>stax</groupId>
@@ -114,7 +104,6 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>shared</artifactId>
-			<version>1.5.182</version>
 			<exclusions>
 				<exclusion>
 					<groupId>stax</groupId>
@@ -130,7 +119,6 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>bimserver</artifactId>
-			<version>1.5.182</version>
 			<exclusions>
 				<exclusion>
 					<groupId>stax</groupId>
@@ -140,6 +128,10 @@
 					<groupId>stax</groupId>
 					<artifactId>stax2-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.opensourcebim</groupId>
+					<artifactId>bdb</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -147,7 +139,6 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>bcf</artifactId>
-			<version>0.0.35</version>
 			<exclusions>
 				<exclusion>
 					<groupId>stax</groupId>
@@ -163,22 +154,20 @@
 		<dependency>
 			<groupId>de.rwth-aachen.dc.mvd</groupId>
 			<artifactId>mvdXMLCheckerCommon</artifactId>
-			<version>${mvdxml_check_project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.4.1</version>
-				<configuration>
-					<rules>
-						<dependencyConvergence />
-					</rules>
-				</configuration>
-			</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+				</plugin>
 		</plugins>
 	</build>
 </project>
